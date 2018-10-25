@@ -8,8 +8,6 @@ import {FormattedMessage} from 'react-intl';
 import Scrollbars from 'react-custom-scrollbars';
 
 import UserStore from 'stores/user_store.jsx';
-import WebrtcStore from 'stores/webrtc_store.jsx';
-
 import Constants from 'utils/constants.jsx';
 import * as Utils from 'utils/utils.jsx';
 
@@ -74,7 +72,6 @@ export default class SearchResults extends React.PureComponent {
             windowWidth: Utils.windowWidth(),
             windowHeight: Utils.windowHeight(),
             profiles: JSON.parse(JSON.stringify(UserStore.getProfiles())),
-            isBusy: WebrtcStore.isBusy(),
             statuses: Object.assign({}, UserStore.getStatuses()),
         };
     }
@@ -82,7 +79,6 @@ export default class SearchResults extends React.PureComponent {
     componentDidMount() {
         UserStore.addChangeListener(this.onUserChange);
         UserStore.addStatusesChangeListener(this.onStatusChange);
-        WebrtcStore.addBusyListener(this.onBusy);
 
         this.scrollToTop();
         window.addEventListener('resize', this.handleResize);
@@ -91,7 +87,6 @@ export default class SearchResults extends React.PureComponent {
     componentWillUnmount() {
         UserStore.removeChangeListener(this.onUserChange);
         UserStore.removeStatusesChangeListener(this.onStatusChange);
-        WebrtcStore.removeBusyListener(this.onBusy);
 
         window.removeEventListener('resize', this.handleResize);
     }
@@ -111,10 +106,6 @@ export default class SearchResults extends React.PureComponent {
 
     onUserChange = () => {
         this.setState({profiles: JSON.parse(JSON.stringify(UserStore.getProfiles()))});
-    }
-
-    onBusy = (isBusy) => {
-        this.setState({isBusy});
     }
 
     onStatusChange = () => {
@@ -226,7 +217,6 @@ export default class SearchResults extends React.PureComponent {
                         term={(!this.props.isFlaggedPosts && !this.props.isPinnedPosts && !this.props.isMentionSearch) ? searchTerms : ''}
                         isMentionSearch={this.props.isMentionSearch}
                         isFlagged={isFlagged}
-                        isBusy={this.state.isBusy}
                         status={status}
                     />
                 );

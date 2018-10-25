@@ -14,11 +14,10 @@ import {isChannelMuted} from 'mattermost-redux/utils/channel_utils';
 
 import * as GlobalActions from 'actions/global_actions.jsx';
 import * as WebrtcActions from 'actions/webrtc_actions.jsx';
-import WebrtcStore from 'stores/webrtc_store.jsx';
 import TeamStore from 'stores/team_store.jsx';
 
 import Markdown from 'components/markdown';
-import {Constants, NotificationLevels, RHSStates, UserStatuses, ModalIdentifiers} from 'utils/constants.jsx';
+import {Constants, NotificationLevels, RHSStates, ModalIdentifiers} from 'utils/constants.jsx';
 import * as Utils from 'utils/utils.jsx';
 import {browserHistory} from 'utils/browser_history';
 import ChannelInfoModal from 'components/channel_info_modal';
@@ -73,20 +72,16 @@ export default class ChannelHeader extends React.Component {
         isDefault: PropTypes.bool,
         currentUser: PropTypes.object.isRequired,
         dmUser: PropTypes.object,
-        dmUserStatus: PropTypes.object,
-        dmUserIsInCall: PropTypes.bool,
         isReadOnly: PropTypes.bool,
         rhsState: PropTypes.oneOf(
             Object.values(RHSStates)
         ),
         lastViewedChannelName: PropTypes.string.isRequired,
         penultimateViewedChannelName: PropTypes.string.isRequired,
-        enableWebrtc: PropTypes.bool.isRequired,
     };
 
     static defaultProps = {
         dmUser: {},
-        dmUserStatus: {status: UserStatuses.OFFLINE},
     };
 
     constructor(props) {
@@ -258,13 +253,6 @@ export default class ChannelHeader extends React.Component {
         });
     };
 
-    initWebrtc = (contactId, isOnline) => {
-        if (isOnline && !this.state.isBusy) {
-            this.props.actions.closeRightHandSide();
-            WebrtcActions.initWebrtc(contactId, true);
-        }
-    };
-
     handleOnMouseOver = () => {
         if (this.refs.headerOverlay) {
             this.refs.headerOverlay.show();
@@ -299,16 +287,6 @@ export default class ChannelHeader extends React.Component {
 
     showEditChannelHeaderModal = () => {
         this.setState({showEditChannelHeaderModal: true});
-    };
-
-    handleWebRTCOnClick = (e) => {
-        e.preventDefault();
-        const dmUserId = this.props.dmUser.id;
-        const dmUserStatus = this.props.dmUserStatus.status;
-        const isOffline = dmUserStatus === UserStatuses.OFFLINE;
-        const isDoNotDisturb = dmUserStatus === UserStatuses.DND;
-
-        this.initWebrtc(dmUserId, !isOffline || !isDoNotDisturb);
     };
 
     showInviteModal = () => {
@@ -409,10 +387,8 @@ export default class ChannelHeader extends React.Component {
         const channelMuted = isChannelMuted(this.props.channelMember);
 
         const teamId = TeamStore.getCurrentId();
-        let webrtc;
 
         if (isDirect) {
-            const dmUserStatus = this.props.dmUserStatus.status;
 
             const teammateId = Utils.getUserIdFromChannelName(channel);
             if (this.props.currentUser.id === teammateId) {
@@ -427,78 +403,6 @@ export default class ChannelHeader extends React.Component {
                 );
             } else {
                 channelTitle = Utils.getDisplayNameByUserId(teammateId) + ' ';
-            }
-
-            const webrtcEnabled = this.props.enableWebrtc && Utils.isUserMediaAvailable();
-
-            if (webrtcEnabled && this.props.currentUser.id !== teammateId) {
-                const isOffline = dmUserStatus === UserStatuses.OFFLINE;
-                const isDoNotDisturb = dmUserStatus === UserStatuses.DND;
-                const busy = this.props.dmUserIsInCall;
-                let circleClass = '';
-                let webrtcMessage;
-
-                if (isOffline || isDoNotDisturb || busy) {
-                    circleClass = 'offline';
-
-                    if (isOffline) {
-                        webrtcMessage = (
-                            <FormattedMessage
-                                id='channel_header.webrtc.offline'
-                                defaultMessage='The user is offline'
-                            />
-                        );
-                    } else if (isDoNotDisturb) {
-                        webrtcMessage = (
-                            <FormattedMessage
-                                id='channel_header.webrtc.doNotDisturb'
-                                defaultMessage='Do not disturb'
-                            />
-                        );
-                    } else if (busy) {
-                        webrtcMessage = (
-                            <FormattedMessage
-                                id='channel_header.webrtc.unavailable'
-                                defaultMessage='New call unavailable until your existing call ends'
-                            />
-                        );
-                    }
-                } else {
-                    webrtcMessage = (
-                        <FormattedMessage
-                            id='channel_header.webrtc.call'
-                            defaultMessage='Start Video Call'
-                        />
-                    );
-                }
-
-                const webrtcTooltip = (
-                    <Tooltip id='webrtcTooltip'>{webrtcMessage}</Tooltip>
-                );
-
-                webrtc = (
-                    <div className={'webrtc__header channel-header__icon wide text ' + circleClass}>
-                        <button
-                            className='style--none'
-                            onClick={this.handleWebRTCOnClick}
-                            disabled={isOffline || isDoNotDisturb}
-                        >
-                            <OverlayTrigger
-                                trigger={['hover', 'focus']}
-                                delayShow={Constants.WEBRTC_TIME_DELAY}
-                                placement='bottom'
-                                overlay={webrtcTooltip}
-                            >
-                                <div
-                                    id='webrtc-btn'
-                                    className={'webrtc__button hidden-xs ' + circleClass}
-                                >
-                                    {'WebRTC'}
-                                </div>
-                            </OverlayTrigger>
-                        </button>
-                    </div>
-                );
             }
         }
 
@@ -1176,9 +1080,6 @@ export default class ChannelHeader extends React.Component {
                             </div>
                             {headerTextContainer}
                         </div>
-                    </div>
-                    <div className='flex-child'>
-                        {webrtc}
                     </div>
                     <div className='flex-child'>
                         {popoverListMembers}

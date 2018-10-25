@@ -11,7 +11,6 @@ import posts from './posts';
 import modals from './modals';
 import emoji from './emoji';
 import lhs from './lhs';
-import webrtc from './webrtc';
 import search from './search';
 import notice from './notice';
 
@@ -24,7 +23,6 @@ export default combineReducers({
     modals,
     emoji,
     lhs,
-    webrtc,
     search,
     notice,
 });

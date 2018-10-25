@@ -52,7 +52,6 @@
     "superagent": "3.8.3",
     "twemoji": "11.0.1",
     "url-search-params-polyfill": "4.0.1",
-    "webrtc-adapter": "6.3.2",
     "whatwg-fetch": "2.0.4",
     "xregexp": "4.2.0"
   },
