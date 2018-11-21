@@ -9,6 +9,7 @@ import {FormattedMessage} from 'react-intl';
 import {PropTypes} from 'prop-types';
 import Permissions from 'mattermost-redux/constants/permissions';
 import classNames from 'classnames';
+import {Link} from 'react-router-dom';
 
 import Scrollbars from 'react-custom-scrollbars';
 
@@ -529,6 +530,38 @@ export default class Sidebar extends React.PureComponent {
             </li>
         );
 
+        var dashboard = (
+            <li key='dashboard'>
+                <button
+                    id='dashboard'
+                    className='nav-more cursor--pointer style--none btn--block'
+                    onClick={
+                        () => { this.props.history.push(`/${this.props.currentTeam.name}/channels/dashboard`) }
+                    }
+                >
+                    <FormattedMessage
+                        id='sidebar.dashboard'
+                        defaultMessage='Dashboard'
+                    />
+                </button>
+            </li>
+        );
+
+        var videoChat = (
+          <li key="videochat">
+            <h4 id="videochat">
+              <Link target="_blank" to={`/${this.props.currentTeam.name}/${this.props.currentChannel.id}/video`}>
+              <button id="videochat"
+                      className='nav-more cursor--pointer style--none btn--block'
+                >
+                <FormattedMessage id='sidebar.video'
+                                  defaultMessage="Riff Video"/>
+              </button>
+              </Link>
+            </h4>
+          </li>
+        );
+
         let showChannelModal = false;
         if (this.state.newChannelModalType !== '') {
             showChannelModal = true;
@@ -772,6 +805,7 @@ export default class Sidebar extends React.PureComponent {
                                 {favoriteItems}
                             </ul>}
                             <ul className='nav nav-pills nav-stacked'>
+                                {videoChat}
                                 <li>
                                     <h4 id='publicChannel'>
                                         <FormattedMessage
@@ -830,6 +864,7 @@ export default class Sidebar extends React.PureComponent {
                                 </li>
                                 {directMessageItems}
                                 {directMessageMore}
+                                {dashboard}
                             </ul>
                         </div>
                     </Scrollbars>
