@@ -139,9 +139,11 @@ const DashboardView = (props) => {
             </div>
         );
     }
+    // marginLeft on column is a quick fix until we fix the styling on this ugly page.
     return (
         <div
-            className='app__content'
+          className='app__content'
+          style={{overflowY: 'scroll'}}
         >
             {props.statsStatus === 'loading' ? (
                 <div>
@@ -151,7 +153,7 @@ const DashboardView = (props) => {
                 <div>
                     <div
                       className=''
-                      style={{paddingBottom: '0px',
+                      style={{paddingBottom: '2rem',
                               paddingTop: '1rem',
                       paddingLeft: '1rem'}}>
                       <h3>Room: {props.selectedMeeting.room} </h3>
@@ -163,13 +165,17 @@ const DashboardView = (props) => {
                             <span> Duration </span>
                             {props.selectedMeetingDuration}
                         </SpaceBetweeen>
-                        <TurnChart
-                            processedUtterances={props.processedUtterances}
-                            participantId={props.user.id}
-                        />
-                        <div className='column is-half has-text-left'>
+                                               <div className='column is-half has-text-left'>
 
                         </div>
+                    </div>
+                    <div className="columns is-centered">
+                      <div className="column" style={{marginLeft: "33%"}}>
+                      <TurnChart
+                        processedUtterances={props.processedUtterances}
+                        participantId={props.user.id}
+                        />
+                      </div>
                     </div>
                     <div
                         className='section'
