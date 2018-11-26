@@ -22,7 +22,7 @@ class RenderVideos extends React.Component {
             return (
                 <div style={{width: '100%', alignItems: 'center'}}className="columns is-centered is-vcentered">
                   <div className="column">
-                    {!this.props.inRoom ?
+                    {!this.props.inRoom && !this.props.riff.meetingId ?
 
                         <React.Fragment>
                               {this.props.displayRoomName &&

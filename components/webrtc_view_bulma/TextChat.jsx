@@ -104,7 +104,7 @@ const ChatView = (props) => (
     <RiffChat onClick={event => props.removeBadge()}>
       <Widget handleNewUserMessage={props.handleNewUserMessage}
               onClick={event => props.removeBadge()}
-        title={props.roomName}
+        title=""
         subtitle=""
         badge={props.badge}/>
     </RiffChat>

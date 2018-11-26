@@ -95,7 +95,7 @@ export default function (localVideoNode, dispatch, getState) {
 
 
         webrtc.stopSibilant = function () {
-            //sib.unbind('volumeChange');
+            sib.unbind('volumeChange');
             sib.unbind('stoppedSpeaking');
         };
 

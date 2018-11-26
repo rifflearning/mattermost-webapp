@@ -30,7 +30,7 @@ const AudioStatus = (props) => {
     const MutedButton = (props) =>
           (<a className="button is-rounded is-danger"
            onClick={event => props.handleMuteAudioClick(event,
-                                                        props.isAudioMuted,
+                                                        props.audioMuted,
                                                         props.webrtc)}>
            <MaterialIcon icon="mic_off"/>
            </a>);
@@ -38,14 +38,14 @@ const AudioStatus = (props) => {
     const NotMutedButton = (props) =>
           (<a className="button is-rounded"
            onClick={event => props.handleMuteAudioClick(event,
-                                                        props.isAudioMuted,
+                                                        props.audioMuted,
                                                         props.webrtc)}>
            <MaterialIcon icon="mic"/>
            </a>);
 
     return (<div className="has-text-centered">
             <div className="control">
-            {props.isAudioMuted ? <MutedButton {...props}/> : <NotMutedButton {...props}/>}
+            {props.audioMuted ? <MutedButton {...props}/> : <NotMutedButton {...props}/>}
             </div>
             </div>
            );
