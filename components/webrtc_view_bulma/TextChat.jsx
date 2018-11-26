@@ -16,6 +16,10 @@ const RiffChat = styled.div`
   background-color: rgb(138,106,148);
 }
 
+.rcw-conversation-container > .rcw-header > .rcw-close-button {
+  background-color: rgb(138,106,148);
+}
+
 .rcw-message > .rcw-client {
 background-color: rgb(138,106,148);
 color: #fff;
