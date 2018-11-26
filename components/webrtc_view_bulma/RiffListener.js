@@ -3,8 +3,8 @@ import {
     updateMeetingParticipants,
     updateTurnData,
     updateRiffMeetingId} from '../../actions/views/riff';
-// import {
-//     updateTextChat} from '../actions/textchat';
+import {updateTextChat} from '../../actions/webrtc_actions';
+import {getCurrentUser} from 'mattermost-redux/selectors/entities/users';
 import store from 'stores/redux_store.jsx';
 
 
@@ -42,9 +42,10 @@ export default function () {
 
     app.service('messages').on('created', function (obj) {
         let state = getState();
-        console.log('riff listener.messages.created', obj);
+        let user = getCurrentUser(state);
+        console.log('riff listener.messages.created', obj, user.id, updateTextChat);
         if (obj.meeting === state.views.riff.meetingId &&
-            obj.participant != state.auth.user.uid) {
+            obj.participant != user.id) {
             dispatch(updateTextChat(
                 obj.msg,
                 obj.meeting,
@@ -53,11 +54,4 @@ export default function () {
             ));
         }
     });
-
-    // this.app.service('meetings').on('patched', function (obj) {
-    //   if (obj.room === state.chat.webRtcRoom) {
-    //     console.log("Got update for meeting", obj.room);
-    //     dispatch(meetingUpdated())
-    //   }
-    // })
 }

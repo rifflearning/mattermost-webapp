@@ -129,10 +129,11 @@ const webrtc = (state = initialState, action) => {
 
     case(WebRtcActionTypes.TEXT_CHAT_MSG_UPDATE):
         // will never be a message this user has sent (will always be peer)
+        console.log("text chat message update:", action)
         let dNames = state.webRtcPeers.map((p) => { return p.nick.split("|")[1]; });
         let rIds = state.webRtcPeers.map((p) => { return p.nick.split("|")[0]; });
         const peerIdx = rIds.indexOf(action.messageObj.participant);
-        const dispName = dNames[peerIdx];
+        const dispName = "@" + dNames[peerIdx];
         let msg = {...action.messageObj,
                    name: dispName};
         return {...state, textchat: {...state.textchat,
