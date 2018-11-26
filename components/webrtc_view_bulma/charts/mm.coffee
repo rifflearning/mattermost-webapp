@@ -90,8 +90,9 @@
       @chart = d3.select id
         .append "svg"
         .attr "class", "meeting-mediator"
-        .attr "width", @width + @margin.left + @margin.right
-        .attr "height", @height + @margin.top + @margin.bottom
+        .attr "preserveAspectRatio", "xMinYMin meet"
+        .attr "viewBox", "0 0 #{@width + @margin.left + @margin.right} #{@height + @margin.top + @margin.bottom}"
+        .classed "svg-content", true
         .append "g"
         .attr "transform", "translate(#{ @width / 2 },#{ @height / 2 })"
 
