@@ -555,23 +555,18 @@ export default class Sidebar extends React.PureComponent {
 
         var videoChat = (
           <li key="videochat">
-            <button id="videochat"
-                    className="nav-more cursor--pointer style--none btn--block">
               <Link target="_blank"
+                    id="videochat"
+                    className="nav-more cursor--pointer style--none btn--block"
                     style={{color: "rgba(255, 255, 255, 0.6)"}}
                     to={`/${this.props.currentTeam.name}/${this.props.currentChannel.id}/video`}>
-              <button id="videochat"
-                      className='nav-more cursor--pointer style--none btn--block'
-                      >
                 <span style={{marginRight: ".5rem"}}>
                   <MaterialIcon icon="video_call" size={17} invert/>
                 </span>
                 <FormattedMessage id='sidebar.video'
                                   defaultMessage="Riff Video">
                 </FormattedMessage>
-              </button>
               </Link>
-            </button>
           </li>
         );
 
