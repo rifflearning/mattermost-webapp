@@ -79,6 +79,7 @@ class WebRtc extends Component {
                     joinRoomStatus={this.props.joinRoomStatus}
                     joinRoomMessage={this.props.joinRoomMessage}
                     chat={this.props}
+                    riff={this.props.riff}
                     webrtc={this.webrtc}
                     displayRoomName={false}
                     displayName={this.props.user.nickname == "" ?
