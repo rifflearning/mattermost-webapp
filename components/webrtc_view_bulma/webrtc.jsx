@@ -85,6 +85,7 @@ class WebRtc extends Component {
                     "@" + this.props.user.username : this.props.user.nickname}
                     roDisplayName={true}>
                   </RenderVideos>
+                  {this.props.inRoom && <TextChat/>}
                   </div>
                 </div>
               </div>
@@ -92,6 +93,6 @@ class WebRtc extends Component {
         );
     }
 }
-// {this.props.inRoom && <TextChat/>}
+
 
 export default WebRtc;
