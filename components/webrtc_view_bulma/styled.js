@@ -1,5 +1,13 @@
 import styled from 'styled-components';
 
+export const VideoUsernameTag = styled.span.attrs({
+    className: 'tag is-light is-normal'
+})`
+position: absolute;
+top: 1rem;
+left: 1rem;
+`;
+
 export const VideoPlaceholder = styled.div.attrs({
   className: 'has-text-centered',
   ref: 'local'
