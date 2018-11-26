@@ -142,7 +142,6 @@ const DashboardView = (props) => {
     return (
         <div
             className='app__content'
-            style={{padding: '3rem 8rem'}}
         >
             {props.statsStatus === 'loading' ? (
                 <div>
@@ -150,22 +149,13 @@ const DashboardView = (props) => {
                 </div>
             ) : (
                 <div>
-                    <div className='col-md-2'>
-                        <MeetingList
-                            uid={props.user.uid}
-                            meetings={props.meetings}
-                            selectedMeeting={props.selectedMeeting}
-                            fetchMeetingsStatus={props.fetchMeetingsStatus}
-                            fetchMeetingsMessage={props.fetchMeetingsMessage}
-                            handleMeetingClick={props.handleMeetingClick}
-                        />
-                    </div>
                     <div
-                        className=''
-                        style={{paddingBottom: '0px'}}
-                    >
-                        <h3>Room: {props.selectedMeeting.room} </h3>
-                        <SpaceBetweeen>
+                      className=''
+                      style={{paddingBottom: '0px',
+                              paddingTop: '1rem',
+                      paddingLeft: '1rem'}}>
+                      <h3>Room: {props.selectedMeeting.room} </h3>
+                      <SpaceBetweeen>
                             <span> Attendees </span>
                             <span>{props.processedUtterances.length}</span>
                         </SpaceBetweeen>
@@ -175,7 +165,7 @@ const DashboardView = (props) => {
                         </SpaceBetweeen>
                         <TurnChart
                             processedUtterances={props.processedUtterances}
-                            participantId={props.user.uid}
+                            participantId={props.user.id}
                         />
                         <div className='column is-half has-text-left'>
 
@@ -187,7 +177,7 @@ const DashboardView = (props) => {
                     >
                         <TimelineChart
                             processedTimeline={props.processedTimeline}
-                            participantId={props.user.uid}
+                            participantId={props.user.id}
                         />
                     </div>
                 </div>

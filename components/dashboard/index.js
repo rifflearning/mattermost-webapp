@@ -90,13 +90,13 @@ const mapMergeProps = (stateProps, dispatchProps, ownProps) => {
 
 const componentDidUpdate = (props) => {
     if (props.riffAuthToken && props.shouldFetch) {
-        props.loadRecentMeetings(props.user.uid, props.selectedMeeting);
+        props.loadRecentMeetings(props.user.id, props.selectedMeeting);
     }
 };
 
 const componentDidMount = (props) => {
     if (props.riffAuthToken) {
-        props.loadRecentMeetings(props.user.uid, props.selectedMeeting);
+        props.loadRecentMeetings(props.user.id, props.selectedMeeting);
     }
 
     $('body').addClass('app__body');
