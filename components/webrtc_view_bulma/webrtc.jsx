@@ -61,10 +61,13 @@ class WebRtc extends Component {
             <div id='app-content'
                  className=''>
               <div className="section">
-                <div className="columns">
+                <div className="columns is-fullheight">
+                  <div className="column is-3 is-sidebar-menu is-hidden-mobile">
                   <WebRtcSidebar {...this.props}
                                  webrtc={this.webrtc}
                                  localVideoRef={this.localVideoRef}/>
+                  </div>
+                  <div className="column">
                   <RenderVideos inRoom={this.props.inRoom}
                                 roomName={this.props.roomName}
                                 handleKeyPress={this.props.handleKeyPress}
@@ -82,14 +85,13 @@ class WebRtc extends Component {
                     "@" + this.props.user.username : this.props.user.nickname}
                     roDisplayName={true}>
                   </RenderVideos>
-
-                  {this.props.inRoom && <TextChat/>}
-                  
+                  </div>
                 </div>
               </div>
             </div>
         );
     }
 }
+// {this.props.inRoom && <TextChat/>}
 
 export default WebRtc;

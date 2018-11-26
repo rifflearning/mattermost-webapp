@@ -2,9 +2,20 @@ import util from 'util';
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
+import styled from 'styled-components';
 import Mediator from './charts';
 import startRiffListener from './RiffListener';
 import { app, socket} from "../../utils/riff";
+
+const MMContainer = styled.div.attrs({
+})`
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    padding-bottom: 100%;
+    vertical-align: top;
+    overflow: hidden;
+`;
 
 
 class MeetingMediator extends Component {
@@ -44,8 +55,8 @@ class MeetingMediator extends Component {
 
     render() {
         return (
-            <div id = "meeting-mediator">
-            </div>
+            <MMContainer id = "meeting-mediator">
+            </MMContainer>
         );
     }
 }

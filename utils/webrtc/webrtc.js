@@ -44,7 +44,7 @@ export default function (localVideoNode, dispatch, getState) {
                                                videoEl: video}));
             let [riffId, ...rest] = peer.nick.split("|");
             //TODO: state get here is wrong.
-            WebRtcActions.riffParticipantLeaveRoom(state.views.riff.meetingId, riffId);
+            dispatch(WebRtcActions.riffParticipantLeaveRoom(state.views.riff.meetingId, riffId));
         }
     });
 
