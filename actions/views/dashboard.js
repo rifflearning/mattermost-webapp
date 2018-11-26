@@ -112,7 +112,7 @@ export const loadRecentMeetings = (uid, selectedMeeting) => (dispatch) => {
             );
             dispatch(updateMeetingList(meetings));
             if (meetings.length > 0) {
-                const newSelectedMeeting = meetings[4];
+                const newSelectedMeeting = meetings[0];
                 dispatch(selectMeeting(newSelectedMeeting));
                 dispatch(loadMeetingData(uid, newSelectedMeeting._id));
             }
