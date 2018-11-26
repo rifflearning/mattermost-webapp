@@ -26,38 +26,35 @@ import ChartCard from './ChartCard';
 
 const colorYou = '#ab45ab';
 const colorOther = '#bdc3c7';
-const peerColors = ['#f56b6b', '#128AD', '#7caf5f', '#f2a466'];
+const peerColors = ['#f56b6b', '#128EAD', '#7caf5f', '#f2a466'];
 
 const drawGantt = (props) => {
     const {processedTimeline, participantId} = props;
     const {utts, participants, startTime, endTime} = processedTimeline;
 
     // create map of id: name
-    const participants2 = _.sortBy(participants, 'id');
-    console.log('sorted participants:', participants2);
-    const participantNames = _.pluck(participants2, 'name');
-    const participantIds = _.pluck(participants2, 'id');
+    // local user will always be first.
+    console.log('sorted participants:', participants);
+    const participantNames = _.pluck(participants, 'name');
+    const participantIds = _.pluck(participants, 'id');
     const participantMap = _.object(participantIds, participantNames);
 
     const getColor = (pId) => {
-        let color = peerColors[participantIds.indexOf(pId)];
+        let pIndex = participantIds.indexOf(pId) - 1;
+        console.log(pId, "participant index:", pIndex, "color:", peerColors[pIndex]);
+        let color = peerColors[pIndex];
         if (color == undefined) {
             color = colorOther;
         }
         return color;
     };
-
     // create extra key 'taskName' detailing name of speaker
-    const utts2 = _.map(utts, (u) => {
-        return {
-            ...u,
-            taskName: participantMap[u.participant],
-            color:
-                u.participant == participantId ?
-                    colorYou :
-                    getColor(u.participant),
-        };
+    let utts2 = _.map(utts, (u) => {
+        return {...u,
+                taskName: participantMap[u.participant],
+                color: u.participant == participantId ? colorYou : getColor(u.participant)};
     });
+
     var gantt = Gantt().taskTypes(participantNames);
     gantt(utts2);
 };
@@ -90,6 +87,7 @@ const chartInfo =
 // processedUtterances: [list of utterances...]
 // participants: [{id, name, ...}, ...]
 const TimelineView = (props) => {
+    console.log("timeline props:", props, props.processedTimeline.utts);
     const chartDiv = <div id='gantt'/>;
     return (
         <React.Fragment>

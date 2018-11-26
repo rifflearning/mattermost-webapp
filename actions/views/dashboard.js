@@ -112,7 +112,7 @@ export const loadRecentMeetings = (uid, selectedMeeting) => (dispatch) => {
             );
             dispatch(updateMeetingList(meetings));
             if (meetings.length > 0) {
-                const newSelectedMeeting = meetings[0];
+                const newSelectedMeeting = meetings[4];
                 dispatch(selectMeeting(newSelectedMeeting));
                 dispatch(loadMeetingData(uid, newSelectedMeeting._id));
             }
@@ -374,7 +374,7 @@ export const processNetwork = (uid, utterances, meetingId) => {
     });
 };
 
-export const processTimeline = (utterances, meetingId) => {
+export const processTimeline = (uid, utterances, meetingId) => {
     const participantUtterances = _.groupBy(utterances, 'participant');
     let utts = _.map(utterances, (u) => {
         return {
@@ -390,7 +390,10 @@ export const processTimeline = (utterances, meetingId) => {
     });
 
     const participants = Object.keys(participantUtterances);
-    const promises = _.map(participants, (p) => {
+    let otherParticipants = _.filter(participants, (p) => { return p != uid; });
+    console.log("local uid:", uid)
+    console.log("other participants:", otherParticipants)
+    const promises = _.map(otherParticipants, (p) => {
         return app.
             service('participants').
             get(p).
@@ -407,12 +410,15 @@ export const processTimeline = (utterances, meetingId) => {
     });
 
     return Promise.all(promises).then((participants) => {
-        return {
-            utts,
-            participants,
-            startTime,
-            endTime,
-        };
+        // add local participant
+        participants = _.sortBy(participants, "id");
+        participants.unshift({name: 'You',
+                              id: uid});
+        console.log("sending sorted participants:", participants);
+        return {utts,
+                participants,
+                startTime,
+                endTime};
     });
 };
 
@@ -431,7 +437,7 @@ export const loadMeetingData = (uid, meetingId) => (dispatch) => {
             return {
                 processedUtterances: processUtterances(utterances, meetingId),
                 processedNetwork: processNetwork(uid, utterances, meetingId),
-                processedTimeline: processTimeline(utterances, meetingId),
+                processedTimeline: processTimeline(uid, utterances, meetingId),
             };
         }).
         then(({processedUtterances, processedNetwork, processedTimeline}) => {
