@@ -6,12 +6,12 @@ import {updateRiffMeetingId} from '../../actions/views/riff'
 
 export default function (localVideoNode, dispatch, getState) {
     //TODO: make dynamic
-    //let signalmasterPath = '/socket.io';
-    let signalmasterPath = '';
+    let signalmasterPath = process.env.CLIENT_ENV.SIGNALMASTER_PATH || '';
+    signalmasterPath += '/socket.io';
     let signalmasterUrl = process.env.CLIENT_ENV.SIGNALMASTER_URL;
     let webRtcConfig = {
         localVideoEl: localVideoNode,
-        remoteVideosEl: "",  
+        remoteVideosEl: "",
         autoRequestMedia: true,
         url: signalmasterUrl,
         socketio: {

@@ -5,8 +5,8 @@ import io from 'socket.io-client';
 
 // access to api
 
-//let dataserverPath = window.client_config.dataServer.path || '';
-let dataserverPath = '/socket.io';
+let dataserverPath = process.env.CLIENT_ENV.RIFF_SERVER_PATH || '';
+dataserverPath += '/socket.io';
 
 console.log("riff server URL:", process.env.CLIENT_ENV.RIFF_SERVER_URL);
 console.log("env:", process.env);
