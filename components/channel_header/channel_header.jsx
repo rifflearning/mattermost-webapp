@@ -13,13 +13,10 @@ import 'bootstrap';
 import {isChannelMuted} from 'mattermost-redux/utils/channel_utils';
 
 import * as GlobalActions from 'actions/global_actions.jsx';
-import * as WebrtcActions from 'actions/webrtc_actions.jsx';
-import TeamStore from 'stores/team_store.jsx';
 
 import Markdown from 'components/markdown';
 import {Constants, NotificationLevels, RHSStates, ModalIdentifiers} from 'utils/constants.jsx';
 import * as Utils from 'utils/utils.jsx';
-import {browserHistory} from 'utils/browser_history';
 import ChannelInfoModal from 'components/channel_info_modal';
 import ChannelInviteModal from 'components/channel_invite_modal';
 import ChannelMembersModal from 'components/channel_members_modal';
@@ -65,6 +62,7 @@ export default class ChannelHeader extends React.Component {
             openModal: PropTypes.func.isRequired,
             getCustomEmojisInText: PropTypes.func.isRequired,
             updateChannelNotifyProps: PropTypes.func.isRequired,
+            goToLastViewedChannel: PropTypes.func.isRequired,
         }).isRequired,
         channel: PropTypes.object.isRequired,
         channelMember: PropTypes.object.isRequired,
@@ -76,7 +74,6 @@ export default class ChannelHeader extends React.Component {
         rhsState: PropTypes.oneOf(
             Object.values(RHSStates)
         ),
-        lastViewedChannelName: PropTypes.string.isRequired,
         penultimateViewedChannelName: PropTypes.string.isRequired,
     };
 
@@ -95,7 +92,6 @@ export default class ChannelHeader extends React.Component {
             showMembersModal: false,
             showRenameChannelModal: false,
             showChannelNotificationsModal: false,
-            isBusy: WebrtcStore.isBusy(),
         };
 
         this.getHeaderMarkdownOptions = memoizeResult((channelNamesMap) => (
@@ -108,15 +104,11 @@ export default class ChannelHeader extends React.Component {
 
     componentDidMount() {
         this.props.actions.getCustomEmojisInText(this.props.channel.header);
-        WebrtcStore.addChangedListener(this.onWebrtcChange);
-        WebrtcStore.addBusyListener(this.onBusy);
         document.addEventListener('keydown', this.handleShortcut);
         window.addEventListener('resize', this.handleResize);
     }
 
     componentWillUnmount() {
-        WebrtcStore.removeChangedListener(this.onWebrtcChange);
-        WebrtcStore.removeBusyListener(this.onBusy);
         document.removeEventListener('keydown', this.handleShortcut);
         window.removeEventListener('resize', this.handleResize);
     }
@@ -133,14 +125,6 @@ export default class ChannelHeader extends React.Component {
         this.setState({showSearchBar: windowWidth > SEARCH_BAR_MINIMUM_WINDOW_SIZE});
     };
 
-    onWebrtcChange = () => {
-        this.setState({isBusy: WebrtcStore.isBusy()});
-    };
-
-    onBusy = (isBusy) => {
-        this.setState({isBusy});
-    };
-
     handleLeave = () => {
         if (this.props.channel.type === Constants.PRIVATE_CHANNEL) {
             GlobalActions.showLeavePrivateChannelModal(this.props.channel);
@@ -150,8 +134,7 @@ export default class ChannelHeader extends React.Component {
     };
 
     handleClose = () => {
-        const {lastViewedChannelName} = this.props;
-        browserHistory.push(`${TeamStore.getCurrentTeamRelativeUrl()}/channels/${lastViewedChannelName}`);
+        this.props.actions.goToLastViewedChannel();
     };
 
     toggleFavorite = () => {
@@ -386,10 +369,9 @@ export default class ChannelHeader extends React.Component {
 
         const channelMuted = isChannelMuted(this.props.channelMember);
 
-        const teamId = TeamStore.getCurrentId();
+        const teamId = this.props.channel.team_id;
 
         if (isDirect) {
-
             const teammateId = Utils.getUserIdFromChannelName(channel);
             if (this.props.currentUser.id === teammateId) {
                 channelTitle = (
