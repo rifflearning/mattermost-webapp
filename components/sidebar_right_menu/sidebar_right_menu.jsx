@@ -12,7 +12,6 @@ import * as GlobalActions from 'actions/global_actions.jsx';
 import PreferenceStore from 'stores/preference_store.jsx';
 import TeamStore from 'stores/team_store.jsx';
 import UserStore from 'stores/user_store.jsx';
-import WebrtcStore from 'stores/webrtc_store.jsx';
 import {
     Constants,
     WebrtcActionTypes,

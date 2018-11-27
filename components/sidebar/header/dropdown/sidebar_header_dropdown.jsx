@@ -12,7 +12,6 @@ import {Permissions} from 'mattermost-redux/constants';
 
 import * as GlobalActions from 'actions/global_actions.jsx';
 import TeamStore from 'stores/team_store.jsx';
-import WebrtcStore from 'stores/webrtc_store.jsx';
 import {Constants, WebrtcActionTypes} from 'utils/constants.jsx';
 import {useSafeUrl} from 'utils/url';
 import * as UserAgent from 'utils/user_agent.jsx';
