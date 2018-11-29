@@ -347,6 +347,11 @@ export default class ChannelHeader extends React.Component {
         }
     }
 
+    webRtcDisabled = () => {
+        return (!this.props.channelStats ||
+                this.props.channelStats.member_count > 6);
+    }
+
     renderWebRtc = (circleClass) => {
         let tooltipContent = null;
         if (!this.props.channelStats) {
@@ -383,31 +388,30 @@ export default class ChannelHeader extends React.Component {
         );
 
         return (
-            <div className={'webrtc__header channel-header__icon wide text ' + circleClass}>
+            <div className={'webrtc__header channel-header__icon wide text ' + circleClass}
+                 style={{cursor: this.webRtcDisabled() ? 'default' : 'pointer'}}
+              >
               <Link target="_blank"
                     id="videochat"
                     to={`/${this.props.currentTeam.name}/${this.props.channel.id}/video`}>
-
-              <button
-                className='style--none'
-                onClick={this.handleWebRTCOnClick}
-                disabled={false}//{isOffline || isDoNotDisturb}
-                >
-
                 <PopoverStickOnHover
                   component={webrtcTooltip}
                   placement="bottom"
-                  onMouseEnter={() => { }}
                   delay={Constants.WEBRTC_TIME_DELAY}
-                >
+                  >
+                  <button
+                    className='style--none'
+                    disabled={this.webRtcDisabled()}//{isOffline || isDoNotDisturb}
+                    >
+
                   <div
                     id='webrtc-btn'
                     className={'webrtc__button hidden-xs ' + circleClass}
                     >
                     {'WebRTC'}
                   </div>
+                  </button>
                 </PopoverStickOnHover>
-              </button>
               </Link>
             </div>
         );
