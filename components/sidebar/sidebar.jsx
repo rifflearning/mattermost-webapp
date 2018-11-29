@@ -553,23 +553,6 @@ export default class Sidebar extends React.PureComponent {
             </li>
         );
 
-        var videoChat = (
-          <li key="videochat">
-              <Link target="_blank"
-                    id="videochat"
-                    className="nav-more cursor--pointer style--none btn--block"
-                    style={{color: "rgba(255, 255, 255, 0.6)"}}
-                    to={`/${this.props.currentTeam.name}/${this.props.currentChannel.id}/video`}>
-                <span style={{marginRight: ".5rem"}}>
-                  <MaterialIcon icon="video_call" size={17} invert/>
-                </span>
-                <FormattedMessage id='sidebar.video'
-                                  defaultMessage="Riff Video">
-                </FormattedMessage>
-              </Link>
-          </li>
-        );
-
         let showChannelModal = false;
         if (this.state.newChannelModalType !== '') {
             showChannelModal = true;
@@ -821,7 +804,6 @@ export default class Sidebar extends React.PureComponent {
                                   </h4>
                                 </li>
                                 {dashboard}
-                                {videoChat}
                                 <li>
                                     <h4 id='publicChannel'>
                                         <FormattedMessage
