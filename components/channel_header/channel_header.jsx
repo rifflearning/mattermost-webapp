@@ -7,6 +7,7 @@ import {OverlayTrigger, Popover, Tooltip} from 'react-bootstrap';
 import {FormattedMessage} from 'react-intl';
 import {Permissions} from 'mattermost-redux/constants';
 import {memoizeResult} from 'mattermost-redux/utils/helpers';
+import {Link} from 'react-router-dom';
 
 import 'bootstrap';
 
@@ -327,6 +328,44 @@ export default class ChannelHeader extends React.Component {
         );
     };
 
+
+    renderWebRtc = (circleClass, tooltipText) => {
+        const webrtcTooltip = (
+            <Tooltip id="tooltip">
+              {tooltipText}
+            </Tooltip>
+        );
+        console.log("props in render:", this.props,
+                   this.props.currentChannel);
+        return (
+            <div className={'webrtc__header channel-header__icon wide text ' + circleClass}>
+              <Link target="_blank"
+                    id="videochat">
+                    
+              <button
+                className='style--none'
+                onClick={this.handleWebRTCOnClick}
+                disabled={false}//{isOffline || isDoNotDisturb}
+                >
+                <OverlayTrigger
+                  trigger={['hover', 'focus']}
+                  delayShow={Constants.WEBRTC_TIME_DELAY}
+                  placement='bottom'
+                  overlay={webrtcTooltip}
+                  >
+                  <div
+                    id='webrtc-btn'
+                    className={'webrtc__button hidden-xs ' + circleClass}
+                    >
+                    {'WebRTC'}
+                  </div>
+                </OverlayTrigger>
+              </button>
+              </Link>
+            </div>
+        );
+    }
+
     render() {
         const channelIsArchived = this.props.channel.delete_at !== 0;
         if (Utils.isEmptyObject(this.props.channel) ||
@@ -371,6 +410,10 @@ export default class ChannelHeader extends React.Component {
 
         const teamId = this.props.channel.team_id;
 
+        let webrtc = this.renderWebRtc('', // first arg is circleClass (online or '')
+                                      "WebRtc ToolTip!");
+
+
         if (isDirect) {
             const teammateId = Utils.getUserIdFromChannelName(channel);
             if (this.props.currentUser.id === teammateId) {
@@ -387,6 +430,7 @@ export default class ChannelHeader extends React.Component {
                 channelTitle = Utils.getDisplayNameByUserId(teammateId) + ' ';
             }
         }
+
 
         let popoverListMembers;
         if (!isDirect) {
@@ -1062,6 +1106,9 @@ export default class ChannelHeader extends React.Component {
                             </div>
                             {headerTextContainer}
                         </div>
+                    </div>
+                    <div className='flex-child'>
+                      {webrtc}
                     </div>
                     <div className='flex-child'>
                         {popoverListMembers}
