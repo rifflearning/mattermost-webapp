@@ -35,7 +35,6 @@ export default class SearchBar extends React.Component {
             showMentions: PropTypes.func,
             showFlaggedPosts: PropTypes.func,
             closeRightHandSide: PropTypes.func,
-            closeWebrtc: PropTypes.func,
         }),
     };
 
@@ -66,7 +65,6 @@ export default class SearchBar extends React.Component {
     }
 
     handleClose = () => {
-        this.props.actions.closeWebrtc();
         this.props.actions.closeRightHandSide();
     }
 

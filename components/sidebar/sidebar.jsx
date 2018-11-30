@@ -9,6 +9,7 @@ import {FormattedMessage} from 'react-intl';
 import {PropTypes} from 'prop-types';
 import Permissions from 'mattermost-redux/constants/permissions';
 import classNames from 'classnames';
+import {Link} from 'react-router-dom';
 
 import Scrollbars from 'react-custom-scrollbars';
 
@@ -26,6 +27,7 @@ import MoreChannels from 'components/more_channels';
 import MoreDirectChannels from 'components/more_direct_channels';
 import TeamPermissionGate from 'components/permissions_gates/team_permission_gate';
 import Pluggable from 'plugins/pluggable';
+import MaterialIcon from 'material-icons-react';
 
 import NewChannelFlow from '../new_channel_flow.jsx';
 import UnreadChannelIndicator from '../unread_channel_indicator.jsx';
@@ -529,6 +531,45 @@ export default class Sidebar extends React.PureComponent {
             </li>
         );
 
+        var dashboard = (
+            <li key='dashboard'>
+                <button
+                    id='dashboard'
+                    className='nav-more cursor--pointer style--none btn--block'
+                    onClick={
+                        () => { this.props.history.push(`/${this.props.currentTeam.name}/channels/dashboard`) }
+                    }
+                >
+
+                  <span style={{marginRight: ".5rem"}}>
+                    <MaterialIcon icon="dashboard" size={17} invert/>
+                  </span>
+                    <FormattedMessage
+                        id='sidebar.dashboard'
+                        defaultMessage='Riff Stats'
+                      >
+                    </FormattedMessage>
+                </button>
+            </li>
+        );
+
+        var videoChat = (
+          <li key="videochat">
+              <Link target="_blank"
+                    id="videochat"
+                    className="nav-more cursor--pointer style--none btn--block"
+                    style={{color: "rgba(255, 255, 255, 0.6)"}}
+                    to={`/${this.props.currentTeam.name}/${this.props.currentChannel.id}/video`}>
+                <span style={{marginRight: ".5rem"}}>
+                  <MaterialIcon icon="video_call" size={17} invert/>
+                </span>
+                <FormattedMessage id='sidebar.video'
+                                  defaultMessage="Riff Video">
+                </FormattedMessage>
+              </Link>
+          </li>
+        );
+
         let showChannelModal = false;
         if (this.state.newChannelModalType !== '') {
             showChannelModal = true;
@@ -772,6 +813,15 @@ export default class Sidebar extends React.PureComponent {
                                 {favoriteItems}
                             </ul>}
                             <ul className='nav nav-pills nav-stacked'>
+
+                                <li>
+                                  <h4 id="dashboard">
+                                    <FormattedMessage id="sidebar.dashboard"
+                                                      defaultMessage="DASHBOARD"/>
+                                  </h4>
+                                </li>
+                                {dashboard}
+                                {videoChat}
                                 <li>
                                     <h4 id='publicChannel'>
                                         <FormattedMessage

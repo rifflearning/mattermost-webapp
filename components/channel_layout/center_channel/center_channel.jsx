@@ -9,6 +9,7 @@ import classNames from 'classnames';
 import PermalinkView from 'components/permalink_view';
 import Navbar from 'components/navbar';
 import ChannelIdentifierRouter from 'components/channel_layout/channel_identifier_router';
+import Dashboard from 'components/dashboard/index';
 
 export default class CenterChannel extends React.PureComponent {
     static propTypes = {
@@ -18,7 +19,6 @@ export default class CenterChannel extends React.PureComponent {
         lhsOpen: PropTypes.bool.isRequired,
         rhsOpen: PropTypes.bool.isRequired,
         rhsMenuOpen: PropTypes.bool.isRequired,
-        webRtcOpen: PropTypes.bool.isRequired,
     };
 
     constructor(props) {
@@ -28,8 +28,12 @@ export default class CenterChannel extends React.PureComponent {
         };
     }
 
-    UNSAFE_componentWillReceiveProps(nextProps) { // eslint-disable-line camelcase
-        if (this.props.location.pathname !== nextProps.location.pathname && nextProps.location.pathname.includes('/pl/')) {
+    UNSAFE_componentWillReceiveProps(nextProps) {
+        // eslint-disable-line camelcase
+        if (
+            this.props.location.pathname !== nextProps.location.pathname &&
+            nextProps.location.pathname.includes('/pl/')
+        ) {
             this.setState({returnTo: this.props.location.pathname});
         }
     }
@@ -41,9 +45,8 @@ export default class CenterChannel extends React.PureComponent {
             <div
                 key='inner-wrap'
                 className={classNames('inner-wrap', 'channel__wrap', {
-                    'webrtc--show': this.props.webRtcOpen,
                     'move--right': this.props.lhsOpen,
-                    'move--left': this.props.rhsOpen || this.props.webRtcOpen,
+                    'move--left': this.props.rhsOpen,
                     'move--left-small': this.props.rhsMenuOpen,
                 })}
             >
@@ -64,10 +67,13 @@ export default class CenterChannel extends React.PureComponent {
                             )}
                         />
                         <Route
+                            path={'/:team/:path(channels|messages)/dashboard'}
+                            component={Dashboard}
+                        />
+                        <Route
                             path={'/:team/:path(channels|messages)/:identifier'}
                             component={ChannelIdentifierRouter}
                         />
-                        <Redirect to={lastChannelPath}/>
                     </Switch>
                 </div>
             </div>
