@@ -7,6 +7,7 @@ import {OverlayTrigger, Popover, Tooltip} from 'react-bootstrap';
 import {FormattedMessage} from 'react-intl';
 import {Permissions} from 'mattermost-redux/constants';
 import {memoizeResult} from 'mattermost-redux/utils/helpers';
+import {Link} from 'react-router-dom';
 
 import 'bootstrap';
 
@@ -38,7 +39,7 @@ import ArchiveIcon from 'components/svg/archive_icon';
 import ToggleModalButtonRedux from 'components/toggle_modal_button_redux';
 import ChannelPermissionGate from 'components/permissions_gates/channel_permission_gate';
 import TeamPermissionGate from 'components/permissions_gates/team_permission_gate';
-
+import PopoverStickOnHover from 'components/PopoverStickOnHover';
 import ChannelHeaderPlug from 'plugins/channel_header_plug';
 
 import HeaderIconWrapper from './components/header_icon_wrapper';
@@ -327,7 +328,97 @@ export default class ChannelHeader extends React.Component {
         );
     };
 
+    
+    showMoreDirectChannelsModal = () => {
+    //    trackEvent('ui', 'ui_channels_more_direct');
+        this.setState({showDirectChannelsModal: true});
+    }
+
+    hideMoreDirectChannelsModal = () => {
+        this.setState({showDirectChannelsModal: false});
+    }
+
+    handleOpenMoreDirectChannelsModal = (e) => {
+        e.preventDefault();
+        if (this.state.showDirectChannelsModal) {
+            this.hideMoreDirectChannelsModal();
+        } else {
+            this.showMoreDirectChannelsModal();
+        }
+    }
+
+    webRtcDisabled = () => {
+        return (!this.props.channelStats ||
+                this.props.channelStats.member_count > 6);
+    }
+
+    renderWebRtc = (circleClass) => {
+        let tooltipContent = null;
+        if (!this.props.channelStats) {
+            tooltipContent = (
+                <span>
+                  Riff chat is disabled until the page fully loads.
+                </span>
+            );
+        } else if (this.props.channelStats.member_count > 6) {
+            tooltipContent = (
+                <span >
+                  Riff video chat only supports groups up to 6 people. Create a new DM group to start a call.
+                  <button
+                    className='add-channel-btn cursor--pointer btn-primary btn'
+                    style={{marginTop: '.5rem', marginBottom: '.5rem'}}
+                    onClick={this.handleOpenMoreDirectChannelsModal}
+                    >
+                    {'Start a new DM'}
+                  </button>
+                </span>
+            );
+        } else {
+            tooltipContent = (
+                <span>
+                  Start a Riff chat. Anyone in the channel will be able to join.
+                </span>
+            );
+        }
+
+        const webrtcTooltip = (
+            <div>
+              {tooltipContent}
+            </div>
+        );
+
+        return (
+            <div className={'webrtc__header channel-header__icon wide text ' + circleClass}
+                 style={{cursor: this.webRtcDisabled() ? 'default' : 'pointer'}}
+              >
+              <Link target="_blank"
+                    id="videochat"
+                    to={`/${this.props.currentTeam.name}/${this.props.channel.id}/video`}>
+                <PopoverStickOnHover
+                  component={webrtcTooltip}
+                  placement="bottom"
+                  delay={Constants.WEBRTC_TIME_DELAY}
+                  >
+                  <button
+                    className='style--none'
+                    disabled={this.webRtcDisabled()}//{isOffline || isDoNotDisturb}
+                    >
+
+                  <div
+                    id='webrtc-btn'
+                    className={'webrtc__button hidden-xs ' + circleClass}
+                    >
+                    {'WebRTC'}
+                  </div>
+                  </button>
+                </PopoverStickOnHover>
+              </Link>
+            </div>
+        );
+    }
+
     render() {
+
         const channelIsArchived = this.props.channel.delete_at !== 0;
         if (Utils.isEmptyObject(this.props.channel) ||
             Utils.isEmptyObject(this.props.channelMember) ||
@@ -371,6 +462,19 @@ export default class ChannelHeader extends React.Component {
 
         const teamId = this.props.channel.team_id;
 
+        let webrtc = this.renderWebRtc('', // first arg is circleClass (online or '')
+                                      );
+
+        let moreDirectChannelsModal;
+        if (this.state.showDirectChannelsModal) {
+            moreDirectChannelsModal = (
+                <MoreDirectChannels
+                  onModalDismissed={this.hideMoreDirectChannelsModal}
+                  isExistingChannel={false}
+                  />
+            );
+        }
+
         if (isDirect) {
             const teammateId = Utils.getUserIdFromChannelName(channel);
             if (this.props.currentUser.id === teammateId) {
@@ -387,6 +491,7 @@ export default class ChannelHeader extends React.Component {
                 channelTitle = Utils.getDisplayNameByUserId(teammateId) + ' ';
             }
         }
+
 
         let popoverListMembers;
         if (!isDirect) {
@@ -1016,7 +1121,8 @@ export default class ChannelHeader extends React.Component {
             <div
                 id='channel-header'
                 className='channel-header alt'
-            >
+              >
+              {moreDirectChannelsModal}
                 <div className='flex-parent'>
                     <div className='flex-child'>
                         <div
@@ -1062,6 +1168,9 @@ export default class ChannelHeader extends React.Component {
                             </div>
                             {headerTextContainer}
                         </div>
+                    </div>
+                    <div className='flex-child'>
+                      {webrtc}
                     </div>
                     <div className='flex-child'>
                         {popoverListMembers}
