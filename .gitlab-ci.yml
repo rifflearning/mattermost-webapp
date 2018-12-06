@@ -8,20 +8,20 @@ before_script:
   - pip install docker-compose
 deploy:
   stage: deploy
-  variables:
-    - SIGNALMASTER_URL: $SIGNALMASTER_URL
-    - RIFF_SERVER_URL: $RIFF_SERVER_URL
-    - MYSQL_URL: $MYSQL_URL
-    - MM_SQLSETTINGS_DATASOURCE: $MM_SQLSETTINGS_DATASOURCE
+  # variables:
+  #   - SIGNALMASTER_URL: $SIGNALMASTER_URL
+  #   - RIFF_SERVER_URL: $RIFF_SERVER_URL
+  #   - MYSQL_URL: $MYSQL_URL
+  #   - MM_SQLSETTINGS_DATASOURCE: $MM_SQLSETTINGS_DATASOURCE
   script:
     - mkdir $DOCKER_CERT_PATH
     - echo "$CA" > $DOCKER_CERT_PATH/ca.pem
     - echo "$CLIENT_CERT" > $DOCKER_CERT_PATH/cert.pem
     - echo "$CLIENT_KEY" > $DOCKER_CERT_PATH/key.pem
-    - docker-compose build
-    - docker-compose down
-    - docker-compose up -d --force-recreate
+    - docker build --build-arg MATTERMOST_SERVER_REPO=$MM_SERVER_REPO  -t riffedu-webapp .
+    - docker run  -it -e MM_SQLSETTINGS_DATASOURCE=$MM_SQLSETTINGS_DATASOURCE -e RIFF_SERVER_URL=$RIFF_SERVER_URL -e SIGNALMASTER_URL=$SIGNALMASTER_URL --expose=8065 riffedu-webapp
     - rm -rf $DOCKER_CERT_PATH
+   
   only:
     - feature/CI-gitlab
   variables:
