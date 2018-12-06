@@ -19,7 +19,7 @@ deploy:
     - echo "$CLIENT_CERT" > certs/cert.pem
     - echo "$CLIENT_KEY" > certs/key.pem
     - docker build --build-arg MATTERMOST_SERVER_REPO=$MM_SERVER_REPO  -t riffedu-webapp .
-    - docker run  -t -e MM_SQLSETTINGS_DATASOURCE=$MM_SQLSETTINGS_DATASOURCE -e RIFF_SERVER_URL=$RIFF_SERVER_URL -e SIGNALMASTER_URL=$SIGNALMASTER_URL --expose=8065 riffedu-webapp
+    - docker run  -td -e MM_SQLSETTINGS_DATASOURCE=$MM_SQLSETTINGS_DATASOURCE -e RIFF_SERVER_URL=$RIFF_SERVER_URL -e SIGNALMASTER_URL=$SIGNALMASTER_URL --expose=8065 riffedu-webapp
     - rm -rf certs
   only:
     - feature/CI-gitlab
