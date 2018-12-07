@@ -1,7 +1,4 @@
 image: docker:latest
-stages:
-  - build
-  - deploy_review
 services:
   - docker:dind
 variables:
