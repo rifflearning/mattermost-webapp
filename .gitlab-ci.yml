@@ -38,7 +38,7 @@ deploy_review:
     - ./deploy.sh
   environment:
     name: review/$CI_COMMIT_REF_NAME
-    url: http://riffedu-webapp-$CI_ENVIRONMENT_SLUG.eu-east-2.elasticbeanstalk.com
+    url: http://riffedu-webapp-$CI_ENVIRONMENT_SLUG.us-east-2.elasticbeanstalk.com
     on_stop: stop_review
   only:
     - branches
@@ -51,7 +51,7 @@ stop_review:
   variables:
     GIT_STRATEGY: none
   script:
-    - eb init hello -r eu-east-2 -p docker-17.09.1-ce
+    - eb init riffedu-webapp -r us-east-2 -p docker-17.09.1-ce
     - eb terminate --force "$CI_ENVIRONMENT_SLUG" | tee "$CIRCLE_ARTIFACTS/eb_deploy_output.txt"
   environment:
     name: review/$CI_COMMIT_REF_NAME
@@ -70,7 +70,7 @@ deploy:
     - ./deploy.sh
   environment:
     name: development
-    url: http://hello-build-dev.eu-west-2.elasticbeanstalk.com
+    url: http://hello-build-dev.us-west-2.elasticbeanstalk.com
   only:
     - master
 
