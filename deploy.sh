@@ -2,7 +2,7 @@
 set -x
 set -e
 
-echo "Deploying ${IMAGE_TAG} to hello-build-${CI_ENVIRONMENT_SLUG} for review/${CI_COMMIT_REF_NAME}"
+echo "Deploying ${IMAGE_TAG} to riffedu-webapp-${CI_ENVIRONMENT_SLUG} for review/${CI_COMMIT_REF_NAME}"
 
 jq < Dockerrun.aws.template.json ".Image.Name=\"${IMAGE_TAG}\""  > Dockerrun.aws.json
 
