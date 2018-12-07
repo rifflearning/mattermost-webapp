@@ -18,6 +18,8 @@ build-aws:
   variables:
     REPOSITORY_URL: $ECR_REPOSITORY_URL
   script:
+    - echo $AWS_SECRET_ACCESS_KEY
+    - echo $AWS_ACCESS_KEY_ID
     - $(aws ecr get-login --no-include-email --region us-east-2)
     - docker pull $BUILD_IMAGE_TAG || true
     - docker build --build-arg MATTERMOST_SERVER_REPO=$MM_SERVER_REPO -t $ECR_BUILD_IMAGE_TAG --cache-from $ECR_BUILD_IMAGE_TAG --target build .
