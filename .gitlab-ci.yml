@@ -13,24 +13,6 @@ before_script:
   - apk add --no-cache curl jq python py-pip
   - pip install awscli
 
-build-aws:
-  stage: build
-  variables:
-    REPOSITORY_URL: $ECR_REPOSITORY_URL
-  script:
-    - echo $AWS_SECRET_ACCESS_KEY
-    - echo $AWS_ACCESS_KEY_ID
-    - $(aws ecr get-login --no-include-email --region us-east-2)
-    - docker pull $BUILD_IMAGE_TAG || true
-    - docker build --build-arg MATTERMOST_SERVER_REPO=$MM_SERVER_REPO -t $ECR_BUILD_IMAGE_TAG --cache-from $ECR_BUILD_IMAGE_TAG .
-    - docker push $BUILD_IMAGE_TAG
-    - docker build --build-arg MATTERMOST_SERVER_REPO=$MM_SERVER_REPO -t $ECR_IMAGE_TAG  --cache-from $ECR_IMAGE_TAG --cache-from $ECR_BUILD_IMAGE_TAG .
-    - docker push $ECR_IMAGE_TAG
-  only:
-    - feature/CI-gitlab
-  tags:
-    - docker
-
 build:
   stage: build
   before_script:
