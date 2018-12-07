@@ -1,31 +1,97 @@
-stages:
- - deploy
+image: docker:latest
 services:
   - docker:dind
-image: docker
-# before_script:
-#   - apk add --update py-pip
-#   - pip install docker-compose
-deploy:
-  stage: deploy
-  # variables:
-  #   - SIGNALMASTER_URL: $SIGNALMASTER_URL
-  #   - RIFF_SERVER_URL: $RIFF_SERVER_URL
-  #   - MYSQL_URL: $MYSQL_URL
-  #   - MM_SQLSETTINGS_DATASOURCE: $MM_SQLSETTINGS_DATASOURCE
+variables:
+  DOCKER_DRIVER: overlay2
+  IMAGE_TAG: $CI_REGISTRY_IMAGE/hello:$CI_COMMIT_SHA
+  BUILD_IMAGE_TAG: $CI_REGISTRY_IMAGE/build:latest
+before_script:
+  - apk add --no-cache curl jq python py-pip
+  - pip install awscli
+
+build:
+  stage: build
+  before_script:
+    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
-    - mkdir $DOCKER_CERT_PATH
-    - echo "$CA" > certs/ca.pem
-    - echo "$CLIENT_CERT" > certs/cert.pem
-    - echo "$CLIENT_KEY" > certs/key.pem
-    - docker build --build-arg MATTERMOST_SERVER_REPO=$MM_SERVER_REPO  -t riffedu-webapp .
-    - docker run  -td -e MM_SQLSETTINGS_DATASOURCE=$MM_SQLSETTINGS_DATASOURCE -e RIFF_SERVER_URL=$RIFF_SERVER_URL -e SIGNALMASTER_URL=$SIGNALMASTER_URL --expose=8065 riffedu-webapp
-    - rm -rf certs
+    - docker pull $BUILD_IMAGE_TAG || true
+    - docker build --build-arg MATTERMOST_SERVER_REPO=$MM_SERVER_REPO -t $BUILD_IMAGE_TAG --cache-from $BUILD_IMAGE_TAG --target build .
+    - docker push $BUILD_IMAGE_TAG
+    - docker build --build-arg MATTERMOST_SERVER_REPO=$MM_SERVER_REPO -t $IMAGE_TAG  --cache-from $IMAGE_TAG --cache-from $BUILD_IMAGE_TAG .
+    - docker push $IMAGE_TAG
   only:
-    - feature/CI-gitlab
-  variables:
-    DOCKER_TLS_VERIFY: "1"
-    DOCKER_HOST: "tcp://$INSTANCE_IP:2376"
-    DOCKER_CERT_PATH: "certs"
+    - feature/CI_gitlab
   tags:
     - docker
+
+test:
+  stage: test
+  script:
+    - make test
+  only:
+    - feature/CI_gitlab
+
+deploy_review:
+  stage: deploy
+  image: coxauto/aws-ebcli
+  script:
+    - ./deploy.sh
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    url: http://riffedu-webapp-$CI_ENVIRONMENT_SLUG.eu-east-2.elasticbeanstalk.com
+    on_stop: stop_review
+  only:
+    - branches
+  except:
+    - master
+
+stop_review:
+  stage: deploy
+  image: coxauto/aws-ebcli
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - eb init hello -r eu-east-2 -p docker-17.09.1-ce
+    - eb terminate --force "$CI_ENVIRONMENT_SLUG" | tee "$CIRCLE_ARTIFACTS/eb_deploy_output.txt"
+  environment:
+    name: review/$CI_COMMIT_REF_NAME
+    action: stop
+  only:
+    - branches
+  except:
+    - master
+  when:
+    manual
+
+deploy:
+  stage: deploy
+  image: coxauto/aws-ebcli
+  script:
+    - ./deploy.sh
+  environment:
+    name: development
+    url: http://hello-build-dev.eu-west-2.elasticbeanstalk.com
+  only:
+    - master
+
+
+# deploy:
+#   stage: deploy
+#   script:
+#     - mkdir $DOCKER_CERT_PATH
+#     - echo "$CA" > certs/ca.pem
+#     - echo "$CLIENT_CERT" > certs/cert.pem
+#     - echo "$CLIENT_KEY" > certs/key.pem
+#     - docker build --build-arg MATTERMOST_SERVER_REPO=$MM_SERVER_REPO  -t riffedu-webapp .
+#     - docker run  -td -e MM_SQLSETTINGS_DATASOURCE=$MM_SQLSETTINGS_DATASOURCE -e RIFF_SERVER_URL=$RIFF_SERVER_URL -e SIGNALMASTER_URL=$SIGNALMASTER_URL --expose=8065 riffedu-webapp
+#     - rm -rf certs
+#   only:
+#     - feature/CI-gitlab
+#   variables:
+#     DOCKER_TLS_VERIFY: "1"
+#     DOCKER_HOST: "tcp://$INSTANCE_IP:2376"
+#     DOCKER_CERT_PATH: "certs"
+#   tags:
+#     - docker
+
+
