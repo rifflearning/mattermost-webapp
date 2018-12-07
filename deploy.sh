@@ -12,7 +12,7 @@ then
     eb deploy "$CI_ENVIRONMENT_SLUG" | tee "$CIRCLE_ARTIFACTS/eb_deploy_output.txt"
 else
     echo "Creating new environment"
-    eb create -i t2.small -c "riffedu-webapp-$CI_ENVIRONMENT_SLUG" "$CI_ENVIRONMENT_SLUG" | tee "$CIRCLE_ARTIFACTS/eb_deploy_output.txt"
+    eb create -i t2.medium -c "riffedu-webapp-$CI_ENVIRONMENT_SLUG" "$CI_ENVIRONMENT_SLUG" | tee "$CIRCLE_ARTIFACTS/eb_deploy_output.txt"
 fi
 
 # Temporary hack to overcome issue with 'eb deploy' returning exit code 0 on error
