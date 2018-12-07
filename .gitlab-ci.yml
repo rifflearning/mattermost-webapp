@@ -1,10 +1,15 @@
 image: docker:latest
+stages:
+  - build
+  - deploy_review
 services:
   - docker:dind
 variables:
   DOCKER_DRIVER: overlay2
   IMAGE_TAG: $CI_REGISTRY_IMAGE/hello:$CI_COMMIT_SHA
   BUILD_IMAGE_TAG: $CI_REGISTRY_IMAGE/build:latest
+  AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+  AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
 before_script:
   - apk add --no-cache curl jq python py-pip
   - pip install awscli
