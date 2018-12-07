@@ -22,7 +22,7 @@ build:
     - docker build --build-arg MATTERMOST_SERVER_REPO=$MM_SERVER_REPO -t $IMAGE_TAG  --cache-from $IMAGE_TAG --cache-from $BUILD_IMAGE_TAG .
     - docker push $IMAGE_TAG
   only:
-    - feature/CI_gitlab
+    - feature/CI-gitlab
   tags:
     - docker
 
@@ -36,14 +36,18 @@ test:
 deploy_review:
   stage: deploy
   image: coxauto/aws-ebcli
+  variables:
+    AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+    AWS_SECRET_ACCESS_KEY: $AWS_SECRET_KEY
   script:
+    - echo $AWS_ACCESS_KEY_ID
     - ./deploy.sh
   environment:
     name: review/$CI_COMMIT_REF_NAME
     url: http://riffedu-webapp-$CI_ENVIRONMENT_SLUG.us-east-2.elasticbeanstalk.com
     on_stop: stop_review
   only:
-    - branches
+    - feature/CI-gitlab
   except:
     - master
 
@@ -59,7 +63,7 @@ stop_review:
     name: review/$CI_COMMIT_REF_NAME
     action: stop
   only:
-    - branches
+    - feature/CI-gitlab
   except:
     - master
   when:
@@ -74,7 +78,7 @@ deploy:
     name: development
     url: http://riffedu-webapp-dev.us-west-2.elasticbeanstalk.com
   only:
-    - master
+    - feature/CI-gitlab
 
 
 # deploy:
