@@ -9,6 +9,9 @@ ARG GOLANG_VER=1.11.2
 ARG PRIVATE_SSH_KEY
 ARG MATTERMOST_SERVER_REPO
 
+# expose mm-server port
+EXPOSE 8065
+
 # install ssh and git
 RUN apt-get update \
 && apt-get install -y --no-install-recommends \
