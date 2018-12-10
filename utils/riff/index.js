@@ -6,7 +6,7 @@ import io from 'socket.io-client';
 // access to api
 
 let dataserverPath = process.env.CLIENT_ENV ? process.env.CLIENT_ENV.RIFF_SERVER_PATH : process.env.RIFF_SERVER_PATH;
-dataserverPath = dataserverPath | '';
+dataserverPath = dataserverPath == 0 ? '' : dataserverPath | '';
 dataserverPath += '/socket.io';
 
 let dataserverUrl = process.env.CLIENT_ENV ? process.env.CLIENT_ENV.RIFF_SERVER_URL : process.env.RIFF_SERVER_URL;
