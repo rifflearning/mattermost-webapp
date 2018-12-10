@@ -23,8 +23,6 @@ build:
     - docker push $BUILD_IMAGE_TAG
     - docker build --build-arg MATTERMOST_SERVER_REPO=$MM_SERVER_REPO --build-arg RIFF_SERVER_URL=$RIFF_SERVER_URL --build-arg SIGNALMASTER_URL=$SIGNALMASTER_URL --build-arg MM_SQLSETTINGS_DATASOURCE=$MM_SQLSETTINGS_DATASOURCE -t $IMAGE_TAG  --cache-from $IMAGE_TAG --cache-from $BUILD_IMAGE_TAG .
     - docker push $IMAGE_TAG
-  only:
-    - feature/CI-gitlab
   tags:
     - docker
 
@@ -49,7 +47,7 @@ deploy_review:
     url: http://riffedu-webapp-$CI_ENVIRONMENT_SLUG.us-west-2.elasticbeanstalk.com
     on_stop: stop_review
   only:
-    - feature/CI-gitlab
+    - branches
   except:
     - master
 
@@ -65,7 +63,7 @@ stop_review:
     name: review/$CI_COMMIT_REF_NAME
     action: stop
   only:
-    - feature/CI-gitlab
+    - branches
   except:
     - master
   when:
@@ -81,25 +79,3 @@ deploy:
     url: http://riffedu-webapp-dev.us-west-2.elasticbeanstalk.com
   only:
     - master
-
-
-# deploy:
-#   stage: deploy
-#   script:
-#     - mkdir $DOCKER_CERT_PATH
-#     - echo "$CA" > certs/ca.pem
-#     - echo "$CLIENT_CERT" > certs/cert.pem
-#     - echo "$CLIENT_KEY" > certs/key.pem
-#     - docker build --build-arg MATTERMOST_SERVER_REPO=$MM_SERVER_REPO  -t riffedu-webapp .
-#     - docker run  -td -e MM_SQLSETTINGS_DATASOURCE=$MM_SQLSETTINGS_DATASOURCE -e RIFF_SERVER_URL=$RIFF_SERVER_URL -e SIGNALMASTER_URL=$SIGNALMASTER_URL --expose=8065 riffedu-webapp
-#     - rm -rf certs
-#   only:
-#     - featurppe/CI-gitlab
-#   variables:
-#     DOCKER_TLS_VERIFY: "1"
-#     DOCKER_HOST: "tcp://$INSTANCE_IP:2376"
-#     DOCKER_CERT_PATH: "certs"
-#   tags:
-#     - docker
-
-
