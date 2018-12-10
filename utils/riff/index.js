@@ -10,6 +10,8 @@ dataserverPath = dataserverPath | '';
 dataserverPath += '/socket.io';
 
 let dataserverUrl = process.env.CLIENT_ENV ? process.env.CLIENT_ENV.RIFF_SERVER_URL : process.env.RIFF_SERVER_URL;
+console.log("data server path:", dataserverPath)
+console.log("data server URL:", dataserverUrl)
 
 export const socket = io(dataserverUrl, {
     'timeout': 20000,
