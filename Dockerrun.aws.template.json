@@ -6,8 +6,8 @@
     },
     "Ports": [
         {
-            "ContainerPort": "8065",
-            "hostPort": "80"
+            "ContainerPort": 8065,
+            "HostPort": 80
         }
     ],
     "Volumes": [
