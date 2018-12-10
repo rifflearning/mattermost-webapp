@@ -19,9 +19,9 @@ build:
     - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
   script:
     - docker pull $BUILD_IMAGE_TAG || true
-    - docker build --build-arg MATTERMOST_SERVER_REPO=$MM_SERVER_REPO -t $BUILD_IMAGE_TAG --cache-from $BUILD_IMAGE_TAG .
+    - docker build --build-arg MATTERMOST_SERVER_REPO=$MM_SERVER_REPO --build-arg RIFF_SERVER_URL=$RIFF_SERVER_URL --build-arg SIGNALMASTER_URL=$SIGNALMASTER_URL --build-arg MM_SQLSETTINGS_DATASOURCE=$MM_SQLSETTINGS_DATASOURCE -t $BUILD_IMAGE_TAG --cache-from $BUILD_IMAGE_TAG .
     - docker push $BUILD_IMAGE_TAG
-    - docker build --build-arg MATTERMOST_SERVER_REPO=$MM_SERVER_REPO -t $IMAGE_TAG  --cache-from $IMAGE_TAG --cache-from $BUILD_IMAGE_TAG .
+    - docker build --build-arg MATTERMOST_SERVER_REPO=$MM_SERVER_REPO --build-arg RIFF_SERVER_URL=$RIFF_SERVER_URL --build-arg SIGNALMASTER_URL=$SIGNALMASTER_URL --build-arg MM_SQLSETTINGS_DATASOURCE=$MM_SQLSETTINGS_DATASOURCE -t $IMAGE_TAG  --cache-from $IMAGE_TAG --cache-from $BUILD_IMAGE_TAG .
     - docker push $IMAGE_TAG
   only:
     - feature/CI-gitlab
@@ -94,7 +94,7 @@ deploy:
 #     - docker run  -td -e MM_SQLSETTINGS_DATASOURCE=$MM_SQLSETTINGS_DATASOURCE -e RIFF_SERVER_URL=$RIFF_SERVER_URL -e SIGNALMASTER_URL=$SIGNALMASTER_URL --expose=8065 riffedu-webapp
 #     - rm -rf certs
 #   only:
-#     - feature/CI-gitlab
+#     - featurppe/CI-gitlab
 #   variables:
 #     DOCKER_TLS_VERIFY: "1"
 #     DOCKER_HOST: "tcp://$INSTANCE_IP:2376"
