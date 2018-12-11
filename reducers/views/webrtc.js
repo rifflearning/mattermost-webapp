@@ -1,4 +1,4 @@
-import * as WebRtcActions from '../../actions/webrtc_actions';
+import {joinWebRtcRoom} from '../../actions/webrtc_actions';
 import {WebRtcActionTypes, ActionTypes} from '../../utils/constants';
 
 const initialState = {
@@ -125,7 +125,7 @@ const webrtc = (state = initialState, action) => {
 
     case(ActionTypes.CLICK_VIDEO):
         console.log("CLICK VIDEO action in webrtc reducer.")
-        WebRtcActions.joinWebRtcRoom(action.roomName, action.team_id);
+        joinWebRtcRoom(action.roomName, action.team_id);
 
     case(WebRtcActionTypes.TEXT_CHAT_MSG_UPDATE):
         // will never be a message this user has sent (will always be peer)

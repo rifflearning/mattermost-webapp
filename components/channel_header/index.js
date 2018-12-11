@@ -11,6 +11,7 @@ import {getMyTeamMember, getCurrentTeam} from 'mattermost-redux/selectors/entiti
 import {getCurrentUser, getUser} from 'mattermost-redux/selectors/entities/users';
 import {getUserIdFromChannelName, isDefault, isFavoriteChannel} from 'mattermost-redux/utils/channel_utils';
 import {getLicense} from 'mattermost-redux/selectors/entities/general';
+import {sendWebRtcMessage} from 'actions/webrtc_channel_actions';
 
 import {withRouter} from 'react-router-dom';
 
@@ -84,6 +85,7 @@ function mapDispatchToProps(dispatch) {
             openModal,
             getCustomEmojisInText,
             updateChannelNotifyProps,
+            sendWebRtcMessage
         }, dispatch),
     };
 }
