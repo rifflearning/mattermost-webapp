@@ -30,10 +30,10 @@ export const handleMuteAudioClick = (event, muted, webrtc) => (dispatch) => {
     }
 };
 
-export const joinWebRtcRoom = (roomName, teamId) => dispatch => {
-    console.log("Joining webrtc room", roomName, teamId);
-    dispatch(joinRoom(roomName));
-    browserHistory.push(`/${teamId}/${roomName}/video`);
+export const joinWebRtcRoom = (roomName, teamId, videoId) => dispatch => {
+    console.log("Joining webrtc room", roomName, teamId, videoId);
+    dispatch(joinRoom(roomName + '-' + videoId));
+    browserHistory.push(`/${teamId}/${roomName}/video/${videoId}`);
 
 };
 

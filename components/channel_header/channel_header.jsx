@@ -18,6 +18,7 @@ import * as GlobalActions from 'actions/global_actions.jsx';
 import Markdown from 'components/markdown';
 import {Constants, NotificationLevels, RHSStates, ModalIdentifiers} from 'utils/constants.jsx';
 import * as Utils from 'utils/utils.jsx';
+import {createWebRtcLink} from 'utils/webrtc/webrtc';
 import ChannelInfoModal from 'components/channel_info_modal';
 import ChannelInviteModal from 'components/channel_invite_modal';
 import ChannelMembersModal from 'components/channel_members_modal';
@@ -102,12 +103,18 @@ export default class ChannelHeader extends React.Component {
         this.getPopoverMarkdownOptions = memoizeResult((channelNamesMap) => (
             {...popoverMarkdownOptions, channelNamesMap}
         ));
+
+
+        const webRtcLink = createWebRtcLink(props.currentTeam.name, props.channel.id);
+        console.log("WEBRTC link:", webRtcLink);
+        this.webRtcLink = webRtcLink
     }
 
     componentDidMount() {
         this.props.actions.getCustomEmojisInText(this.props.channel.header);
         document.addEventListener('keydown', this.handleShortcut);
         window.addEventListener('resize', this.handleResize);
+        console.log("WEBRTC link:", this.webRtcLink);
     }
 
     componentWillUnmount() {
@@ -394,8 +401,8 @@ export default class ChannelHeader extends React.Component {
               >
               <Link target="_blank"
                     id="videochat"
-                    onClick={() => {this.props.actions.sendWebRtcMessage(this.props.channel.id,this.props.currentUser.id)}}
-                    to={`/${this.props.currentTeam.name}/${this.props.channel.id}/video`}>
+                    to={this.webRtcLink}
+                    onClick={() => {this.props.actions.sendWebRtcMessage(this.props.channel.id,this.props.currentUser.id,this.webRtcLink, this.props.currentTeam.name)}}>
                 <PopoverStickOnHover
                   component={webrtcTooltip}
                   placement="bottom"

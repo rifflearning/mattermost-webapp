@@ -17,7 +17,7 @@ const LENGTH_OF_USER_ID_PAIR = 54;
 export function onWebRtcByIdentifierEnter({match, history}) {
     return (dispatch, getState) => {
         const state = getState();
-        const {path, identifier, team} = match.params;
+        const {path, identifier, team, videoId} = match.params;
 
         if (!getTeamByName(state, team)) {
             return;
@@ -75,7 +75,7 @@ export function goToVideoByChannelIdentifier(match, history) {
             console.log("cant join video for channel that doesnt exist.");
         }
 
-        dispatch(WebRtcActions.joinWebRtcRoom(channel.name, team));
+        dispatch(WebRtcActions.joinWebRtcRoom(channel.name, team, videoId));
     };
 };
 
@@ -84,7 +84,7 @@ export function goToVideoByChannelIdentifier(match, history) {
 export function goToVideoByChannelName(match, history) {
     return async (dispatch, getState) => {
         const state = getState();
-        const {team, identifier} = match.params;
+        const {team, identifier, videoId} = match.params;
         const channelName = identifier.toLowerCase();
 
         console.log("channel name:", channelName);
@@ -102,6 +102,6 @@ export function goToVideoByChannelName(match, history) {
             console.log("cant join video for channel that doesnt exist.")
         }
 
-        dispatch(WebRtcActions.joinWebRtcRoom(channel.name, team));
+        dispatch(WebRtcActions.joinWebRtcRoom(channel.name, team, videoId));
     };
 };

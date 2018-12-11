@@ -14,6 +14,7 @@ export default class WebrtcController extends React.Component {
     static propTypes = {
         pathName: PropTypes.string.isRequired,
         teamType: PropTypes.string.isRequired,
+        videoId: PropTypes.string.isRequired
     };
 
     render() {

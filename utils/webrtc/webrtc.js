@@ -4,6 +4,22 @@ import sibilant from 'sibilant-webaudio';
 import { app, socket } from '../riff';
 import {updateRiffMeetingId} from '../../actions/views/riff'
 
+
+export const createWebRtcLink = (teamName, channelId) => {
+    return '/' + teamName + '/' + channelId + '/video' + '/' + generateUID();
+}
+
+function generateUID() {
+    // I generate the UID from two parts here 
+    // to ensure the random number provide enough bits.
+    var firstPart = (Math.random() * 46656) | 0;
+    var secondPart = (Math.random() * 46656) | 0;
+    firstPart = ("000" + firstPart.toString(36)).slice(-3);
+    secondPart = ("000" + secondPart.toString(36)).slice(-3);
+    return firstPart + secondPart;
+}
+
+
 export default function (localVideoNode, dispatch, getState) {
     //TODO: make dynamic
     let signalmasterPath = process.env.CLIENT_ENV.SIGNALMASTER_PATH || '';
