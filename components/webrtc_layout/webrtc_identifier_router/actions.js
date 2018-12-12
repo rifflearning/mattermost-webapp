@@ -54,7 +54,7 @@ export function onWebRtcByIdentifierEnter({match, history}) {
 export function goToVideoByChannelIdentifier(match, history) {
     return async (dispatch, getState) => {
         const state = getState();
-        const {team, identifier} = match.params;
+        const {team, identifier, videoId} = match.params;
         const channelId = identifier.toLowerCase();
 
         console.log("channelId:", channelId);
