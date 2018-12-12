@@ -1,4 +1,5 @@
-import {joinChannel, getChannelByNameAndTeamName, markGroupChannelOpen} from 'mattermost-redux/actions/channels';
+import {joinChannel, markGroupChannelOpen, getChannelByNameAndTeamName} from 'mattermost-redux/actions/channels';
+
 import {getUser, getUserByUsername, getUserByEmail} from 'mattermost-redux/actions/users';
 import {getTeamByName} from 'mattermost-redux/selectors/entities/teams';
 import {getCurrentUserId, getUserByUsername as selectUserByUsername, getUser as selectUser} from 'mattermost-redux/selectors/entities/users';
@@ -75,6 +76,7 @@ export function goToVideoByChannelIdentifier(match, history) {
             console.log("cant join video for channel that doesnt exist.");
         }
 
+        console.log("using video id:", videoId)
         dispatch(WebRtcActions.joinWebRtcRoom(channel.name, team, videoId));
     };
 };
@@ -88,20 +90,22 @@ export function goToVideoByChannelName(match, history) {
         const channelName = identifier.toLowerCase();
 
         console.log("channel name:", channelName);
-        console.log("match:", match.params);
+        console.log("match by channel name::", match.params);
 
         const teamObj = getTeamByName(state, team);
         if (!teamObj) {
             return;
         }
 
-        let channel = getChannelsNameMapInTeam(state, teamObj.id)[channelName];
+        // this broke for sfome reason -- getChannelsNameMapInTeam stopped working
+        //console.log(getChannelsNameMapInTeam)
+        // let channel = getChannelsNameMapInTeam(state, teamObj.id)[channelName];
 
-        if (!channel) {
-            //TODO: error, cant join a video for a channel that doesnt exist.
-            console.log("cant join video for channel that doesnt exist.")
-        }
+        // if (!channel) {
+        //     //TODO: error, cant join a video for a channel that doesnt exist.
+        //     console.log("cant join video for channel that doesnt exist.")
+        // }
 
-        dispatch(WebRtcActions.joinWebRtcRoom(channel.name, team, videoId));
+        dispatch(WebRtcActions.joinWebRtcRoom(channelName, team, videoId));
     };
 };
