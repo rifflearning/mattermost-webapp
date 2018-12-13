@@ -6,10 +6,33 @@ ARG UBUNTU_VER=latest
 FROM ubuntu:${UBUNTU_VER} AS base
 ARG NODE_VER=10
 ARG GOLANG_VER=1.11.2
-ARG PRIVATE_SSH_KEY
-ARG MATTERMOST_SERVER_REPO
+ARG MATTERMOST_SERVER_REPO=https://github.com/rifflearning/mattermost-server.git
 
-# env vars in first stage in image build
+# Copy setup files to the image
+COPY bashrc run.sh riffmm-setup-ci.sh /setupfiles/
+
+# run the setup script
+RUN chmod +x /setupfiles/*.sh \
+    && /setupfiles/riffmm-setup-ci.sh
+
+# create and set working directory owned by non-root user; set that user
+WORKDIR /home/mmuser
+USER mmuser
+
+# set the GOPATH and the PATH to find the go executables
+ENV GOPATH /home/mmuser/go
+ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
+
+# Set the default command to run when the container is started
+CMD ["./run.sh"]
+
+
+#
+# ---- Continuous Integration/Deployment ----
+FROM base AS ci
+LABEL Description="ci: This image runs the mattermost-server and webpack watch of mattermost-webapp"
+
+# environment vars needed for the CI configuration
 ARG RIFF_SERVER_URL
 ARG SIGNALMASTER_URL
 ARG MM_SQLSETTINGS_DATASOURCE
@@ -17,76 +40,14 @@ ENV RIFF_SERVER_URL=$RIFF_SERVER_URL
 ENV SIGNALMASTER_URL=$SIGNALMASTER_URL
 ENV MM_SQLSETTINGS_DATASOURCE=$MM_SQLSETTINGS_DATASOURCE
 
-RUN echo "URL configs:"
-RUN echo $RIFF_SERVER_URL
-RUN echo $SIGNALMASTER_URL
-
-# expose mm-server port
-EXPOSE 8065
-
-# install ssh and git
-RUN apt-get update \
-&& apt-get install -y --no-install-recommends \
-ca-certificates  \
-git-core \
-ssh
-
-# Copy setup files to the image
-COPY bashrc run.sh riffmm-setup-ci.sh /setupfiles/
-
-# run the setup script
-RUN chmod +x /setupfiles/*.sh
-RUN chown -R 1000 /setupfiles
-RUN /setupfiles/riffmm-setup-ci.sh
-
-
-
-RUN mkdir -p $HOME/go/src/github.com/mattermost
-WORKDIR $HOME/go/src/github.com/mattermost
-RUN chown -R 1000 /home/mmuser/
-
-# create and set working directory owned by non-root user; set that user
-USER mmuser
-
-WORKDIR /home/mmuser/go/src/github.com/mattermost
-RUN git clone --single-branch -b develop $MATTERMOST_SERVER_REPO
-
-# set the GOPATH and the PATH to find the go executables
-ENV GOPATH /home/mmuser/go
-ENV PATH $GOPATH/bin:/usr/local/go/bin:$PATH
-
-
-#
-# ---- Development ----
-FROM base AS development
-LABEL Description="dev: This image runs the mattermost-server and webpack watch of mattermost-webapp"
-
 # This is the development image, set NODE_ENV to reflect that
 ENV NODE_ENV=development
 
 # expose port that the mattermost server listens to
 EXPOSE 8065
 
-# when a container is started w/ this image the mattermost-webapp repository working
-# directory must be bound at /home/mmuser/go/src/github.com/mattermost/mattermost-webapp
-# and all dependent packages installed AND the mattermost-server repository working
-# directory must be bound at /home/mmuser/go/src/github.com/mattermost/mattermost-server
-# for this command to correctly start the mattermost-webapp
-RUN mkdir -p /home/mmuser/go/src/github.com/mattermost/mattermost-webapp
-WORKDIR /home/mmuser/go/src/github.com/mattermost/mattermost-webapp
-
-COPY --chown=1000:1000 . ./
-
-# USER root
-# RUN chown -R 1000 /home/mmuser/go/src/github.com/mattermost
-# USER mmuser
-
-WORKDIR /home/mmuser/go/src/github.com/mattermost/mattermost-server
-
-RUN chmod +x ../mattermost-webapp/run.sh
-
-RUN echo $MM_SQLSETTINGS_DATASOURCE
-
-CMD ["../mattermost-webapp/run.sh"]
-
-#CMD ["make", "run-in-container"]
+# Copy the current file structure from this Dockerfile's mattermost-webapp context into place for
+# access by the mattermost-server
+COPY --chown=mmuser:mmuser . /home/mmuser/go/src/github.com/mattermost/mattermost-webapp/
+RUN cd /home/mmuser/go/src/github.com/mattermost/mattermost-webapp/ \
+    && npm install

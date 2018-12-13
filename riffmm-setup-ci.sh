@@ -10,6 +10,9 @@ MM_UID=${MM_UID:-1000}
 INSTALL_PKGS=( curl apt-utils gcc g++ make wget gnupg2 ca-certificates )
 MM_PKGS=( build-essential libpng-dev git )
 DEV_PKGS=( vim-tiny )
+# DevNote: I don't see how the ssh package is actually required for CI, I've moved it here
+# from the Dockerfile created by Dan. - mjl 2018-12-13
+CI_PKGS=( ssh )
 
 # Setting found in Stack Overflow answer to:
 # https://stackoverflow.com/questions/22466255/is-it-possible-to-answer-dialog-questions-when-installing-under-docker
@@ -19,7 +22,7 @@ export DEBIAN_FRONTEND=noninteractive
 # Update package db and install needed packages
 echo "SETUP: Update apt and install packages ..."
 apt-get update
-apt-get install -y --no-install-recommends "${INSTALL_PKGS[@]}" "${MM_PKGS[@]}" "${DEV_PKGS[@]}"
+apt-get install -y --no-install-recommends "${INSTALL_PKGS[@]}" "${MM_PKGS[@]}" "${DEV_PKGS[@]}" "${CI_PKGS[@]}"
 
 # Install node --set up the apt repository to get the latest node ver 10
 # (for production we may want to "lock it down" and use a different way of installing node.
@@ -67,3 +70,8 @@ chown -R ${MM_USER}:${MM_USER} /home/${MM_USER}
 # set the root password to password (I don't care that it's simple it's only for development)
 # this shouldn't exist in a production container
 echo "root:password" | chpasswd
+
+# CI setup
+cd /home/${MM_USER}/go/src/github.com/mattermost
+git clone --depth 1 --branch develop $MATTERMOST_SERVER_REPO
+chown -R ${MM_USER}:${MM_USER} .
