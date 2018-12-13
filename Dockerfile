@@ -32,12 +32,12 @@ git-core \
 ssh
 
 # Copy setup files to the image
-COPY bashrc run.sh riffmm-setup.sh /setupfiles/
+COPY bashrc run.sh riffmm-setup-ci.sh /setupfiles/
 
 # run the setup script
 RUN chmod +x /setupfiles/*.sh
 RUN chown -R 1000 /setupfiles
-RUN /setupfiles/riffmm-setup.sh
+RUN /setupfiles/riffmm-setup-ci.sh
 
 
 
