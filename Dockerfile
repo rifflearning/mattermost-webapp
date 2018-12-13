@@ -48,4 +48,6 @@ EXPOSE 8065
 
 # Copy the current file structure from this Dockerfile's mattermost-webapp context into place for
 # access by the mattermost-server
-COPY --chown=mmuser:mmuser . /go/src/github.com/mattermost/mattermost-webapp/
+COPY --chown=mmuser:mmuser . /home/mmuser/go/src/github.com/mattermost/mattermost-webapp/
+RUN cd /home/mmuser/go/src/github.com/mattermost/mattermost-webapp/ \
+    && npm install
