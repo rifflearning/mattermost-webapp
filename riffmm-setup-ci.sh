@@ -74,3 +74,4 @@ echo "root:password" | chpasswd
 # CI setup
 cd /home/${MM_USER}/go/src/github.com/mattermost
 git clone --depth 1 --branch develop $MATTERMOST_SERVER_REPO
+chown -R ${MM_USER}:${MM_USER} .
