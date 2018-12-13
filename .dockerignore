@@ -1,0 +1,16 @@
+# add git-ignore syntax here of things you don't want copied into docker build context
+
+.git
+Dockerfile*
+.dockerignore
+docker-*
+node_modules/
+dist/
+.npminstall
+.yarninstall
+*.swp
+.idea
+*.tar.gz
+tests/reports
+.DS_Store
+mattermost-webapp.iml
