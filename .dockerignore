@@ -1,6 +1,7 @@
 # add git-ignore syntax here of things you don't want copied into docker build context
 
-.git
+# Can't ignore the .git directory for now because the server Makefile runs `git rev-parse HEAD`
+# .git
 Dockerfile*
 .dockerignore
 docker-*
