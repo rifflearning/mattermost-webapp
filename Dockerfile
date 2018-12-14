@@ -50,4 +50,9 @@ EXPOSE 8065
 # access by the mattermost-server
 COPY --chown=mmuser:mmuser . /home/mmuser/go/src/github.com/mattermost/mattermost-webapp/
 RUN cd /home/mmuser/go/src/github.com/mattermost/mattermost-webapp/ \
-    && npm install
+    && npm install \
+    ; echo "MATTERMOST_SERVER_REPO=$MATTERMOST_SERVER_REPO" \
+    ; echo "RIFF_SERVER_URL=$RIFF_SERVER_URL" \
+    ; echo "SIGNALMASTER_URL=$SIGNALMASTER_URL" \
+    ; echo "MM_SQLSETTINGS_DATASOURCE=$MM_SQLSETTINGS_DATASOURCE"
+
