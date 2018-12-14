@@ -480,7 +480,7 @@ export default class Sidebar extends React.PureComponent {
                 key={channelId}
                 ref={channelId}
                 channelId={channelId}
-                active={channelId === this.props.currentChannel.id}
+                active={channelId === this.props.currentChannel.id && this.props.currentPage === null}
                 currentTeamName={this.props.currentTeam.name}
                 currentUserId={this.props.currentUser.id}
             />
@@ -532,12 +532,14 @@ export default class Sidebar extends React.PureComponent {
         );
 
         var dashboard = (
-            <li key='dashboard'>
+            <li key='dashboard' className={this.props.currentPage === 'dashboard' ? 'active' : ''}>
                 <button
                     id='dashboard'
                     className='nav-more cursor--pointer style--none btn--block'
                     onClick={
-                        () => { this.props.history.push(`/${this.props.currentTeam.name}/channels/dashboard`) }
+                        () => {
+                            browserHistory.push(`/${this.props.currentTeam.name}/pages/dashboard`)
+                        }
                     }
                 >
 

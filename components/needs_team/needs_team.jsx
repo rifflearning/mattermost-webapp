@@ -16,6 +16,7 @@ import {loadProfilesForSidebar} from 'actions/user_actions.jsx';
 import {makeAsyncComponent} from 'components/async_load';
 import loadBackstageController from 'bundle-loader?lazy!components/backstage';
 import ChannelController from 'components/channel_layout/channel_controller';
+import PageController from 'components/page_layout/page_controller';
 import WebRtcController from 'components/webrtc_layout/webrtc_controller';
 import { customTheme } from './theme.js'
 
@@ -233,32 +234,41 @@ export default class NeedsTeam extends React.Component {
         const teamType = this.state.team ? this.state.team.type : '';
         return (
             <Switch>
-                <Route
-                    path={'/:team/integrations'}
-                    component={BackstageController}
+              <Route
+                path={'/:team/integrations'}
+                component={BackstageController}
+                />
+              <Route
+                path={'/:team/emoji'}
+                component={BackstageController}
+                />
+              <Route
+                exact
+                path={'/:team/:path(pages)/:identifier'}
+                render={(renderProps) => (
+                    <PageController
+                      pathName={renderProps.location.pathname}
+                      teamType={teamType}/>
+                )}
+                />
+              <Route
+                exact
+                path={'/:team/:identifier/video/:videoId'}
+                render={(renderProps) => (
+                    <WebRtcController
+                      pathName={renderProps.location.pathname}
+                      teamType={teamType}/>
+                )}
                 />
                 <Route
-                    path={'/:team/emoji'}
-                    component={BackstageController}
+                render={(renderProps) => (
+                <ChannelController
+                  pathName={renderProps.location.pathname}
+                  teamType={teamType}
                   />
-                <Route
-                  exact
-                  path={'/:team/:identifier/video/:videoId'}
-                  render={(renderProps) => (
-                      <WebRtcController
-                        pathName={renderProps.location.pathname}
-                        teamType={teamType}/>
-                  )}
-                  />
-                <Route
-                    render={(renderProps) => (
-                        <ChannelController
-                            pathName={renderProps.location.pathname}
-                            teamType={teamType}
-                        />
-                    )}
+            )}
                 />
-            </Switch>
+                </Switch>
         );
     }
 }
