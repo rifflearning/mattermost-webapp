@@ -5,13 +5,16 @@ import io from 'socket.io-client';
 
 // access to api
 
-let dataserverPath = process.env.CLIENT_ENV.RIFF_SERVER_PATH || '';
+let dataserverPath = process.env.CLIENT_ENV ? process.env.CLIENT_ENV.RIFF_SERVER_PATH : process.env.RIFF_SERVER_PATH;
+console.log("path envs:", process.env.CLIENT_ENV, process.env.RIFF_SERVER_PATH);
+dataserverPath = dataserverPath ? dataserverPath : '';
 dataserverPath += '/socket.io';
 
-console.log("riff server URL:", process.env.CLIENT_ENV.RIFF_SERVER_URL);
-console.log("env:", process.env);
+let dataserverUrl = process.env.CLIENT_ENV ? process.env.CLIENT_ENV.RIFF_SERVER_URL : process.env.RIFF_SERVER_URL;
+console.log("data server path:", dataserverPath)
+console.log("data server URL:", dataserverUrl)
 
-export const socket = io(process.env.CLIENT_ENV.RIFF_SERVER_URL, {
+export const socket = io(dataserverUrl, {
     'timeout': 20000,
     'path': dataserverPath,
     'transports': [
