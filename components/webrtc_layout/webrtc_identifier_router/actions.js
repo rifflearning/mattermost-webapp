@@ -3,7 +3,7 @@ import {joinChannel, markGroupChannelOpen, getChannelByNameAndTeamName} from 'ma
 import {getUser, getUserByUsername, getUserByEmail} from 'mattermost-redux/actions/users';
 import {getTeamByName} from 'mattermost-redux/selectors/entities/teams';
 import {getCurrentUserId, getUserByUsername as selectUserByUsername, getUser as selectUser} from 'mattermost-redux/selectors/entities/users';
-import {getCurrentChannelId, getChannelByName, getOtherChannels, getChannel, getChannelsNameMapInTeam} from 'mattermost-redux/selectors/entities/channels';
+import {getCurrentChannelId, getChannelByName, getOtherChannels, getChannel, getChannelsNameMapInCurrentTeam} from 'mattermost-redux/selectors/entities/channels';
 import * as WebRtcActions from '../../../actions/webrtc_actions';
 
 import {Constants} from 'utils/constants.jsx';
@@ -25,7 +25,6 @@ export function onWebRtcByIdentifierEnter({match, history}) {
         }
 
         // always first check if its an ID or a name.
-        // webrtc rooms are always made with channel names, not ids.
         if (identifier.length == LENGTH_OF_ID || identifier.length == LENGTH_OF_USER_ID_PAIR || identifier.length == LENGTH_OF_GROUP_ID) {
             dispatch(goToVideoByChannelIdentifier(match, history));
         } else {
@@ -77,7 +76,6 @@ export function goToVideoByChannelIdentifier(match, history) {
         }
 
         let channelName = channel ? channel.name : channelId;
-        console.log("using video id:", videoId, "and channel ID", channelId)
         dispatch(WebRtcActions.joinWebRtcRoom(channelId, team, videoId));
     };
 };
@@ -90,23 +88,20 @@ export function goToVideoByChannelName(match, history) {
         const {team, identifier, videoId} = match.params;
         const channelName = identifier.toLowerCase();
 
-        console.log("channel name:", channelName);
-        console.log("match by channel name::", match.params);
-
         const teamObj = getTeamByName(state, team);
         if (!teamObj) {
             return;
         }
 
-        // this broke for sfome reason -- getChannelsNameMapInTeam stopped working
-        //console.log(getChannelsNameMapInTeam)
-        // let channel = getChannelsNameMapInTeam(state, teamObj.id)[channelName];
+        let channel = getChannelsNameMapInCurrentTeam(state)[channelName];
 
-        // if (!channel) {
-        //     //TODO: error, cant join a video for a channel that doesnt exist.
-        //     console.log("cant join video for channel that doesnt exist.")
-        // }
+        if (!channel) {
+            //TODO: error, cant join a video for a channel that doesnt exist.
+            console.log("cant join video for channel that doesnt exist.");
+        }
 
-        dispatch(WebRtcActions.joinWebRtcRoom(channelName, team, videoId));
+        let channelIdentifier = channel ? channel.name : channelName;
+
+        dispatch(WebRtcActions.joinWebRtcRoom(channelIdentifier, team, videoId));
     };
 };

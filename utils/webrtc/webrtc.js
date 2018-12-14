@@ -5,8 +5,8 @@ import { app, socket } from '../riff';
 import {updateRiffMeetingId} from '../../actions/views/riff'
 
 
-export const createWebRtcLink = (teamName, channelId) => {
-    return '/' + teamName + '/' + channelId + '/video' + '/' + generateUID();
+export const createWebRtcLink = (teamName, channelName) => {
+    return '/' + teamName + '/' + channelName + '/video' + '/' + generateUID();
 }
 
 function generateUID() {

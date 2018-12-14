@@ -104,17 +104,12 @@ export default class ChannelHeader extends React.Component {
             {...popoverMarkdownOptions, channelNamesMap}
         ));
 
-
-        const webRtcLink = createWebRtcLink(props.currentTeam.name, props.channel.id);
-        console.log("WEBRTC link:", webRtcLink);
-        this.webRtcLink = webRtcLink
     }
 
     componentDidMount() {
         this.props.actions.getCustomEmojisInText(this.props.channel.header);
         document.addEventListener('keydown', this.handleShortcut);
         window.addEventListener('resize', this.handleResize);
-        console.log("WEBRTC link:", this.webRtcLink);
     }
 
     componentWillUnmount() {
@@ -395,14 +390,17 @@ export default class ChannelHeader extends React.Component {
             </div>
         );
 
+        const webRtcLink = createWebRtcLink(this.props.currentTeam.name,
+                                            this.props.channel.name);
+
         return (
             <div className={'webrtc__header channel-header__icon wide text ' + circleClass}
                  style={{cursor: this.webRtcDisabled() ? 'default' : 'pointer'}}
               >
               <Link target="_blank"
                     id="videochat"
-                    to={this.webRtcLink}
-                    onClick={() => {this.props.actions.sendWebRtcMessage(this.props.channel.id,this.props.currentUser.id,this.webRtcLink, this.props.currentTeam.name)}}>
+                    to={webRtcLink}
+                    onClick={() => {this.props.actions.sendWebRtcMessage(this.props.channel.id,this.props.currentUser.id, webRtcLink, this.props.currentTeam.name); }}>
                 <PopoverStickOnHover
                   component={webrtcTooltip}
                   placement="bottom"
