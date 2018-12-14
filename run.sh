@@ -3,6 +3,9 @@
 # https://medium.com/@ryan0x44/let-a-docker-container-spin-stop-too-da9206126b38
 # NOTE: dash trap didn't recognize SIGTERM, changed it to TERM
 
+echo "Container run.sh script starting ..."
+which tput
+
 RED=`tput -Txterm setaf 1`
 RESET=`tput -Txterm sgr0`
 
