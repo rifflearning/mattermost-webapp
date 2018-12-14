@@ -76,8 +76,9 @@ export function goToVideoByChannelIdentifier(match, history) {
             console.log("cant join video for channel that doesnt exist.");
         }
 
-        console.log("using video id:", videoId)
-        dispatch(WebRtcActions.joinWebRtcRoom(channel.name, team, videoId));
+        let channelName = channel ? channel.name : channelId;
+        console.log("using video id:", videoId, "and channel ID", channelId)
+        dispatch(WebRtcActions.joinWebRtcRoom(channelId, team, videoId));
     };
 };
 
