@@ -112,7 +112,6 @@ const MeetingList = ({
 };
 
 const DashboardView = (props) => {
-    console.log("user:", props.user);
     if (props.fetchMeetingsStatus === 'loading') {
         return (
             <div className='columns is-centered has-text-centered'>
@@ -177,15 +176,7 @@ const DashboardView = (props) => {
                         />
                       </div>
                     </div>
-                    <div
-                        className='section'
-                        style={{padding: '0px'}}
-                    >
-                        <TimelineChart
-                            processedTimeline={props.processedTimeline}
-                            participantId={props.user.id}
-                        />
-                    </div>
+
                 </div>
             )}
         </div>
