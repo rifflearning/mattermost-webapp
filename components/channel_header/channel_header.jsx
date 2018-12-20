@@ -362,10 +362,10 @@ export default class ChannelHeader extends React.Component {
                   Riff chat is disabled until the page fully loads.
                 </span>
             );
-        } else if (this.props.channelStats.member_count > 6) {
+        } else if (this.props.channelStats.member_count > 7) {
             tooltipContent = (
                 <span >
-                  Riff video chat only supports groups up to 6 people. Create a new DM group to start a call.
+                  Riff video chat only supports groups up to 7 people. Create a new DM group to start a call.
                   <button
                     className='add-channel-btn cursor--pointer btn-primary btn'
                     style={{marginTop: '.5rem', marginBottom: '.5rem'}}
