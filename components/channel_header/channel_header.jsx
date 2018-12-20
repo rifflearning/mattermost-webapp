@@ -395,6 +395,7 @@ export default class ChannelHeader extends React.Component {
               >
               <Link target="_blank"
                     id="videochat"
+                    disabled={this.webRtcDisabled}
                     to={this.props.webRtcLink}
                     onClick={() => {this.props.actions.sendWebRtcMessage(this.props.channel.id,this.props.currentUser.id, this.props.webRtcLink, this.props.currentTeam.name); }}>
                 <PopoverStickOnHover

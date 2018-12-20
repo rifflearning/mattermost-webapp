@@ -12,9 +12,6 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-    redirect: () => {
-        dispatch(push("/"));
-    }
 });
 
 const mapMergeProps = (stateProps, dispatchProps, ownProps) => ({
@@ -27,7 +24,6 @@ const mapMergeProps = (stateProps, dispatchProps, ownProps) => ({
         ownProps.leaveRoom();
         ownProps.webrtc.leaveRoom();
         ownProps.webrtc.stopSibilant();
-        dispatchProps.redirect();
     }
 });
 
