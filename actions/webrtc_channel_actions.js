@@ -10,7 +10,7 @@ export const sendWebRtcMessage = (currentChannelId, userId, webRtcLink, teamName
 
     const fullLink = window.location.href.split(teamName)[0] + webRtcLink;
     let post = {
-        message: "I started a webrtc chat! Join here: " + fullLink,
+        message: "I started a Riff meeting! Join here: " + fullLink,
         channel_id: currentChannelId,
         pending_post_id: `${userId}:${time}`,
         create_at: time,
