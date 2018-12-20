@@ -243,7 +243,7 @@ export default class NeedsTeam extends React.Component {
                   />
                 <Route
                   exact
-                  path={'/:team/:identifier/video'}
+                  path={'/:team/:identifier/video/:videoId'}
                   render={(renderProps) => (
                       <WebRtcController
                         pathName={renderProps.location.pathname}

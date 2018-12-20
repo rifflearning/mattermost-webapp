@@ -41,7 +41,7 @@ export default class WebRtc extends React.PureComponent {
                 <div className='row main'>
                     <Switch>
                         <Route
-                        path={'/:team/:identifier/video'}
+                        path={'/:team/:identifier/video/:videoId'}
                         component={WebRtcIdentifierRouter}
                         />
                     </Switch>

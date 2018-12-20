@@ -13,7 +13,7 @@ import WebRtc from './webrtc';
 export default class WebrtcController extends React.Component {
     static propTypes = {
         pathName: PropTypes.string.isRequired,
-        teamType: PropTypes.string.isRequired,
+        teamType: PropTypes.string.isRequired
     };
 
     render() {

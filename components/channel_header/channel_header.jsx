@@ -64,6 +64,7 @@ export default class ChannelHeader extends React.Component {
             getCustomEmojisInText: PropTypes.func.isRequired,
             updateChannelNotifyProps: PropTypes.func.isRequired,
             goToLastViewedChannel: PropTypes.func.isRequired,
+            sendWebRtcMessage: PropTypes.func.isRequired,
         }).isRequired,
         channel: PropTypes.object.isRequired,
         channelMember: PropTypes.object.isRequired,
@@ -101,6 +102,7 @@ export default class ChannelHeader extends React.Component {
         this.getPopoverMarkdownOptions = memoizeResult((channelNamesMap) => (
             {...popoverMarkdownOptions, channelNamesMap}
         ));
+
     }
 
     componentDidMount() {
@@ -393,7 +395,8 @@ export default class ChannelHeader extends React.Component {
               >
               <Link target="_blank"
                     id="videochat"
-                    to={`/${this.props.currentTeam.name}/${this.props.channel.id}/video`}>
+                    to={this.props.webRtcLink}
+                    onClick={() => {this.props.actions.sendWebRtcMessage(this.props.channel.id,this.props.currentUser.id, this.props.webRtcLink, this.props.currentTeam.name); }}>
                 <PopoverStickOnHover
                   component={webrtcTooltip}
                   placement="bottom"
@@ -403,7 +406,6 @@ export default class ChannelHeader extends React.Component {
                     className='style--none'
                     disabled={this.webRtcDisabled()}//{isOffline || isDoNotDisturb}
                     >
-
                   <div
                     id='webrtc-btn'
                     className={'webrtc__button hidden-xs ' + circleClass}

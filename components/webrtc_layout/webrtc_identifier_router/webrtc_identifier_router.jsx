@@ -15,6 +15,7 @@ export default class WebRtcIdentifierRouter extends React.PureComponent {
             params: PropTypes.shape({
                 identifier: PropTypes.string.isRequired,
                 team: PropTypes.string.isRequired,
+                videoId: PropTypes.string.isRequired
             }).isRequired,
         }).isRequired,
 
