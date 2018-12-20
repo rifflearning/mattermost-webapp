@@ -18,7 +18,6 @@ import * as GlobalActions from 'actions/global_actions.jsx';
 import Markdown from 'components/markdown';
 import {Constants, NotificationLevels, RHSStates, ModalIdentifiers} from 'utils/constants.jsx';
 import * as Utils from 'utils/utils.jsx';
-import {createWebRtcLink} from 'utils/webrtc/webrtc';
 import ChannelInfoModal from 'components/channel_info_modal';
 import ChannelInviteModal from 'components/channel_invite_modal';
 import ChannelMembersModal from 'components/channel_members_modal';
@@ -390,17 +389,14 @@ export default class ChannelHeader extends React.Component {
             </div>
         );
 
-        const webRtcLink = createWebRtcLink(this.props.currentTeam.name,
-                                            this.props.channel.name);
-
         return (
             <div className={'webrtc__header channel-header__icon wide text ' + circleClass}
                  style={{cursor: this.webRtcDisabled() ? 'default' : 'pointer'}}
               >
               <Link target="_blank"
                     id="videochat"
-                    to={webRtcLink}
-                    onClick={() => {this.props.actions.sendWebRtcMessage(this.props.channel.id,this.props.currentUser.id, webRtcLink, this.props.currentTeam.name); }}>
+                    to={this.props.webRtcLink}
+                    onClick={() => {this.props.actions.sendWebRtcMessage(this.props.channel.id,this.props.currentUser.id, this.props.webRtcLink, this.props.currentTeam.name); }}>
                 <PopoverStickOnHover
                   component={webrtcTooltip}
                   placement="bottom"

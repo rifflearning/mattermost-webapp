@@ -12,6 +12,7 @@ import {getCurrentUser, getUser} from 'mattermost-redux/selectors/entities/users
 import {getUserIdFromChannelName, isDefault, isFavoriteChannel} from 'mattermost-redux/utils/channel_utils';
 import {getLicense} from 'mattermost-redux/selectors/entities/general';
 import {sendWebRtcMessage} from 'actions/webrtc_channel_actions';
+import {getWebRtcLink} from 'selectors/views/webrtc';
 
 import {withRouter} from 'react-router-dom';
 
@@ -68,6 +69,7 @@ function mapStateToProps(state, ownProps) {
         isReadOnly: isCurrentChannelReadOnly(state),
         lastViewedChannelName,
         penultimateViewedChannelName,
+        webRtcLink: getWebRtcLink(state, ownProps),
     };
 }
 
@@ -89,5 +91,5 @@ function mapDispatchToProps(dispatch) {
         }, dispatch),
     };
 }
-
-export default withRouter(connect(mapStateToProps, mapDispatchToProps)(ChannelHeader));
+export default withRouter(connect(mapStateToProps,
+                                  mapDispatchToProps)(ChannelHeader));
