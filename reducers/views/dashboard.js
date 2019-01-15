@@ -7,7 +7,6 @@ const initialState = {
     numMeetings: 0,
     lastFetched: new Date('January 1, 2000 00:01:00'),
     shouldFetch: true,
-    numMeetings: 0,
     meetings: [],
     loadingError: {
         status: false,
@@ -17,6 +16,8 @@ const initialState = {
     // 'loaded' at idx if utterances, influence, and timeline are all loaded
     statsStatus: [],
 
+    // initial number of meetings to load
+    numLoadedMeetings: 2,
     // array holding processed data for each meeting. 
     processedUtterances: [],
     influenceData: [],
@@ -61,6 +62,11 @@ const dashboard = (state = initialState, action) => {
     switch (action.type) {
     case DashboardActionTypes.LOG_OUT:
         return initialState;
+    case DashboardActionTypes.DASHBOARD_LOAD_MORE_MEETINGS:
+        return {
+            ...state,
+            numLoadedMeetings: state.numLoadedMeetings + 1
+        };
     case DashboardActionTypes.DASHBOARD_FETCH_MEETINGS:
         let timeDiff = ((((new Date()).getTime() - new Date(state.lastFetched).getTime())/1000) > 5);
         console.log("time should fetch?", timeDiff);

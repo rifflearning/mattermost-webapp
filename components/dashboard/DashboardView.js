@@ -73,9 +73,14 @@ const DashboardView = (props) => {
         );
     }
     // marginLeft on column is a quick fix until we fix the styling on this ugly page.
-    const meetingVisualizations = _.map(_.first(props.meetings, 4), (m) => {
+    console.log("only loading:", props.numLoadedMeetings, 'Meetings');
+    const meetingVisualizations = _.map(_.first(props.meetings, props.numLoadedMeetings), (m) => {
         return (
-            <MeetingViz key={m._id} meeting={m} user={props.user}/>
+            <MeetingViz key={m._id}
+                        meeting={m}
+                        allMeetings={props.meetings}
+                        maybeLoadNextMeeting={props.maybeLoadNextMeeting}
+                        user={props.user}/>
         )
     });
     return (

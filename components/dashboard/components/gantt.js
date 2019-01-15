@@ -56,7 +56,7 @@ const Gantt = function(selector, width) {
         tickFormat(d3.timeFormat(tickFormat)).
         tickSize(8).
         tickPadding(8)
-        .ticks(8);
+        .ticks(d3.timeMinute.every(15));
 
     var yAxis = d3.axisLeft(y).tickSize(0);
 

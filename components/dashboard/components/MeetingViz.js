@@ -6,6 +6,7 @@ import styled, {injectGlobal, keyframes} from 'styled-components';
 import {Link} from 'react-router-dom';
 import ReactChartkick, {ColumnChart, PieChart} from 'react-chartkick';
 import {ScaleLoader} from 'react-spinners';
+import Waypoint from 'react-waypoint';
 import MaterialIcon from 'material-icons-react';
 import Chart from 'chart.js';
 import moment from 'moment';
@@ -115,13 +116,25 @@ class MeetingViz extends React.PureComponent {
         }
 
         // only load if the data hasn't been loaded yet.
+        // NEW: waypoint should take care of this for us.
+        // if (!this.props.loaded) {
+        //     props.loadMeetingData(props.user.id, props.meeting._id);
+        // }
+        this.loadThisAndMaybeMore = this.loadThisAndMaybeMore.bind(this);
+    }
+
+    loadThisAndMaybeMore({event}) {
         if (!this.props.loaded) {
-            props.loadMeetingData(props.user.id, props.meeting._id);
+            console.log("NOT loaded, waypoint loading this meeting...", event);
+            this.props.loadMeetingData(this.props.user.id,
+                                       this.props.meeting._id);
+            this.props.maybeLoadNextMeeting(this.props.meeting._id, this.props.allMeetings);
         }
     }
 
     render() {
         return (
+            <Waypoint onEnter={this.loadThisAndMaybeMore}>
             <div>
               <Header {...this.props}/>
               <div className="columns is-centered" style={{marginLeft: "2rem", marginRight: "1rem"}}>
@@ -208,7 +221,8 @@ class MeetingViz extends React.PureComponent {
                   </div>
 
                   </div>
-              </div>
+            </div>
+            </Waypoint>
         );
     }
 }

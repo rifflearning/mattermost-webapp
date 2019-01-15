@@ -9,6 +9,7 @@ import moment from 'moment';
 import lifecycle from 'react-pure-lifecycle';
 
 import {
+    loadMoreMeetings,
     loadRecentMeetings,
     selectMeeting,
     loadMeetingData,
@@ -37,11 +38,15 @@ const mapStateToProps = (state) => {
         statsStatus: riffState.statsStatus,
         processedNetwork: riffState.networkData,
         processedTimeline: riffState.timelineData,
-        loadingError: riffState.loadingError
+        loadingError: riffState.loadingError,
+        numLoadedMeetings: riffState.numLoadedMeetings
     };
 };
 
 const mapDispatchToProps = (dispatch) => ({
+    loadMoreMeetings: () => {
+        dispatch(loadMoreMeetings());
+    },
     loadRecentMeetings: (uid) => {
         dispatch(loadRecentMeetings(uid));
     },
@@ -86,6 +91,14 @@ const mapMergeProps = (stateProps, dispatchProps, ownProps) => {
         selectedMeetingDuration: formatMeetingDuration(
             stateProps.meetings[0]
         ),
+        maybeLoadNextMeeting: (meetingId) => {
+            let lastLoadedMeeting = stateProps.meetings[stateProps.numLoadedMeetings-1];
+            console.log("Maybe loading more meetings", lastLoadedMeeting);
+            if (lastLoadedMeeting._id === meetingId) {
+                console.log("loading more meetings!");
+                dispatchProps.loadMoreMeetings();
+            }
+        }
     };
 };
 

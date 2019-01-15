@@ -115,6 +115,7 @@ export const WebRtcActionTypes = keyMirror({
 });
 
 export const DashboardActionTypes = keyMirror({
+    DASHBOARD_LOAD_MORE_MEETINGS: null,
     DASHBOARD_LOADING_ALL_MEETINGS: null,
     DASHBOARD_MEETING_LOAD_STATUS: null,
     DASHBOARD_FETCH_MEETING_UTTERANCES: null,

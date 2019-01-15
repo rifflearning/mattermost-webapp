@@ -8,6 +8,12 @@ import firebaseApp from 'utils/firebase';
 
 const db = firebaseApp.firestore();
 
+export const loadMoreMeetings = () => {
+    return {
+        type: DashboardActionTypes.DASHBOARD_LOAD_MORE_MEETINGS,
+    };
+};
+
 export const updateMeetingList = (meetings) => {
     return {
         type: DashboardActionTypes.DASHBOARD_FETCH_MEETINGS,
@@ -110,7 +116,7 @@ export const loadRecentMeetings = (uid) => (dispatch) => {
             );
             
             // limit to 10 to begin with
-            meetings = _.first(meetings, 10);
+            //meetings = _.first(meetings, 2);
 
             dispatch(updateMeetingList(meetings));
             if (meetings.length > 0) {
@@ -394,6 +400,7 @@ export const processTimeline = (uid, utterances, meetingId) => {
                 endTime};
     });
 };
+
 
 export const loadMeetingData = (uid, meetingId) => (dispatch) => {
     console.log("loading meeting data:", uid, meetingId);
