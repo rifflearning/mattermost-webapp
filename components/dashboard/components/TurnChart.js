@@ -99,7 +99,7 @@ const TurnChart = ({processedUtterances, participantId, loaded}) => {
           title='Speaking Time'
           chartDiv={loaded ? chartDiv : loadingDiv}
           chartInfo={chartInfo}
-          maxWidth="55vw"
+          maxWidth={100}
         />
     );
 };

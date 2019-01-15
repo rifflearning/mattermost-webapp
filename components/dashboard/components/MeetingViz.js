@@ -1,6 +1,7 @@
 import React, {Component, Fragment} from 'react';
 import {connect} from 'react-redux';
 import {withRouter} from 'react-router-dom';
+import sizeMe from 'react-sizeme';
 import styled, {injectGlobal, keyframes} from 'styled-components';
 import {Link} from 'react-router-dom';
 import ReactChartkick, {ColumnChart, PieChart} from 'react-chartkick';
@@ -93,17 +94,19 @@ const Header = (props) => {
 };
 
 class MeetingViz extends React.PureComponent {
-    static propTypes = {
-        processedUtterances: PropTypes.array.isRequired,
-        user: PropTypes.object.isRequired,
-        influenceData: PropTypes.object.isRequired,
-        timelineData: PropTypes.object.isRequired,
-        meeting: PropTypes.object.isRequired,
-        loaded: PropTypes.bool.isRequired
-    }
+    // static propTypes = {
+    //     processedUtterances: PropTypes.array.isRequired,
+    //     user: PropTypes.object.isRequired,
+    //     influenceData: PropTypes.object.isRequired,
+    //     timelineData: PropTypes.object.isRequired,
+    //     meeting: PropTypes.object.isRequired,
+    //     loaded: PropTypes.bool.isRequired
+    // }
 
     static defaultProps = {
         processedUtterances: [],
+        influenceData: {},
+        timelineData: {}
     }
 
     constructor(props) {
@@ -122,9 +125,9 @@ class MeetingViz extends React.PureComponent {
             <div>
               <Header {...this.props}/>
               <div className="columns is-centered" style={{marginLeft: "2rem", marginRight: "1rem"}}>
-                  <div className="column" style={{paddingBottom: "0px"}}>
+                <div className="column" style={{paddingBottom: "0px"}}>
                     <div className="columns is-centered is-hidden-touch">
-                        <div className="column is-half has-text-centered is-centered"
+                        <div className="column is-half has-text-centered"
                                style={{alignItems: 'center', display: 'flex'}}>
                           <TurnChart processedUtterances={this.props.processedUtterances}
                                      loaded={this.props.loaded}
@@ -190,19 +193,24 @@ class MeetingViz extends React.PureComponent {
                     </div>
 
                     <div className="section" style={{padding: "0px"}}>
-                      <TimelineChart processedTimeline={this.props.timelineData}
-                                     loaded={this.props.loaded}
-                                     meeting={this.props.meeting}
-                                     participantId={this.props.user.uid}>
-                      </TimelineChart>
+                      <div className="columns is-centered">
+                        <div className="column is-centered has-text-centered">
+                          <TimelineChart processedTimeline={this.props.timelineData}
+                                         loaded={this.props.loaded}
+                                         meeting={this.props.meeting}
+                                         participantId={this.props.user.uid}
+                                         width={this.props.size.width}
+                                         >
+                          </TimelineChart>
+                        </div>
+                      </div>
                     </div>
                   </div>
 
                   </div>
-                </div>
-
+              </div>
         );
     }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(MeetingViz);
+export default sizeMe({monitorWidth: true})(connect(mapStateToProps, mapDispatchToProps)(MeetingViz));

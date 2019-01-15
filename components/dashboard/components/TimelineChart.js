@@ -56,7 +56,7 @@ const drawGantt = (props) => {
                 color: u.participant == participantId ? colorYou : getColor(u.participant)};
     });
 
-    var gantt = Gantt('#gantt-' + props.meeting._id).taskTypes(participantNames);
+    var gantt = Gantt('#gantt-' + props.meeting._id, props.width).taskTypes(participantNames);
     gantt(utts2);
 };
 
@@ -69,8 +69,10 @@ const componentDidMount = (props) => {
 
 const componentDidUpdate = (props) => {
     // console.log("component updating...", props);
-    // drawGantt(props);
-    return false;
+    if (props.loaded & props.processedTimeline) {
+        drawGantt(props);
+    };
+    //return false;
 };
 
 const methods = {
@@ -108,7 +110,8 @@ const TimelineView = (props) => {
             // a way to redraw the chart
             redraw={() => {if (props.loaded && props.processedTimeline) { drawGantt(props)}}}
             chartInfo={chartInfo}
-            maxWidth='80'
+            maxWidth={100}
+            setWidth={props.width}
             />
     );
 };
