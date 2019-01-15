@@ -123,7 +123,9 @@ const ChartCard = enhance((props) => {
                     <ChartInfo>{props.chartInfo}</ChartInfo>
                 </ChartInfoDiv>
             )}
-            <ChartDiv>{props.chartDiv}</ChartDiv>
+            <ChartDiv>
+            {props.chartDiv}
+            </ChartDiv>
         </Card>
     );
 });
