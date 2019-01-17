@@ -9,6 +9,7 @@ import moment from 'moment';
 import lifecycle from 'react-pure-lifecycle';
 
 import {
+    loadMoreMeetings,
     loadRecentMeetings,
     selectMeeting,
     loadMeetingData,
@@ -37,15 +38,20 @@ const mapStateToProps = (state) => {
         statsStatus: riffState.statsStatus,
         processedNetwork: riffState.networkData,
         processedTimeline: riffState.timelineData,
+        loadingError: riffState.loadingError,
+        numLoadedMeetings: riffState.numLoadedMeetings
     };
 };
 
 const mapDispatchToProps = (dispatch) => ({
-    loadRecentMeetings: (uid, selectedMeeting) => {
-        dispatch(loadRecentMeetings(uid, selectedMeeting));
+    loadMoreMeetings: () => {
+        dispatch(loadMoreMeetings());
     },
-    handleRefreshClick: (event, uid, selectedMeeting) => {
-        dispatch(loadRecentMeetings(uid, selectedMeeting));
+    loadRecentMeetings: (uid) => {
+        dispatch(loadRecentMeetings(uid));
+    },
+    handleRefreshClick: (event, uid) => {
+        dispatch(loadRecentMeetings(uid));
     },
     handleMeetingClick: (event, uid, meeting) => {
         event.preventDefault();
@@ -61,7 +67,7 @@ const mapDispatchToProps = (dispatch) => ({
 });
 
 const formatMeetingDuration = (meeting) => {
-    if (meeting === null) {
+    if (!meeting || meeting === null) {
         return '';
     }
 
@@ -83,20 +89,28 @@ const mapMergeProps = (stateProps, dispatchProps, ownProps) => {
         ...dispatchProps,
         ...ownProps,
         selectedMeetingDuration: formatMeetingDuration(
-            stateProps.selectedMeeting
+            stateProps.meetings[0]
         ),
+        maybeLoadNextMeeting: (meetingId) => {
+            let lastLoadedMeeting = stateProps.meetings[stateProps.numLoadedMeetings-1];
+            console.log("Maybe loading more meetings", lastLoadedMeeting);
+            if (lastLoadedMeeting._id === meetingId) {
+                console.log("loading more meetings!");
+                dispatchProps.loadMoreMeetings();
+            }
+        }
     };
 };
 
 const componentDidUpdate = (props) => {
     if (props.riffAuthToken && props.shouldFetch) {
-        props.loadRecentMeetings(props.user.id, props.selectedMeeting);
+        props.loadRecentMeetings(props.user.id);
     }
 };
 
 const componentDidMount = (props) => {
     if (props.riffAuthToken) {
-        props.loadRecentMeetings(props.user.id, props.selectedMeeting);
+        props.loadRecentMeetings(props.user.id);
     }
 
     $('body').addClass('app__body');
