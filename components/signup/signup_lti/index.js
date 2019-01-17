@@ -4,6 +4,8 @@
 import {connect} from 'react-redux';
 import {getConfig} from 'mattermost-redux/selectors/entities/general';
 
+import {getPasswordConfig} from 'utils/utils.jsx';
+
 import SignupLTI from './signup_lti.jsx';
 
 function mapStateToProps(state) {
@@ -16,11 +18,12 @@ function mapStateToProps(state) {
     const customDescriptionText = config.CustomDescriptionText;
 
     return {
+        customDescriptionText,
         enableSignUpWithLTI,
+        passwordConfig: getPasswordConfig(config),
+        privacyPolicyLink,
         siteName,
         termsOfServiceLink,
-        privacyPolicyLink,
-        customDescriptionText,
     };
 }
 
