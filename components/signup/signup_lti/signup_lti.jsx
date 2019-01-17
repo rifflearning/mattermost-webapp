@@ -5,8 +5,10 @@ import PropTypes from 'prop-types';
 import React from 'react';
 import {FormattedMessage} from 'react-intl';
 
-import Constants from 'utils/constants.jsx';
 import logoImage from 'images/logo.png';
+import {browserHistory} from 'utils/browser_history';
+import Constants from 'utils/constants.jsx';
+import {isValidPassword} from 'utils/utils.jsx';
 
 import BackButton from 'components/common/back_button.jsx';
 import LoadingScreen from 'components/loading_screen.jsx';
@@ -16,10 +18,12 @@ import FormattedMarkdownMessage from 'components/formatted_markdown_message.jsx'
 export default class SignupLTI extends React.Component {
     static get propTypes() {
         return {
+            customDescriptionText: PropTypes.string,
+            enableSignUpWithLTI: PropTypes.bool,
+            passwordConfig: PropTypes.object,
+            privacyPolicyLink: PropTypes.string,
             siteName: PropTypes.string,
             termsOfServiceLink: PropTypes.string,
-            privacyPolicyLink: PropTypes.string,
-            customDescriptionText: PropTypes.string,
         };
     }
 
@@ -27,11 +31,52 @@ export default class SignupLTI extends React.Component {
         super(props);
 
         this.state = {
-            email: 'jsmith@uni.email.com',
+            formData: {},
             loading: false,
             serverError: '',
+            usernameError: '',
+            emailError: '',
+            passwordError: '',
+            isSubmitting: false,
+            invalidRequest: false,
         };
     }
+
+    componentDidMount() {
+        if (this.props.enableSignUpWithLTI) {
+            this.decodeRequest(this.extractFormData());
+        } else {
+            browserHistory.push('/');
+        }
+    }
+
+    getCookie = (name) => {
+        // Implementation from: https://stackoverflow.com/a/25490531/6241000
+        const parts = document.cookie.match('(^|;)\\s*' + name + '\\s*=\\s*([^;]+)');
+        return parts ? parts.pop() : '';
+    };
+
+    extractFormData = () => {
+        return this.getCookie(Constants.LTI_DATA_COOKIE);
+    };
+
+    decodeRequest = (formData) => {
+        try {
+            const decodedForm = atob(formData);
+            const parsedForm = JSON.parse(decodedForm);
+            this.setState({formData: parsedForm});
+        } catch (e) {
+            this.setState({
+                invalidRequest: true,
+                serverError: (
+                    <FormattedMessage
+                        id='signup_LTI.invalid_request'
+                        defaultMessage='There was an error with your login request. Please try again or contact your system administrator.'
+                    />
+                ),
+            });
+        }
+    };
 
     handleSubmit = (e) => {
         e.preventDefault();
@@ -41,16 +86,43 @@ export default class SignupLTI extends React.Component {
             return;
         }
 
-        this.setState({
-            usernameError: '',
-            emailError: '',
-            passwordError: '',
-            serverError: '',
-            isSubmitting: true,
-        });
+        if (this.isPasswordValid()) {
+            this.setState({
+                usernameError: '',
+                emailError: '',
+                passwordError: '',
+                serverError: '',
+                isSubmitting: true,
+            });
+
+            // TODO: make API calls here
+        }
+    };
+
+    isPasswordValid = () => {
+        const providedPassword = this.refs.password.value;
+        const {valid, error} = isValidPassword(providedPassword, this.props.passwordConfig);
+        if (!valid && error) {
+            this.setState({
+                nameError: '',
+                emailError: '',
+                passwordError: error,
+                serverError: '',
+            });
+            return false;
+        }
+
+        return true;
     };
 
     renderLTISignup = () => {
+        const {formData = {}} = this.state;
+        const {
+            lis_person_contact_email_primary: email,
+            lis_person_name_full: fullName,
+            lis_person_sourcedid: username,
+        } = formData;
+
         let emailError = null;
         let emailDivStyle = 'form-group';
         if (this.state.emailError) {
@@ -73,13 +145,13 @@ export default class SignupLTI extends React.Component {
         }
 
         let yourEmailIs = null;
-        if (this.state.email) {
+        if (email) {
             yourEmailIs = (
                 <FormattedMarkdownMessage
                     id='signup_user_completed.emailIs'
                     defaultMessage="Your email address is **{email}**. You'll use this address to sign in to {siteName}."
                     values={{
-                        email: this.state.email,
+                        email,
                         siteName: this.props.siteName,
                     }}
                 />
@@ -102,11 +174,7 @@ export default class SignupLTI extends React.Component {
                                 type='email'
                                 ref='email'
                                 className='form-control'
-                                defaultValue={this.state.email}
-                                placeholder=''
-                                maxLength='128'
-                                spellCheck='false'
-                                autoCapitalize='off'
+                                defaultValue={email}
                                 disabled={true}
                             />
                             {emailError}
@@ -126,26 +194,7 @@ export default class SignupLTI extends React.Component {
                                 type='text'
                                 ref='fullname'
                                 className='form-control'
-                                defaultValue='John Smith'
-                                spellCheck='false'
-                                disabled={true}
-                            />
-                        </div>
-                    </div>
-                    <div className='margin--extra'>
-                        <h5><strong>
-                            <FormattedMessage
-                                id='signup_LTI.position'
-                                defaultMessage='Position'
-                            />
-                        </strong></h5>
-                        <div className='form-group'>
-                            <input
-                                id='position'
-                                type='text'
-                                ref='position'
-                                className='form-control'
-                                defaultValue='Student'
+                                defaultValue={fullName}
                                 disabled={true}
                             />
                         </div>
@@ -163,11 +212,7 @@ export default class SignupLTI extends React.Component {
                                 type='text'
                                 ref='username'
                                 className='form-control'
-                                defaultValue='jsmith'
-                                placeholder=''
-                                maxLength={Constants.MAX_USERNAME_LENGTH}
-                                spellCheck='false'
-                                autoCapitalize='off'
+                                defaultValue={username}
                                 disabled={true}
                             />
                             {usernameError}
@@ -233,7 +278,7 @@ export default class SignupLTI extends React.Component {
             return (<LoadingScreen/>);
         }
 
-        const ltiSignup = this.renderLTISignup();
+        let ltiSignup = this.renderLTISignup();
         const terms = (
             <p>
                 <FormattedMarkdownMessage
@@ -247,6 +292,10 @@ export default class SignupLTI extends React.Component {
                 />
             </p>
         );
+
+        if (this.state.invalidRequest) {
+            ltiSignup = null;
+        }
 
         return (
             <div>
