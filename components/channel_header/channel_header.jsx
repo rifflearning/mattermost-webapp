@@ -1,6 +1,5 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import {OverlayTrigger, Popover, Tooltip} from 'react-bootstrap';
@@ -9,6 +8,8 @@ import {Permissions} from 'mattermost-redux/constants';
 import {memoizeResult} from 'mattermost-redux/utils/helpers';
 import {Link} from 'react-router-dom';
 import parse from 'url-parse';
+import {getTimestamp} from 'utils/utils.jsx';
+import { createWebRtcLink } from 'utils/webrtc/webrtc';
 
 import 'bootstrap';
 
@@ -287,6 +288,8 @@ export default class ChannelHeader extends React.Component {
         actions.openModal(inviteModalData);
     };
 
+
+
     renderMute = () => {
         const channelMuted = isChannelMuted(this.props.channelMember);
 
@@ -348,6 +351,18 @@ export default class ChannelHeader extends React.Component {
         } else {
             this.showMoreDirectChannelsModal();
         }
+    }
+
+    makePostToSend = (channelId) => {
+        const time = getTimestamp();
+
+        let webRtcLink = createWebRtcLink(this.props.currentTeam.name, channelId);
+        let post = {
+            message: "I started a Riff meeting! Join here: " + webRtcLink.href,
+            channel_id: channelId,
+            pending_post_id: `${this.props.userId}:${time}`,
+            create_at: time,
+        };
     }
 
     webRtcDisabled = () => {
@@ -474,6 +489,7 @@ export default class ChannelHeader extends React.Component {
                 <MoreDirectChannels
                   onModalDismissed={this.hideMoreDirectChannelsModal}
                   isExistingChannel={false}
+                  makePostToSend={this.makePostToSend}
                   />
             );
         }

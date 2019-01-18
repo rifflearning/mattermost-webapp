@@ -46,6 +46,8 @@ export default class MoreDirectChannels extends React.Component {
         onModalDismissed: PropTypes.func,
         onHide: PropTypes.func,
 
+        makePostToSend: PropTypes.func,
+
         actions: PropTypes.shape({
             getProfiles: PropTypes.func.isRequired,
             getProfilesInTeam: PropTypes.func.isRequired,
@@ -138,6 +140,7 @@ export default class MoreDirectChannels extends React.Component {
         this.setState({show: false});
     }
 
+
     setUsersLoadingState = (loadingState) => {
         this.setState({
             loadingUsers: loadingState,
@@ -177,6 +180,9 @@ export default class MoreDirectChannels extends React.Component {
             this.exitToChannel = '/' + this.props.currentTeamName + '/channels/' + channel.name;
             this.setState({saving: false});
             this.handleHide();
+            if (this.props.makePostToSend) {
+                this.props.makePostToSend(channel.name);
+            }
         };
 
         const error = () => {
