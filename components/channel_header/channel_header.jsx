@@ -8,6 +8,7 @@ import {FormattedMessage} from 'react-intl';
 import {Permissions} from 'mattermost-redux/constants';
 import {memoizeResult} from 'mattermost-redux/utils/helpers';
 import {Link} from 'react-router-dom';
+import parse from 'url-parse';
 
 import 'bootstrap';
 
@@ -63,7 +64,7 @@ export default class ChannelHeader extends React.Component {
             openModal: PropTypes.func.isRequired,
             getCustomEmojisInText: PropTypes.func.isRequired,
             updateChannelNotifyProps: PropTypes.func.isRequired,
-            goToLastViewedChannel: PropTypes.func.isRequired,
+            //goToLastViewedChannel: PropTypes.func.isRequired,
             sendWebRtcMessage: PropTypes.func.isRequired,
         }).isRequired,
         channel: PropTypes.object.isRequired,
@@ -394,9 +395,9 @@ export default class ChannelHeader extends React.Component {
               >
               <Link target="_blank"
                     id="videochat"
-                    disabled={this.webRtcDisabled}
-                    to={this.props.webRtcLink}
-                    onClick={() => {this.props.actions.sendWebRtcMessage(this.props.channel.id,this.props.currentUser.id, this.props.webRtcLink, this.props.currentTeam.name); }}>
+                    disabled={this.webRtcDisabled()}
+                    to={this.props.webRtcLink.pathname}
+                    onClick={() => {this.props.actions.sendWebRtcMessage(this.props.channel.id,this.props.currentUser.id, this.props.webRtcLink.href, this.props.currentTeam.name); }}>
                 <PopoverStickOnHover
                   component={webrtcTooltip}
                   placement="bottom"

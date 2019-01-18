@@ -2,11 +2,15 @@ import SimpleWebRtc from 'simplewebrtc';
 import * as WebRtcActions from '../../actions/webrtc_actions';
 import sibilant from 'sibilant-webaudio';
 import { app, socket } from '../riff';
-import {updateRiffMeetingId} from '../../actions/views/riff'
+import {updateRiffMeetingId} from '../../actions/views/riff';
+import parse from 'url-parse';
 
 
 export const createWebRtcLink = (teamName, channelName) => {
-    return '/' + teamName + '/' + channelName + '/video' + '/' + generateUID();
+    let link = parse(window.location.href, true);
+    link.set('pathname', teamName + '/' + channelName + '/' + 'video' + '/' + generateUID());
+    console.log("Created webrtc Link:", link.href);
+    return link;
 }
 
 function generateUID() {
