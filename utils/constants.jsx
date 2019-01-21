@@ -697,7 +697,7 @@ export const Constants = {
     AnnouncementBarMessages,
     FileTypes,
 
-    LTI_DATA_COOKIE: 'MMLTIDATA',
+    LTI_LAUNCH_DATA_COOKIE: 'MMLTILAUNCHDATA',
 
     MAX_POST_VISIBILITY: 1000000,
 
