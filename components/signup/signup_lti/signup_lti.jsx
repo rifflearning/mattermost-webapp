@@ -161,26 +161,6 @@ export default class SignupLTI extends React.Component {
         return (
             <form>
                 <div className='inner__content'>
-                    <div className={'margin--extra'}>
-                        <h5><strong>
-                            <FormattedMessage
-                                id='signup_LTI.email'
-                                defaultMessage='Email Address'
-                            />
-                        </strong></h5>
-                        <div className={emailDivStyle}>
-                            <input
-                                id='email'
-                                type='email'
-                                ref='email'
-                                className='form-control'
-                                defaultValue={email}
-                                disabled={true}
-                            />
-                            {emailError}
-                        </div>
-                    </div>
-                    {yourEmailIs}
                     <div className='margin--extra'>
                         <h5><strong>
                             <FormattedMessage
@@ -218,6 +198,26 @@ export default class SignupLTI extends React.Component {
                             {usernameError}
                         </div>
                     </div>
+                    <div className={'margin--extra'}>
+                        <h5><strong>
+                            <FormattedMessage
+                                id='signup_LTI.email'
+                                defaultMessage='Email Address'
+                            />
+                        </strong></h5>
+                        <div className={emailDivStyle}>
+                            <input
+                                id='email'
+                                type='email'
+                                ref='email'
+                                className='form-control'
+                                defaultValue={email}
+                                disabled={true}
+                            />
+                            {emailError}
+                        </div>
+                    </div>
+                    {yourEmailIs}
                     <div className='margin--extra'>
                         <h5><strong>
                             <FormattedMessage
