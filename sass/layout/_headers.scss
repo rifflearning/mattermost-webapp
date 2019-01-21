@@ -123,6 +123,16 @@
         z-index: 5;
         color: #B1B1B3;
 
+        #webrtc-btn {
+            color: rgba(74,74,74,0.9);
+        }
+
+        &:hover {
+           #webrtc-btn {
+                color: rgb(15,117,142);
+            } 
+        }
+
         &.wide {
             @include border-radius(37px);
             line-height: 28px;

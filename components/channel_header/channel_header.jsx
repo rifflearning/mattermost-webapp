@@ -388,7 +388,6 @@ export default class ChannelHeader extends React.Component {
               {tooltipContent}
             </div>
         );
-
         return (
             <div className={'webrtc__header channel-header__icon wide text ' + circleClass}
                  style={{cursor: this.webRtcDisabled() ? 'default' : 'pointer'}}
@@ -411,7 +410,7 @@ export default class ChannelHeader extends React.Component {
                     id='webrtc-btn'
                     className={'webrtc__button hidden-xs ' + circleClass}
                     >
-                    {'WebRTC'}
+                    <i className='material-icons icon icon__members'>voice_chat</i>
                   </div>
                   </button>
                 </PopoverStickOnHover>
