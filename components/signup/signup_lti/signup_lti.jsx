@@ -57,7 +57,7 @@ export default class SignupLTI extends React.Component {
     };
 
     extractFormData = () => {
-        return this.getCookie(Constants.LTI_DATA_COOKIE);
+        return this.getCookie(Constants.LTI_LAUNCH_DATA_COOKIE);
     };
 
     decodeRequest = (formData) => {
@@ -95,7 +95,7 @@ export default class SignupLTI extends React.Component {
                 isSubmitting: true,
             });
 
-            // TODO: make API calls here
+            // TODO: Make api call for createLTIUser here
         }
     };
 
