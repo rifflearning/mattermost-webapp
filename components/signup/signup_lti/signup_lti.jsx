@@ -7,7 +7,7 @@ import {FormattedMessage} from 'react-intl';
 
 import logoImage from 'images/logo.png';
 import {browserHistory} from 'utils/browser_history';
-import Constants from 'utils/constants.jsx';
+import {LTI_CONSTANTS} from 'utils/constants.jsx';
 import {isValidPassword} from 'utils/utils.jsx';
 
 import BackButton from 'components/common/back_button.jsx';
@@ -19,6 +19,9 @@ export default class SignupLTI extends React.Component {
     static get propTypes() {
         return {
             customDescriptionText: PropTypes.string,
+            actions: PropTypes.shape({
+                createLTIUser: PropTypes.func.isRequired,
+            }).isRequired,
             enableSignUpWithLTI: PropTypes.bool,
             passwordConfig: PropTypes.object,
             privacyPolicyLink: PropTypes.string,
@@ -57,7 +60,7 @@ export default class SignupLTI extends React.Component {
     };
 
     extractFormData = () => {
-        return this.getCookie(Constants.LTI_LAUNCH_DATA_COOKIE);
+        return this.getCookie(LTI_CONSTANTS.LAUNCH_DATA_COOKIE);
     };
 
     decodeRequest = (formData) => {
@@ -78,7 +81,7 @@ export default class SignupLTI extends React.Component {
         }
     };
 
-    handleSubmit = (e) => {
+    handleSubmit = async (e) => {
         e.preventDefault();
 
         // bail out if a submission is already in progress
@@ -95,7 +98,17 @@ export default class SignupLTI extends React.Component {
                 isSubmitting: true,
             });
 
-            // TODO: Make api call for createLTIUser here
+            const {data, error} = await this.props.actions.createLTIUser({password: this.refs.password.value});
+            if (data) {
+                // TODO: update this when login flow is complete
+                browserHistory.push('/');
+            }
+            if (error) {
+                this.setState({
+                    serverError: error.message,
+                    isSubmitting: false,
+                });
+            }
         }
     };
 
@@ -118,9 +131,9 @@ export default class SignupLTI extends React.Component {
     renderLTISignup = () => {
         const {formData = {}} = this.state;
         const {
-            lis_person_contact_email_primary: email,
-            lis_person_name_full: fullName,
-            lis_person_sourcedid: username,
+            [LTI_CONSTANTS.EMAIL_FIELD]: email,
+            [LTI_CONSTANTS.FULLNAME_FIELD]: fullName,
+            [LTI_CONSTANTS.USERNAME_FIELD]: username,
         } = formData;
 
         let emailError = null;
