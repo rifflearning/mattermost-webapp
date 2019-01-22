@@ -2,7 +2,10 @@
 // See LICENSE.txt for license information.
 
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+
 import {getConfig} from 'mattermost-redux/selectors/entities/general';
+import {createLTIUser} from 'mattermost-redux/actions/users';
 
 import {getPasswordConfig} from 'utils/utils.jsx';
 
@@ -27,4 +30,12 @@ function mapStateToProps(state) {
     };
 }
 
-export default connect(mapStateToProps)(SignupLTI);
+function mapDispatchToProps(dispatch) {
+    return {
+        actions: bindActionCreators({
+            createLTIUser,
+        }, dispatch),
+    };
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignupLTI);

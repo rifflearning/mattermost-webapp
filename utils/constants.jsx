@@ -682,6 +682,13 @@ export const DefaultRolePermissions = {
     ],
 };
 
+export const LTI_CONSTANTS = {
+    EMAIL_FIELD: 'lis_person_contact_email_primary',
+    USERNAME_FIELD: 'lis_person_sourcedid',
+    FULLNAME_FIELD: 'lis_person_name_full',
+    LAUNCH_DATA_COOKIE: 'MMLTILAUNCHDATA',
+};
+
 export const Constants = {
     SettingsTypes,
     JobTypes,
@@ -697,7 +704,7 @@ export const Constants = {
     AnnouncementBarMessages,
     FileTypes,
 
-    LTI_LAUNCH_DATA_COOKIE: 'MMLTILAUNCHDATA',
+    LTI_CONSTANTS,
 
     MAX_POST_VISIBILITY: 1000000,
 
