@@ -677,7 +677,7 @@ export const DefaultRolePermissions = {
     ],
 };
 
-export const LTI_CONSTANTS = {
+export const LTIConstants = {
     EMAIL_FIELD: 'lis_person_contact_email_primary',
     USERNAME_FIELD: 'lis_person_sourcedid',
     FULLNAME_FIELD: 'lis_person_name_full',
@@ -699,7 +699,7 @@ export const Constants = {
     AnnouncementBarMessages,
     FileTypes,
 
-    LTI_CONSTANTS,
+    LTIConstants,
 
     MAX_POST_VISIBILITY: 1000000,
 
