@@ -7,7 +7,7 @@ import {FormattedMessage} from 'react-intl';
 
 import logoImage from 'images/logo.png';
 import {browserHistory} from 'utils/browser_history';
-import {LTI_CONSTANTS} from 'utils/constants.jsx';
+import {LTIConstants} from 'utils/constants.jsx';
 import {isValidPassword} from 'utils/utils.jsx';
 
 import BackButton from 'components/common/back_button.jsx';
@@ -60,7 +60,7 @@ export default class SignupLTI extends React.Component {
     };
 
     extractFormData = () => {
-        return this.getCookie(LTI_CONSTANTS.LAUNCH_DATA_COOKIE);
+        return this.getCookie(LTIConstants.LAUNCH_DATA_COOKIE);
     };
 
     decodeRequest = (formData) => {
@@ -131,9 +131,9 @@ export default class SignupLTI extends React.Component {
     renderLTISignup = () => {
         const {formData = {}} = this.state;
         const {
-            [LTI_CONSTANTS.EMAIL_FIELD]: email,
-            [LTI_CONSTANTS.FULLNAME_FIELD]: fullName,
-            [LTI_CONSTANTS.USERNAME_FIELD]: username,
+            [LTIConstants.EMAIL_FIELD]: email,
+            [LTIConstants.FULLNAME_FIELD]: fullName,
+            [LTIConstants.USERNAME_FIELD]: username,
         } = formData;
 
         let emailError = null;
