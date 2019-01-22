@@ -1585,6 +1585,7 @@ export const Constants = {
     TRANSPARENT_PIXEL:
         'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
     TRIPLE_BACK_TICKS: /```/g,
+    SYSTEM_BRAND_NAME: 'Riff Edu'
 };
 
 t('suggestion.mention.channels');
