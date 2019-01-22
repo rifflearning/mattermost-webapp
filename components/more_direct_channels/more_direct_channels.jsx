@@ -6,6 +6,8 @@ import React from 'react';
 import {Modal} from 'react-bootstrap';
 import {FormattedMessage} from 'react-intl';
 import {Client4} from 'mattermost-redux/client';
+import {emitUserPostedEvent, postListScrollChangeToBottom} from 'actions/global_actions';
+import {createPost} from 'actions/post_actions';
 
 import {browserHistory} from 'utils/browser_history';
 import {openDirectChannelToUser, openGroupChannelToUsers} from 'actions/channel_actions.jsx';
@@ -181,7 +183,10 @@ export default class MoreDirectChannels extends React.Component {
             this.setState({saving: false});
             this.handleHide();
             if (this.props.makePostToSend) {
-                this.props.makePostToSend(channel.name);
+                let post = this.props.makePostToSend(channel.id);
+                emitUserPostedEvent(post);
+                createPost(post,[]);
+                postListScrollChangeToBottom();
             }
         };
 

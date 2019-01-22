@@ -363,6 +363,7 @@ export default class ChannelHeader extends React.Component {
             pending_post_id: `${this.props.userId}:${time}`,
             create_at: time,
         };
+        return post;
     }
 
     webRtcDisabled = () => {
