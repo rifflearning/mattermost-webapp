@@ -2532,6 +2532,7 @@
   "signup_LTI.fullname": "Full Name",
   "signup_LTI.position": "Position",
   "signup_LTI.username": "Username",
+  "signup_LTI.invalid_request": "There was an error with your login request. Please try again or contact your system administrator.",
   "signup.office365": "Office 365",
   "signup.saml.icon": "SAML Icon",
   "signup.title": "Create an account with:",
