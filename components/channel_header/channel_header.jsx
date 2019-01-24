@@ -1,6 +1,5 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import {OverlayTrigger, Popover, Tooltip} from 'react-bootstrap';
@@ -8,6 +7,9 @@ import {FormattedMessage} from 'react-intl';
 import {Permissions} from 'mattermost-redux/constants';
 import {memoizeResult} from 'mattermost-redux/utils/helpers';
 import {Link} from 'react-router-dom';
+import parse from 'url-parse';
+import {getTimestamp} from 'utils/utils.jsx';
+import { createWebRtcLink } from 'utils/webrtc/webrtc';
 
 import 'bootstrap';
 
@@ -63,7 +65,7 @@ export default class ChannelHeader extends React.Component {
             openModal: PropTypes.func.isRequired,
             getCustomEmojisInText: PropTypes.func.isRequired,
             updateChannelNotifyProps: PropTypes.func.isRequired,
-            goToLastViewedChannel: PropTypes.func.isRequired,
+            //goToLastViewedChannel: PropTypes.func.isRequired,
             sendWebRtcMessage: PropTypes.func.isRequired,
         }).isRequired,
         channel: PropTypes.object.isRequired,
@@ -286,6 +288,8 @@ export default class ChannelHeader extends React.Component {
         actions.openModal(inviteModalData);
     };
 
+
+
     renderMute = () => {
         const channelMuted = isChannelMuted(this.props.channelMember);
 
@@ -349,6 +353,19 @@ export default class ChannelHeader extends React.Component {
         }
     }
 
+    makePostToSend = (channelId) => {
+        const time = getTimestamp();
+
+        let webRtcLink = createWebRtcLink(this.props.currentTeam.name, channelId);
+        let post = {
+            message: "I started a Riff meeting! Join here: " + webRtcLink.href,
+            channel_id: channelId,
+            pending_post_id: `${this.props.userId}:${time}`,
+            create_at: time,
+        };
+        return post;
+    }
+
     webRtcDisabled = () => {
         return (!this.props.channelStats ||
                 this.props.channelStats.member_count > 6);
@@ -394,9 +411,9 @@ export default class ChannelHeader extends React.Component {
               >
               <Link target="_blank"
                     id="videochat"
-                    disabled={this.webRtcDisabled}
-                    to={this.props.webRtcLink}
-                    onClick={() => {this.props.actions.sendWebRtcMessage(this.props.channel.id,this.props.currentUser.id, this.props.webRtcLink, this.props.currentTeam.name); }}>
+                    disabled={this.webRtcDisabled()}
+                    to={this.props.webRtcLink.pathname}
+                    onClick={() => { if (!this.webRtcDisabled()) { this.props.actions.sendWebRtcMessage(this.props.channel.id,this.props.currentUser.id, this.props.webRtcLink.href, this.props.currentTeam.name) } }}>
                 <PopoverStickOnHover
                   component={webrtcTooltip}
                   placement="bottom"
@@ -473,6 +490,7 @@ export default class ChannelHeader extends React.Component {
                 <MoreDirectChannels
                   onModalDismissed={this.hideMoreDirectChannelsModal}
                   isExistingChannel={false}
+                  makePostToSend={this.makePostToSend}
                   />
             );
         }
