@@ -15,12 +15,13 @@ import Chart from 'chart.js';
 import moment from 'moment';
 import _ from 'underscore';
 import ChartCard from './ChartCard';
+import ChartTable from './ChartTable';
 import {HorizontalBar} from 'react-chartjs-2';
 
 const colorYou = '#ab45ab';
 let peerColors = ['#f56b6b', '#128EAD', '#7caf5f', '#f2a466'];
 
-/* takes a string phrase and breaks it into separate phrases 
+/* takes a string phrase and breaks it into separate phrases
    no bigger than 'maxwidth', breaks are made at complete words.*/
 
 function formatLabel(str, maxwidth){
@@ -127,7 +128,7 @@ const options = {
     scales: {
         yAxes: [
             {
-                gridLines: {display: false}, 
+                gridLines: {display: false},
             }
         ],
         xAxes: [
@@ -140,7 +141,7 @@ const options = {
                 }
             }
         ],
-        gridLines: {display: false} 
+        gridLines: {display: false}
     }
 
 };
@@ -176,12 +177,23 @@ const BarChart = ({processedInfluence, participantId, influenceType, loaded}) =>
     );
 
     var BarGraph;
+    var chartTable;
     if (loaded) {
         let labelsAndData = getLabelsAndData(participantId, influenceType, processedInfluence);
         console.log("influence labels and data,", influenceType, labelsAndData)
 
         let BarGraphData = transformDataForBarChart(labelsAndData.labels, labelsAndData.data);
         BarGraph = getBarGraph(influenceType, BarGraphData, options);
+
+        chartTable = (
+          <ChartTable
+            cols={['Participant', 'Responses']}
+            rows={labelsAndData.labels.map((label, i) => [
+              label,
+              labelsAndData.data[i]
+            ])}
+          />
+        );
     }
 
     return (
@@ -189,7 +201,8 @@ const BarChart = ({processedInfluence, participantId, influenceType, loaded}) =>
           title={chartTitle}
           maxWidth={100}
           chartDiv={loaded ? BarGraph : loadingDiv}
-          chartInfo={chartInfoText}>
+          chartInfo={chartInfoText}
+          chartTable={loaded ? chartTable : false}>
         </ChartCard>
     );
 };

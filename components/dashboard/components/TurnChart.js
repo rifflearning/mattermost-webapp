@@ -8,6 +8,7 @@ import ReactChartkick, {ColumnChart, PieChart} from 'react-chartkick';
 import {ScaleLoader} from 'react-spinners';
 import MaterialIcon from 'material-icons-react';
 import Chart from 'chart.js';
+import ChartTable from './ChartTable';
 import _ from 'underscore';
 
 import moment from 'moment';
@@ -53,6 +54,7 @@ const TurnChart = ({processedUtterances, participantId, loaded}) => {
 
 
     var chartDiv;
+    var chartTable;
     if (loaded) {
         const r = formatChartData(processedUtterances, participantId);
         console.log('data for chart:', r.data);
@@ -88,6 +90,27 @@ const TurnChart = ({processedUtterances, participantId, loaded}) => {
               width='100%'
               />
         );
+
+        const totalTime = r.data.reduce((prev, curr) => {
+          return prev + curr[1];
+        }, 0);
+
+        const getTimeString =
+          seconds => `${Math.trunc(seconds / 60)} minutes ${Math.round(seconds % 60)} seconds`;
+
+        const getPercentageString =
+          seconds => `${Math.round((seconds / totalTime) * 100)}%`;
+
+        chartTable = (
+         <ChartTable
+           cols={['Participant', 'Percent Speaking Time', 'Total Speaking Time']}
+           rows={r ? r.data.map(participant => [
+             participant[0],
+             getPercentageString(participant[1]),
+             getTimeString(participant[1])
+           ]) : []}
+         />
+        );
     }
 
     const loadingDiv = (
@@ -100,6 +123,7 @@ const TurnChart = ({processedUtterances, participantId, loaded}) => {
           chartDiv={loaded ? chartDiv : loadingDiv}
           chartInfo={chartInfo}
           maxWidth={100}
+          chartTable={loaded ? chartTable : false}
         />
     );
 };
