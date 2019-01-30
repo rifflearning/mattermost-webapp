@@ -4,6 +4,7 @@ import sibilant from 'sibilant-webaudio';
 import { app, socket } from '../riff';
 import {updateRiffMeetingId} from '../../actions/views/riff';
 import parse from 'url-parse';
+import { logger } from '../riff';
 
 
 export const createWebRtcLink = (teamName, channelName) => {
@@ -14,7 +15,7 @@ export const createWebRtcLink = (teamName, channelName) => {
 }
 
 function generateUID() {
-    // I generate the UID from two parts here 
+    // I generate the UID from two parts here
     // to ensure the random number provide enough bits.
     var firstPart = (Math.random() * 46656) | 0;
     var secondPart = (Math.random() * 46656) | 0;
@@ -23,6 +24,14 @@ function generateUID() {
     return firstPart + secondPart;
 }
 
+
+export function isScreenShareSourceAvailable() {
+  // currently we only support chrome v70+ (w/ experimental features enabled, if necessary)
+  // and firefox
+  return (navigator.getDisplayMedia ||
+    navigator.mediaDevices.getDisplayMedia ||
+    !!navigator.mediaDevices.getSupportedConstraints().mediaSource);
+}
 
 export default function (localVideoNode, dispatch, getState) {
     //TODO: make dynamic
@@ -49,7 +58,8 @@ export default function (localVideoNode, dispatch, getState) {
         debug: true
     };
 
-    let webrtc = new SimpleWebRtc(webRtcConfig);
+    const webrtc = new SimpleWebRtc(webRtcConfig);
+
 
     webrtc.on('videoAdded', function (video, peer) {
         console.log("added video", video, peer);
@@ -66,6 +76,34 @@ export default function (localVideoNode, dispatch, getState) {
             //TODO: state get here is wrong.
             dispatch(WebRtcActions.riffParticipantLeaveRoom(state.views.riff.meetingId, riffId));
         }
+    });
+
+    webrtc.on('screenAdded', function (video, peer) {
+        logger.debug("adding shared screen!", video, "from", peer);
+        dispatch(WebRtcActions.addSharedScreen({ videoEl: video, peer: peer }));
+    });
+
+    webrtc.on('screenRemoved', function (video, peer) {
+        logger.debug("removing shared screen!", video);
+        dispatch(WebRtcActions.removeSharedScreen());
+    });
+
+    webrtc.on('localScreenAdded', function (video) {
+        dispatch(WebRtcActions.addLocalSharedScreen(video));
+    });
+
+    webrtc.on('localScreenRemoved', function (video) {
+        dispatch(WebRtcActions.removeLocalSharedScreen(video));
+    });
+
+    // this happens if the user ends via the chrome button
+    // instead of our button
+    webrtc.on('localScreenStopped', function (video) {
+        dispatch(WebRtcActions.removeLocalSharedScreen(video));
+    });
+
+    webrtc.on('localScreenRequestFailed', function () {
+        dispatch(WebRtcActions.getDisplayError());
     });
 
     webrtc.on('localStreamRequestFailed', function (event) {

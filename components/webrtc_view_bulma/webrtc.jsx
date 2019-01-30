@@ -29,13 +29,12 @@ class WebRtc extends Component {
         console.log("webrt has these props:", props);
         this.onUnload = this.onUnload.bind(this);
         this.render = this.render.bind(this);
-        // creating ref for local video so we can pass down to children
-        this.localVideoRef = React.createRef();
+        this.reattachVideo = this.reattachVideo.bind(this);
     }
-
+    
     componentDidMount () {
         console.log("adding local video to:", this.localVideoRef);
-        let localVideo = ReactDOM.findDOMNode(this.localVideoRef.current);
+        let localVideo = ReactDOM.findDOMNode(this.localVideoRef);
         //TODO: "" here should be replaced by user info.
         this.webrtc = webrtc(localVideo,
                              this.props.dispatch,
@@ -56,6 +55,28 @@ class WebRtc extends Component {
         // we previously left the riff room
     }
 
+    reattachVideo(video) {
+      if (video == null) {
+        return;
+      }
+      try {
+        if (this.props.inRoom &&
+            this.webrtc &&
+            this.webrtc.webrtc.localStreams.length &&
+            video.srcObject == null) {
+          this.webrtc.reattachLocalVideo(video);
+        }
+      } catch (err) {
+        // it is possible webrtc state will change while re-rendering,
+        // which can break things
+        // we catch the exception here so we can recover
+        logger.debug(err);
+      }
+      
+      // creating ref for local video so we can pass down to children
+      this.localVideoRef = video;
+    }
+
     render () {
         return (
             <div id='app-content'
@@ -65,7 +86,8 @@ class WebRtc extends Component {
                   <div className="column is-3 is-sidebar-menu is-hidden-mobile">
                   <WebRtcSidebar {...this.props}
                                  webrtc={this.webrtc}
-                                 localVideoRef={this.localVideoRef}/>
+                                 localVideoRef={this.localVideoRef}
+                                 reattachVideo={this.reattachVideo}/>
                   </div>
                   <div className="column">
                   <RenderVideos inRoom={this.props.inRoom}
@@ -84,7 +106,8 @@ class WebRtc extends Component {
                     displayRoomName={false}
                     displayName={this.props.user.nickname == "" ?
                     "@" + this.props.user.username : this.props.user.nickname}
-                    roDisplayName={true}>
+                    roDisplayName={true}
+                    webRtcRemoteSharedScreen={this.props.webRtcRemoteSharedScreen}>
                   </RenderVideos>
                   {this.props.inRoom && <TextChat/>}
                   </div>
