@@ -368,7 +368,7 @@ export default class ChannelHeader extends React.Component {
 
     webRtcDisabled = () => {
         return (!this.props.channelStats ||
-                this.props.channelStats.member_count > 6);
+                this.props.channelStats.member_count > 7);
     }
 
     renderWebRtc = (circleClass) => {
