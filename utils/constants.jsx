@@ -98,20 +98,23 @@ export const WebRtcActionTypes = keyMirror({
     JOINED_ROOM: null,
     READY_TO_CALL: null,
     LEAVE_ROOM: null,
-
     MUTE_AUDIO: null,
     UNMUTE_AUDIO: null,
     VOLUME_CHANGED: null,
-
     GET_MEDIA: null,
     GET_MEDIA_ERROR: null,
-
     CHANGE_PEER_RIFF_ID: null,
     ADD_PEER: null,
     REMOVE_PEER: null,
-
     TEXT_CHAT_MSG_UPDATE: null,
-    TEXT_CHAT_SET_BADGE: null
+    TEXT_CHAT_SET_BADGE: null,
+    SHARE_SCREEN: null,
+    STOP_SHARE_SCREEN: null,
+    CHAT_GET_DISPLAY_ERROR: null,
+    REMOVE_SHARED_SCREEN: null,
+    ADD_SHARED_SCREEN: null,
+    ADD_LOCAL_SHARED_SCREEN: null,
+    REMOVE_LOCAL_SHARED_SCREEN: null
 });
 
 export const DashboardActionTypes = keyMirror({

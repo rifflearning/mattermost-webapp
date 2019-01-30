@@ -27,7 +27,10 @@ const initialState = {
         lastRoom: "",
         lastMeetingId: "",
         badge: 0
-    }
+    },
+    userSharing: false,
+    webRtcLocalSharedScreen: null,
+    webRtcRemoteSharedScreen: null
 };
 
 
@@ -144,6 +147,44 @@ const webrtc = (state = initialState, action) => {
                  textchat: {...state.textchat,
                             badge: action.badgeValue}};
 
+    case(WebRtcActionTypes.SHARE_SCREEN):
+        return {...state, 
+            userSharing: true};                   
+
+    case(WebRtcActionTypes.STOP_SHARE_SCREEN):
+        return {...state, 
+            webRtcLocalSharedScreen: null, 
+            userSharing: false};
+
+    case(WebRtcActionTypes.CHAT_GET_DISPLAY_ERROR):
+        return {...state, userSharing: false};
+
+    case(WebRtcActionTypes.ADD_SHARED_SCREEN):
+        return {
+          ...state,
+          webRtcRemoteSharedScreen: action.peer.peer.videoEl}
+
+    case(WebRtcActionTypes.REMOVE_SHARED_SCREEN):
+        return {
+          ...state,
+          webRtcRemoteSharedScreen: null}
+
+    case(WebRtcActionTypes.ADD_LOCAL_SHARED_SCREEN):
+        if (state.webRtcLocalSharedScreen) {
+          // we only allow one shared screen at a time.
+          // we should be checking for this before allowing the user to share
+          // but just in case
+          return state;
+        }
+        return {
+          ...state,
+          webRtcLocalSharedScreen: action.screen,
+          userSharing: true,};
+    case(WebRtcActionTypes.REMOVE_LOCAL_SHARED_SCREEN):
+        return {
+          ...state,
+          webRtcLocalSharedScreen: null,
+          userSharing: false};
     default:
         return state;
     }
