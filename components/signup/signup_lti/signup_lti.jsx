@@ -59,6 +59,10 @@ export default class SignupLTI extends React.Component {
         return parts ? parts.pop() : '';
     };
 
+    deleteCookie = (name) => {
+        document.cookie = name + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+    };
+
     extractFormData = () => {
         return this.getCookie(LTIConstants.LAUNCH_DATA_COOKIE);
     };
@@ -100,8 +104,7 @@ export default class SignupLTI extends React.Component {
 
             const {data, error} = await this.props.actions.createLTIUser({password: this.refs.password.value});
             if (data) {
-                // TODO: update this when login flow is complete
-                browserHistory.push('/');
+                this.deleteCookie(LTIConstants.LAUNCH_DATA_COOKIE);
             }
             if (error) {
                 this.setState({
