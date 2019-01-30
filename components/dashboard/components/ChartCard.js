@@ -124,6 +124,7 @@ const ChartCard = enhance((props) => {
                 </ChartInfoDiv>
             )}
             <ChartDiv>
+            {props.chartTable}
             {props.chartDiv}
             </ChartDiv>
         </Card>

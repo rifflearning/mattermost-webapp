@@ -115,6 +115,9 @@ const Gantt = function(selector, width) {
             attr('height', height + margin.top + margin.bottom).
             append('g').
             attr('class', 'gantt-chart').
+            attr("role", "figure").
+            attr("aria-labelledby", "gantt-label").
+
             attr('width', width + margin.left + margin.right).
             attr('height', height + margin.top + margin.bottom).
             attr(
@@ -122,9 +125,21 @@ const Gantt = function(selector, width) {
                 'translate(' + margin.left + ', ' + margin.top + ')'
             );
 
+            svg.append("title")
+            .attr("id", "gantt-label")
+            .text("Timeline Chart");
+
+
         svg.selectAll('.chart').
             data(tasks, keyFunction).
             enter().
+            append("g").
+            attr("role", "presentation").
+            attr("aria-label", function(d) {
+              const startTime = d3.timeFormat(tickFormat)(d.startDate);
+              const utteranceLength = Math.round((d.endDate - d.startDate) / 1000);
+              return `${startTime}, ${d.taskName} spoke for ${utteranceLength} seconds`;
+            }).
             append('rect').
             attr('rx', 5).
             attr('ry', 5).
@@ -149,6 +164,7 @@ const Gantt = function(selector, width) {
         svg.append('g').
             attr('class', 'x axis').
             attr('class', 'axisGray').
+            attr("aria-hidden", "true").
             attr(
                 'transform',
                 'translate(0, ' + (height - margin.top - margin.bottom) + ')'
@@ -159,6 +175,7 @@ const Gantt = function(selector, width) {
         svg.append('g').
             attr('class', 'y axis').
             attr('class', 'axisGray').
+            attr("aria-hidden", "true").
             transition().
             call(yAxis);
 
