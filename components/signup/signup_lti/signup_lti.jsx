@@ -105,6 +105,9 @@ export default class SignupLTI extends React.Component {
             const {data, error} = await this.props.actions.createLTIUser({password: this.refs.password.value});
             if (data) {
                 this.deleteCookie(LTIConstants.LAUNCH_DATA_COOKIE);
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                }
             }
             if (error) {
                 this.setState({
