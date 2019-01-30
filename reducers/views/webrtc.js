@@ -2,7 +2,7 @@ import {joinWebRtcRoom} from '../../actions/webrtc_actions';
 import {WebRtcActionTypes, ActionTypes} from '../../utils/constants';
 
 const initialState = {
-    peerColors: ['#f56b6b', '#128EAD', '#7caf5f', '#f2a466'],
+    peerColors: ['#f56b6b', '#128EAD', '#7caf5f', '#f2a466', '#321325', '#3C493F', '#1B998B'],
     getMediaStatus: 'error',
     getMediaMessage: '',
 
