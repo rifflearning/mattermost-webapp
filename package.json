@@ -52,7 +52,7 @@
     "localforage-observable": "1.4.0",
     "marked": "github:mattermost/marked#ed33baecd7d7fa97d479ba22dde9d226b083d67d",
     "material-icons-react": "^1.0.4",
-    "mattermost-redux": "github:rifflearning/mattermost-redux#6a58dd72727e6cef8643abe14bc97725bb36862b",
+    "mattermost-redux": "github:rifflearning/mattermost-redux#dd99d262263efc9d36da24f31fd25ee7f2cef879",
     "moment-timezone": "0.5.21",
     "pdfjs-dist": "2.0.489",
     "perfect-scrollbar": "0.8.1",
