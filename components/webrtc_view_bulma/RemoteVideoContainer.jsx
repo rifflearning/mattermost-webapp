@@ -15,22 +15,22 @@ class RemoteVideoContainer extends React.Component {
         // returns a function
         // close over peerLength
         return function (peer) {
-          let [riffId, displayName] = peer.nick.split("|");
-          let riffIds = [...this.props.chat.webRtcRiffIds].sort();
-          logger.debug("riff ids:", riffIds);
-          const idx = riffIds.indexOf(riffId);
-          let peerColor = this.props.chat.peerColors[idx];
-          logger.debug("!!PEER COLOR:", peerColor, "IDX:", idx, "Riff ID:", riffId);
-          return (
-            <PeerVideo
-              key={peer.id}
-              id={peer.id}
-              videoEl={peer.videoEl}
-              type="peer"
-              peerColor={peerColor}
-              peerLength={peerLength}
-            />
-          );
+            const [riffId, displayName] = peer.nick.split("|");
+            const riffIds = [...this.props.chat.webRtcRiffIds].sort();
+            logger.debug("riff ids:", riffIds);
+            const idx = riffIds.indexOf(riffId);
+            const peerColor = this.props.chat.peerColors[idx];
+            logger.debug("!!PEER COLOR:", peerColor, "IDX:", idx, "Riff ID:", riffId);
+            return (
+                <PeerVideo
+                  key={peer.id}
+                  id={peer.id}
+                  videoEl={peer.videoEl}
+                  type="peer"
+                  peerColor={peerColor}
+                  peerLength={peerLength}
+                />
+            );
         }.bind(this)
     }
 

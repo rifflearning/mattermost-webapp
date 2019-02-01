@@ -1,14 +1,17 @@
 import SimpleWebRtc from 'simplewebrtc';
-import * as WebRtcActions from '../../actions/webrtc_actions';
-import sibilant from 'sibilant-webaudio';
-import { app, socket } from '../riff';
-import {updateRiffMeetingId} from '../../actions/views/riff';
-import parse from 'url-parse';
-import { logger } from '../riff';
 
+import sibilant from 'sibilant-webaudio';
+
+import parse from 'url-parse';
+
+import * as WebRtcActions from '../../actions/webrtc_actions';
+
+import {app, logger} from '../riff';
+
+import {updateRiffMeetingId} from '../../actions/views/riff';
 
 export const createWebRtcLink = (teamName, channelName) => {
-    let link = parse(window.location.href, true);
+    const link = parse(window.location.href, true);
     link.set('pathname', teamName + '/' + channelName + '/' + 'video' + '/' + generateUID());
     console.log("Created webrtc Link:", link.href);
     return link;
@@ -26,11 +29,11 @@ function generateUID() {
 
 
 export function isScreenShareSourceAvailable() {
-  // currently we only support chrome v70+ (w/ experimental features enabled, if necessary)
-  // and firefox
-  return (navigator.getDisplayMedia ||
-    navigator.mediaDevices.getDisplayMedia ||
-    !!navigator.mediaDevices.getSupportedConstraints().mediaSource);
+    // currently we only support chrome v70+ (w/ experimental features enabled, if necessary)
+    // and firefox
+    return (navigator.getDisplayMedia ||
+        navigator.mediaDevices.getDisplayMedia ||
+        !!navigator.mediaDevices.getSupportedConstraints().mediaSource);
 }
 
 export default function (localVideoNode, dispatch, getState) {
@@ -38,7 +41,7 @@ export default function (localVideoNode, dispatch, getState) {
     let signalmasterPath = process.env.CLIENT_ENV.SIGNALMASTER_PATH || '';
     signalmasterPath += '/socket.io';
     let signalmasterUrl = process.env.CLIENT_ENV.SIGNALMASTER_URL;
-    let webRtcConfig = {
+    const webRtcConfig = {
         localVideoEl: localVideoNode,
         remoteVideosEl: "",
         autoRequestMedia: true,
@@ -67,12 +70,12 @@ export default function (localVideoNode, dispatch, getState) {
     });
 
     webrtc.on('videoRemoved', function (video, peer) {
-        let state = getState();
+        const state = getState();
         // get riffId
         if (state.views.webrtc.inRoom) {
             dispatch(WebRtcActions.removePeer({peer: peer,
                                                videoEl: video}));
-            let [riffId, ...rest] = peer.nick.split("|");
+            const [riffId, ...rest] = peer.nick.split("|");
             //TODO: state get here is wrong.
             dispatch(WebRtcActions.riffParticipantLeaveRoom(state.views.riff.meetingId, riffId));
         }
@@ -127,7 +130,7 @@ export default function (localVideoNode, dispatch, getState) {
 
             webrtc.startVolumeCollection = function () {
                 sib.bind('volumeChange', function (data) {
-                    let state = getState();
+                    const state = getState();
                     if (!state.views.webrtc.inRoom) {
                         dispatch(WebRtcActions.volumeChanged(data));
                     }
