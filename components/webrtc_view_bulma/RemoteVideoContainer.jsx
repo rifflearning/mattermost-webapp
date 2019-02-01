@@ -16,7 +16,7 @@ class RemoteVideoContainer extends React.Component {
         // close over peerLength
         return function (peer) {
           let [riffId, displayName] = peer.nick.split("|");
-          let riffIds = this.props.chat.webRtcRiffIds.sort();
+          let riffIds = [...this.props.chat.webRtcRiffIds].sort();
           logger.debug("riff ids:", riffIds);
           const idx = riffIds.indexOf(riffId);
           let peerColor = this.props.chat.peerColors[idx];

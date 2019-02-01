@@ -22,7 +22,8 @@ class PeerVideo extends React.Component {
           // we don't want to clip any of the shared screen,
           // so only apply this to peers
           this.video.style.setProperty('object-fit', 'cover');
-          this.video.style.setProperty('border-bottom', '5px solid ' + this.props.peerColor);
+          this.video.style.setProperty('border-bottom-right-radius', '0px');
+          this.video.style.setProperty('border-bottom-left-radius', '0px');
         }
         el.appendChild(this.video);
         this.video.play()
@@ -35,7 +36,11 @@ class PeerVideo extends React.Component {
       };
 
       if (this.props.type === "peer") {
-        style.borderBottom = '5px solid ' + this.props.PeerColor;
+        style.borderBottom = '5px solid ' + this.props.peerColor;
+        style.padding = '0';
+        style.margin = '0.25rem';
+        style.borderBottomRightRadius = '5px';
+        style.borderBottomLeftRadius = '5px';
       }
 
       let classes = "videoContainer remotes column";
