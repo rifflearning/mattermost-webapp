@@ -34,22 +34,25 @@ const placeholderStyle = (mediaError) => {
 };
 
 const AudioStatus = (props) => {
-    const MutedButton = (props) =>
-          (<a className="button is-rounded is-danger"
-           onClick={event => props.handleMuteAudioClick(event,
-                                                        props.audioMuted,
-                                                        props.webrtc)}>
-           <MaterialIcon icon="mic_off"/>
-           </a>);
 
-    const NotMutedButton = (props) =>
-          (<a className="button is-rounded"
-           onClick={event => props.handleMuteAudioClick(event,
-                                                        props.audioMuted,
-                                                        props.webrtc)}>
-           <MaterialIcon icon="mic"/>
-           </a>);
+      const MicMuteButton = props => {
+        let icon = 'mic';
+        let classNames = 'button is-rounded';
 
+         if (props.audioMuted) {
+          icon = 'mic_off';
+          classNames += ' is-danger';
+        }
+
+         return (
+            <button
+              className={classNames}
+              onClick={event => props.handleMuteAudioClick(event, props.audioMuted, props.webrtc)}
+            >
+              <MaterialIcon icon={icon} />
+            </button>
+        );
+     }
 
      const ScreenShareButton = (props) => {
       let classNames = "button is-rounded";
@@ -58,7 +61,7 @@ const AudioStatus = (props) => {
       let ariaLabel = "Share Your Screen";
       if (props.webRtcRemoteSharedScreen) {
         disabled = true;
-      } else if (props.isUserSharing) {
+      } else if (props.userSharing) {
         icon = "stop_screen_share";
         ariaLabel = "Stop Sharing Your Screen";
       }
@@ -72,68 +75,88 @@ const AudioStatus = (props) => {
       };
 
       return (
-        <button className="button is-rounded"
-           onClick={onClick}
-           disabled={disabled}
-           aria-label={ariaLabel}>
-           <MaterialIcon icon="screen_share"/>
-           </button>);
+        <button className={classNames}
+                onClick={onClick}
+                disabled={disabled}
+                aria-label={ariaLabel}>
+          <MaterialIcon icon={icon} />
+        </button>);
     }
 
     return (<div className="has-text-centered">
-            <div className="control">
-            {props.audioMuted ? <MutedButton {...props}/> : <NotMutedButton {...props}/>}
-            {isScreenShareSourceAvailable() && <ScreenShareButton {...props}/>}
-            </div>
+              <div className="control">
+                  <div className='columns'>
+                      <div className='column'><MicMuteButton {...props}/></div>
+                      <div className='column has-text-right'>{isScreenShareSourceAvailable() && <ScreenShareButton {...props}/>}</div>
+                  </div>
+              </div>
             </div>
            );
 };
 
 const AudioStatusBar = (props) => {
     const screenShareWarning = () => {
-    // inform the user screen sharing is not available on their device
-    let text = '';
-    let experimental = false;
-    let alertText = 'Copy and paste "chrome://flags/#enable-experimental-web-platform-features" into your ';
-    alertText +=    'address bar, click its "Enable" link, and restart Chrome.';
-    switch (browser && browser.name) {
-      case 'chrome':
-        let version = parseInt(browser.version.split('.')[0]);
-        if (version >= 70) {
-          text = 'Please enable experimental features in your chrome settings to use screen sharing.\n';
-          experimental = true;
-        } else {
-          text = 'Please update chrome to the latest version to use screen sharing.';
-        }
-        break;
-      case 'firefox':
-        text = 'Please make sure you have the latest version of firefox to use screen sharing.';
-        break;
-      default:
-        text =  'Screen sharing is not supported in this browser. '
-        text += 'Please use the latest version of Chrome or Firefox to enable screen sharing.';
+      // inform the user screen sharing is not available on their device
+      let text = <p></p>;
+      let alertText = 'Copy and paste "chrome://flags/#enable-experimental-web-platform-features" into your ';
+      alertText +=    'address bar, toggle the button to "Enabled", and relaunch Chrome.';
+
+      let howToEnableAlert = (e) => {
+        e.preventDefault();
+        alert(alertText);
+      };
+
+      switch (browser && browser.name) {
+        case 'chrome':
+          let version = parseInt(browser.version.split('.')[0]);
+          if (version >= 70) {
+            text = (
+              <p>
+                Screen Sharing is Disabled.
+                To enable screen sharing, please&nbsp;
+                <a href="#" onClick={howToEnableAlert}>turn on experimental features</a>
+                &nbsp;in Chrome.
+              </p>
+            );
+          } else {
+            text = (
+              <p>
+                Screen Sharing is Disabled.
+                Please update Chrome to the latest version to use screen sharing.
+              </p>
+            );
+          }
+          break;
+        case 'firefox':
+          text = (
+            <p>
+              Screen Sharing is Disabled.
+              Please make sure you have the latest version of Firefox to use screen sharing.
+            </p>
+          );
+          break;
+        default:
+          text = (
+            <p>
+              Screen sharing is not supported in this browser.
+              Please use the latest version of Chrome or Firefox to enable screen sharing.
+            </p>
+          );
+      }
+
+
+      return (
+        <div style={{paddingBottom: "20px"}}>
+          <MaterialIcon icon="warning" color="#f44336" />
+          <div>
+            {text}
+          </div>
+        </div>
+      );
     }
-
-    let howToAlert = (e) => {
-      e.preventDefault();
-      alert(alertText);
-    };
-
-    return (
-      <div style={{paddingBottom: "20px"}}>
-        <MaterialIcon icon="warning" color="#f44336" />
-        <p> Screen Sharing is disabled! </p>
-        <p> {text} </p>
-        {experimental &&
-          <a href="#" onClick={howToAlert}>How to enable experimental features</a>
-        }
-      </div>
-    );
-
-  }
     return (
         <div className="has-text-centered" style={{marginTop: '1rem'}}>
-          <div className="level">
+          <div className="level" style={{'marginBottom': '5px'}}>
             <div className="level-item" style={{'maxWidth': '20%'}}>
               <MaterialIcon icon="mic"></MaterialIcon>
             </div>
@@ -142,7 +165,11 @@ const AudioStatusBar = (props) => {
             </div>
           </div>
           {!isScreenShareSourceAvailable() && screenShareWarning()}
-          <p>Having trouble? refresh the page and allow access to your camera and mic.</p>
+          <MenuLabelCentered>
+            <p>
+              Having trouble? <a href="/room">Refresh the page</a> and allow access to your camera and mic.
+            </p>
+          </MenuLabelCentered>
         </div>
     );
 };
@@ -159,7 +186,7 @@ class WebRtcSidebar extends React.PureComponent {
       return (
         <React.Fragment>
            <video className = "local-video"
-                 id = 'local-video'
+                 id = "local-video"
                  // this is necessary for thumos. yes, it is upsetting.
                  height="175" width = "250"
                  style={videoStyle(this.props.mediaError)}
@@ -226,6 +253,8 @@ class WebRtcSidebar extends React.PureComponent {
                                             </p>
                                       </VideoPlaceholder>
                                   }
+
+                                  <p className="menu-label" style={{marginBottom: '0px'}}>{this.props.user.email}</p>
 
                                   {this.props.inRoom && <AudioStatus {...this.props}/>}
 
