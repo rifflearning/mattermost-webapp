@@ -39,6 +39,8 @@ import solarizedDarkCSS from '!!file-loader?name=files/code_themes/[hash].[ext]!
 // eslint-disable-line import/order
 import solarizedLightCSS from '!!file-loader?name=files/code_themes/[hash].[ext]!highlight.js/styles/solarized-light.css'; // eslint-disable-line import/order
 
+import { customTheme } from 'components/needs_team/theme';
+
 export const SettingsTypes = {
     TYPE_TEXT: 'text',
     TYPE_LONG_TEXT: 'longtext',
@@ -989,7 +991,8 @@ export const Constants = {
     MAX_POST_LEN: 4000,
     EMOJI_SIZE: 16,
     THEMES: {
-        default: {
+        default: customTheme,
+        mattermost: {
             type: 'Mattermost',
             sidebarBg: "#6e5080",
             sidebarText: "#ffffff",
