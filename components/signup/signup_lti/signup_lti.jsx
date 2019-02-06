@@ -203,7 +203,7 @@ export default class SignupLTI extends React.Component {
                                 type='text'
                                 ref='fullname'
                                 className='form-control'
-                                defaultValue={fullName || `${firstName.trim()} ${lastName.trim()}`}
+                                defaultValue={fullName || (firstName + " " + lastName)}
                                 disabled={true}
                             />
                         </div>
