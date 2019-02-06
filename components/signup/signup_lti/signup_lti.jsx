@@ -137,9 +137,9 @@ export default class SignupLTI extends React.Component {
     renderLTISignup = () => {
         const {formData = {}} = this.state;
         const {
-            [LTIConstants.EMAIL_FIELD]: email = '',
-            [LTIConstants.FULLNAME_FIELD]: fullName = '',
-            [LTIConstants.USERNAME_FIELD]: username = '',
+            [LTIConstants.EMAIL_FIELD]: email,
+            [LTIConstants.FULLNAME_FIELD]: fullName,
+            [LTIConstants.USERNAME_FIELD]: username,
         } = formData;
 
         const firstName = formData[LTIConstants.FIRST_NAME_FIELD] || '';
