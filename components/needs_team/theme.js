@@ -28,5 +28,5 @@ export const customTheme = {
     mentionHighlightLink: '#0f758e',
     mentionBg: '#fbfbfb',
     codeTheme: 'github',
-    image: riffThemeImage
+    image: riffThemeImage,
 };

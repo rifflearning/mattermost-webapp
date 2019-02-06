@@ -3,6 +3,7 @@
 
 /* eslint-disable no-magic-numbers */
 import keyMirror from 'key-mirror';
+import Permissions from 'mattermost-redux/constants/permissions';
 
 import audioIcon from 'images/icons/audio.svg';
 import codeIcon from 'images/icons/code.svg';
@@ -24,9 +25,8 @@ import defaultThemeImage from 'images/themes/organization.png';
 import windows10ThemeImage from 'images/themes/windows_dark.png';
 import logoWebhook from 'images/webhook_icon.jpg';
 
-import Permissions from 'mattermost-redux/constants/permissions';
-
 import {t} from 'utils/i18n';
+import {customTheme} from 'components/needs_team/theme';
 
 import githubCSS from '!!file-loader?name=files/code_themes/[hash].[ext]!highlight.js/styles/github.css';
 
@@ -38,8 +38,6 @@ import solarizedDarkCSS from '!!file-loader?name=files/code_themes/[hash].[ext]!
 
 // eslint-disable-line import/order
 import solarizedLightCSS from '!!file-loader?name=files/code_themes/[hash].[ext]!highlight.js/styles/solarized-light.css'; // eslint-disable-line import/order
-
-import { customTheme } from 'components/needs_team/theme';
 
 export const SettingsTypes = {
     TYPE_TEXT: 'text',
@@ -116,7 +114,7 @@ export const WebRtcActionTypes = keyMirror({
     REMOVE_SHARED_SCREEN: null,
     ADD_SHARED_SCREEN: null,
     ADD_LOCAL_SHARED_SCREEN: null,
-    REMOVE_LOCAL_SHARED_SCREEN: null
+    REMOVE_LOCAL_SHARED_SCREEN: null,
 });
 
 export const DashboardActionTypes = keyMirror({
@@ -994,29 +992,29 @@ export const Constants = {
         default: customTheme,
         mattermost: {
             type: 'Mattermost',
-            sidebarBg: "#6e5080",
-            sidebarText: "#ffffff",
-            sidebarUnreadText: "#ffffff",
-            sidebarTextHoverBg: "#6f5d7d",
-            sidebarTextActiveBorder: "#b5a2bf",
-            sidebarTextActiveColor: "#ffffff",
-            sidebarHeaderBg: "#6e5080",
-            sidebarHeaderTextColor: "#ffffff",
-            onlineIndicator: "#8dde5d",
-            awayIndicator: "#ff8b2c",
-            dndIndicator: "#ff5f5f",
-            mentionBj: "#fbfbfb",
-            mentionColor: "#0f758e",
-            centerChannelBg: "#f5f5f5",
-            centerChannelColor: "#4a4a4a",
-            newMessageSeparator: "#ff8800",
-            linkColor: "#0f758e",
-            buttonBg: "#0f758e",
-            buttonColor: "#ffffff",
-            errorTextColor: "#ce5252",
-            mentionHighlightBg: "#fdff8e",
-            mentionHighlightLink: "#0f758e",
-            mentionBg: "#fbfbfb",
+            sidebarBg: '#6e5080',
+            sidebarText: '#ffffff',
+            sidebarUnreadText: '#ffffff',
+            sidebarTextHoverBg: '#6f5d7d',
+            sidebarTextActiveBorder: '#b5a2bf',
+            sidebarTextActiveColor: '#ffffff',
+            sidebarHeaderBg: '#6e5080',
+            sidebarHeaderTextColor: '#ffffff',
+            onlineIndicator: '#8dde5d',
+            awayIndicator: '#ff8b2c',
+            dndIndicator: '#ff5f5f',
+            mentionBj: '#fbfbfb',
+            mentionColor: '#0f758e',
+            centerChannelBg: '#f5f5f5',
+            centerChannelColor: '#4a4a4a',
+            newMessageSeparator: '#ff8800',
+            linkColor: '#0f758e',
+            buttonBg: '#0f758e',
+            buttonColor: '#ffffff',
+            errorTextColor: '#ce5252',
+            mentionHighlightBg: '#fdff8e',
+            mentionHighlightLink: '#0f758e',
+            mentionBg: '#fbfbfb',
             codeTheme: 'github',
             image: mattermostThemeImage,
         },
@@ -1600,7 +1598,7 @@ export const Constants = {
     TRANSPARENT_PIXEL:
         'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
     TRIPLE_BACK_TICKS: /```/g,
-    SYSTEM_BRAND_NAME: 'Riff Edu'
+    SYSTEM_BRAND_NAME: 'Riff Edu',
 };
 
 t('suggestion.mention.channels');
