@@ -140,7 +140,11 @@ export default class SignupLTI extends React.Component {
             [LTIConstants.EMAIL_FIELD]: email,
             [LTIConstants.FULLNAME_FIELD]: fullName,
             [LTIConstants.USERNAME_FIELD]: username,
+            [LTIConstants.FIRST_NAME_FIELD]: firstName = '',
+            [LTIConstants.LAST_NAME_FIELD]: lastName = '',
         } = formData;
+
+        const name = (fullName || `${firstName.trim()} ${lastName.trim()}`).trim();
 
         let emailError = null;
         let emailDivStyle = 'form-group';
@@ -193,7 +197,7 @@ export default class SignupLTI extends React.Component {
                                 type='text'
                                 ref='fullname'
                                 className='form-control'
-                                defaultValue={fullName}
+                                value={name}
                                 disabled={true}
                             />
                         </div>
@@ -211,7 +215,7 @@ export default class SignupLTI extends React.Component {
                                 type='text'
                                 ref='username'
                                 className='form-control'
-                                defaultValue={username}
+                                value={username}
                                 disabled={true}
                             />
                             {usernameError}
@@ -230,7 +234,7 @@ export default class SignupLTI extends React.Component {
                                 type='email'
                                 ref='email'
                                 className='form-control'
-                                defaultValue={email}
+                                value={email}
                                 disabled={true}
                             />
                             {emailError}
