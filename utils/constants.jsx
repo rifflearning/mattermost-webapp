@@ -689,6 +689,8 @@ export const LTIConstants = {
     EMAIL_FIELD: 'lis_person_contact_email_primary',
     USERNAME_FIELD: 'lis_person_sourcedid',
     FULLNAME_FIELD: 'lis_person_name_full',
+    FIRST_NAME_FIELD: 'lis_person_name_given',
+    LAST_NAME_FIELD: 'lis_person_name_family',
     LAUNCH_DATA_COOKIE: 'MMLTILAUNCHDATA',
 };
 
