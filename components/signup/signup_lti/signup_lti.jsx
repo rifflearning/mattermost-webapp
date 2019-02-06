@@ -144,11 +144,12 @@ export default class SignupLTI extends React.Component {
 
         const firstName = formData[LTIConstants.FIRST_NAME_FIELD] || '';
         const lastName = formData[LTIConstants.LAST_NAME_FIELD] || '';
+        const name =fullName || `${firstName.trim()} ${lastName.trim()}`;
 
         console.log("First name:" + firstName);
         console.log("Last name:" + lastName);
         console.log("Full name:" + fullName);
-        console.log("Name: " + (fullName || `${firstName.trim()} ${lastName.trim()}`));
+        console.log("Name: " + name);
 
         console.log(formData);
 
@@ -203,7 +204,7 @@ export default class SignupLTI extends React.Component {
                                 type='text'
                                 ref='fullname'
                                 className='form-control'
-                                defaultValue={fullName || (firstName + " " + lastName)}
+                                defaultValue={name}
                                 disabled={true}
                             />
                         </div>
