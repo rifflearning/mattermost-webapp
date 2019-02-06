@@ -140,18 +140,11 @@ export default class SignupLTI extends React.Component {
             [LTIConstants.EMAIL_FIELD]: email,
             [LTIConstants.FULLNAME_FIELD]: fullName,
             [LTIConstants.USERNAME_FIELD]: username,
+            [LTIConstants.FIRST_NAME_FIELD]: firstName = '',
+            [LTIConstants.LAST_NAME_FIELD]: lastName = '',
         } = formData;
 
-        const firstName = formData[LTIConstants.FIRST_NAME_FIELD] || '';
-        const lastName = formData[LTIConstants.LAST_NAME_FIELD] || '';
         const name = fullName || `${firstName.trim()} ${lastName.trim()}`;
-
-        console.log("First name:" + firstName);
-        console.log("Last name:" + lastName);
-        console.log("Full name:" + fullName);
-        console.log("Name: " + name);
-
-        console.log(formData);
 
         let emailError = null;
         let emailDivStyle = 'form-group';
