@@ -1,5 +1,4 @@
 import React from 'react';
-import { logger } from '../../utils/riff';
 
 class PeerAudio extends React.Component {
   constructor(props) {
