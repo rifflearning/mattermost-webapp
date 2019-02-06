@@ -222,7 +222,7 @@ export default class SignupLTI extends React.Component {
                                 type='text'
                                 ref='username'
                                 className='form-control'
-                                defaultValue={username}
+                                value={username}
                                 disabled={true}
                             />
                             {usernameError}
@@ -241,7 +241,7 @@ export default class SignupLTI extends React.Component {
                                 type='email'
                                 ref='email'
                                 className='form-control'
-                                defaultValue={email}
+                                value={email}
                                 disabled={true}
                             />
                             {emailError}
