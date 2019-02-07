@@ -412,7 +412,7 @@ export const loadMeetingData = (uid, meetingId) => (dispatch) => {
     console.log('finding utterances for meeting', meetingId);
     return app.
         service('utterances').
-        find({query: {meeting: meetingId, $limit: 10000}}).
+        find({query: {meeting: meetingId, $limit: 10000, stitch: true}}).
         then((utterances) => {
             console.log(">>>", meetingId, 'utterances', utterances);
             return {
