@@ -1,28 +1,23 @@
-import React, {Component, Fragment} from 'react';
+import React from 'react';
 import {connect} from 'react-redux';
-import {withRouter} from 'react-router-dom';
 import sizeMe from 'react-sizeme';
-import styled, {injectGlobal, keyframes} from 'styled-components';
-import {Link} from 'react-router-dom';
-import ReactChartkick, {ColumnChart, PieChart} from 'react-chartkick';
-import {ScaleLoader} from 'react-spinners';
+import styled from 'styled-components';
 import Waypoint from 'react-waypoint';
-import MaterialIcon from 'material-icons-react';
-import Chart from 'chart.js';
 import moment from 'moment';
 import _ from 'underscore';
+import PropTypes from 'prop-types';
+
+
+import {
+    loadMeetingData,
+} from '../../../actions/views/dashboard';
 
 import TurnChart from './TurnChart';
 import InfluenceChart from './InfluenceChart';
 import TimelineChart from './TimelineChart';
 
-import PropTypes from 'prop-types';
 
-import {
-    loadRecentMeetings,
-    selectMeeting,
-    loadMeetingData,
-} from '../../../actions/views/dashboard';
+
 
 const SpaceBetweeen = styled.div.attrs({
     className: 'space-between',
@@ -39,13 +34,13 @@ const getMeetingIndex = (meetings, meetingId) => {
 
 const formatMeetingDuration = (meeting) => {
   if (meeting === null) {
-    return '';
-  }
+      return '';
+  };
   // support showing data on in progress meeting by giving them a fake end time of now
   if (!meeting.endTime) {
-    meeting = { ...meeting, endTime: new Date()  };
+      meeting = { ...meeting, endTime: new Date()  };
   };
-  let diff = moment(new Date(meeting.endTime)).diff(moment(new Date(meeting.startTime)), 'minutes');
+  const diff = moment(new Date(meeting.endTime)).diff(moment(new Date(meeting.startTime)), 'minutes');
   return `${diff} minutes`;
 }
 
@@ -64,7 +59,7 @@ const mapStateToProps = (state, ownProps) => {
         loaded: dashboard.statsStatus[idx] == 'loaded'
     };
 
-};
+}
 
 const mapDispatchToProps = (dispatch) => ({
     loadMeetingData: (uid, meetingId) => {
@@ -81,15 +76,15 @@ const Header = (props) => {
           style={{paddingBottom: '2rem',
                   paddingTop: '1rem',
           paddingLeft: '1rem'}}>
-          <h3>Meeting at: {meetingDate} </h3>
-          <SpaceBetweeen>
-            <span> Attendees: {props.processedUtterances.length}</span>
-          </SpaceBetweeen>
-          <SpaceBetweeen>
-            <span> Duration: {props.selectedMeetingDuration} </span>
-          </SpaceBetweeen>
-          <div className='column is-half has-text-left'>
-          </div>
+              <h3>Meeting at: {meetingDate} </h3>
+              <SpaceBetweeen>
+                <span> Attendees: {props.processedUtterances.length}</span>
+              </SpaceBetweeen>
+              <SpaceBetweeen>
+                  <span> Duration: {props.selectedMeetingDuration} </span>
+              </SpaceBetweeen>
+              <div className='column is-half has-text-left'>
+              </div>
         </div>
     );
 };
@@ -140,29 +135,22 @@ class MeetingViz extends React.PureComponent {
               <div className="columns is-centered" style={{marginLeft: "2rem", marginRight: "1rem"}}>
                 <div className="column" style={{paddingBottom: "0px"}}>
                     <div className="columns is-centered is-hidden-touch">
-                        <div className="column is-half has-text-centered"
-                               style={{alignItems: 'center', display: 'flex'}}>
+                        <div className="column is-centered has-text-centered">
                           <TurnChart processedUtterances={this.props.processedUtterances}
                                      loaded={this.props.loaded}
                                      participantId={this.props.user.id}/>
-                      </div>
-                        <div className="column is-half is-centered">
-                          <div className="columns is-desktop is-pulled-right">
-                            <div className="column" >
-                          <InfluenceChart influenceType={"mine"}
+                        </div>
+                        <div className="column is-centered" >
+                      <InfluenceChart influenceType={"mine"}
+                                      processedInfluence={this.props.influenceData}
+                                      loaded={this.props.loaded}
+                                      participantId={this.props.user.id}/>
+                        </div>
+                        <div className="column is-centered" >
+                          <InfluenceChart influenceType={"theirs"}
                                           processedInfluence={this.props.influenceData}
                                           loaded={this.props.loaded}
                                           participantId={this.props.user.id}/>
-                            </div>
-                            </div>
-                              <div className="columns is-pulled-right">
-                                  <div className="column" >
-                                    <InfluenceChart influenceType={"theirs"}
-                                                    processedInfluence={this.props.influenceData}
-                                                    loaded={this.props.loaded}
-                                                    participantId={this.props.user.id}/>
-                                    </div>
-                              </div>
                           </div>
                     </div>
                     <div className="columns is-hidden-desktop is-multiline is-centered">
@@ -202,7 +190,7 @@ class MeetingViz extends React.PureComponent {
                         </div>
                       </div>
                       </div>
-                      
+
                     </div>
 
                     <div className="section" style={{padding: "0px"}}>
