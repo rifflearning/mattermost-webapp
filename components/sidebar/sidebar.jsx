@@ -9,7 +9,6 @@ import {FormattedMessage} from 'react-intl';
 import {PropTypes} from 'prop-types';
 import Permissions from 'mattermost-redux/constants/permissions';
 import classNames from 'classnames';
-import {Link} from 'react-router-dom';
 
 import Scrollbars from 'react-custom-scrollbars';
 
@@ -27,7 +26,6 @@ import MoreChannels from 'components/more_channels';
 import MoreDirectChannels from 'components/more_direct_channels';
 import TeamPermissionGate from 'components/permissions_gates/team_permission_gate';
 import Pluggable from 'plugins/pluggable';
-import MaterialIcon from 'material-icons-react';
 
 import NewChannelFlow from '../new_channel_flow.jsx';
 import UnreadChannelIndicator from '../unread_channel_indicator.jsx';
@@ -532,24 +530,32 @@ export default class Sidebar extends React.PureComponent {
         );
 
         var dashboard = (
-            <li key='dashboard' className={this.props.currentPage === 'dashboard' ? 'active' : ''}>
+            <li key='dashboard'
+                className={this.props.currentPage === 'dashboard' ? 'active' : ''}>
                 <button
                     id='dashboard'
                     className='nav-more cursor--pointer style--none btn--block'
                     onClick={
                         () => {
-                            browserHistory.push(`/${this.props.currentTeam.name}/pages/dashboard`)
+                            browserHistory.push(`/${this.props.currentTeam.name}/pages/dashboard`);
                         }
                     }
                 >
 
-                  <span style={{marginRight: ".5rem"}}>
-                    <MaterialIcon icon="dashboard" size={17} invert/>
-                  </span>
+                    <span style={{marginRight: '.5rem'}}>
+                        <svg xmlns='http://www.w3.org/2000/svg'
+                             width='17'
+                             height='17'
+                             viewBox='0 0 24 24'>
+                                 <path d='M0 0h24v24H0z'
+                                       fill='none'/>
+                                 <path d='M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z'
+                                       fill='#ffffff'/>
+                        </svg>
+                    </span>
                     <FormattedMessage
                         id='sidebar.dashboard'
-                        defaultMessage='Riff Stats'
-                      >
+                        defaultMessage='Riff Stats'>
                     </FormattedMessage>
                 </button>
             </li>
@@ -800,9 +806,9 @@ export default class Sidebar extends React.PureComponent {
                             <ul className='nav nav-pills nav-stacked'>
 
                                 <li>
-                                  <h4 id="dashboard">
-                                    <FormattedMessage id="sidebar.dashboard"
-                                                      defaultMessage="DASHBOARD"/>
+                                  <h4 id='dashboard'>
+                                    <FormattedMessage id='sidebar.dashboard'
+                                                      defaultMessage='DASHBOARD'/>
                                   </h4>
                                 </li>
                                 {dashboard}
