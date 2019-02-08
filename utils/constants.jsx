@@ -684,6 +684,7 @@ export const LTIConstants = {
     FIRST_NAME_FIELD: 'lis_person_name_given',
     LAST_NAME_FIELD: 'lis_person_name_family',
     LAUNCH_DATA_COOKIE: 'MMLTILAUNCHDATA',
+    NAME_COOKIE: 'MMLTINAME',
 };
 
 export const Constants = {

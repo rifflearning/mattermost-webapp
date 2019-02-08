@@ -35,6 +35,7 @@ export default class SignupLTI extends React.Component {
 
         this.state = {
             formData: {},
+            name: '',
             loading: false,
             serverError: '',
             usernameError: '',
@@ -48,6 +49,10 @@ export default class SignupLTI extends React.Component {
     componentDidMount() {
         if (this.props.enableSignUpWithLTI) {
             this.decodeRequest(this.extractFormData());
+            const name = this.extractName();
+            this.setState({
+                name: name,
+            });
         } else {
             browserHistory.push('/');
         }
@@ -65,6 +70,11 @@ export default class SignupLTI extends React.Component {
 
     extractFormData = () => {
         return this.getCookie(LTIConstants.LAUNCH_DATA_COOKIE);
+    };
+
+    extractName = () => {
+        const name = this.getCookie(LTIConstants.NAME_COOKIE);
+        return atob(name);
     };
 
     decodeRequest = (formData) => {
@@ -105,6 +115,7 @@ export default class SignupLTI extends React.Component {
             const {data, error} = await this.props.actions.createLTIUser({password: this.refs.password.value});
             if (data) {
                 this.deleteCookie(LTIConstants.LAUNCH_DATA_COOKIE);
+                this.deleteCookie(LTIConstants.NAME_COOKIE);
                 if (data.redirect) {
                     window.location.href = data.redirect;
                 }
@@ -138,13 +149,8 @@ export default class SignupLTI extends React.Component {
         const {formData = {}} = this.state;
         const {
             [LTIConstants.EMAIL_FIELD]: email,
-            [LTIConstants.FULLNAME_FIELD]: fullName,
             [LTIConstants.USERNAME_FIELD]: username,
-            [LTIConstants.FIRST_NAME_FIELD]: firstName = '',
-            [LTIConstants.LAST_NAME_FIELD]: lastName = '',
         } = formData;
-
-        const name = (fullName || `${firstName.trim()} ${lastName.trim()}`).trim();
 
         let emailError = null;
         let emailDivStyle = 'form-group';
@@ -181,6 +187,8 @@ export default class SignupLTI extends React.Component {
             );
         }
 
+        console.log(this.state.name);
+
         return (
             <form>
                 <div className='inner__content'>
@@ -197,7 +205,7 @@ export default class SignupLTI extends React.Component {
                                 type='text'
                                 ref='fullname'
                                 className='form-control'
-                                value={name}
+                                value={this.state.name}
                                 disabled={true}
                             />
                         </div>
