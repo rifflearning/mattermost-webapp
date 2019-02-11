@@ -187,8 +187,6 @@ export default class SignupLTI extends React.Component {
             );
         }
 
-        console.log(this.state.name);
-
         return (
             <form>
                 <div className='inner__content'>
