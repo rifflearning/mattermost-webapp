@@ -43,7 +43,7 @@ import ChannelPermissionGate from 'components/permissions_gates/channel_permissi
 import TeamPermissionGate from 'components/permissions_gates/team_permission_gate';
 import PopoverStickOnHover from 'components/PopoverStickOnHover';
 import ChannelHeaderPlug from 'plugins/channel_header_plug';
-
+import MaterialIcon from 'material-icons-react';
 import HeaderIconWrapper from './components/header_icon_wrapper';
 
 const headerMarkdownOptions = {singleline: true, mentionHighlight: false, atMentions: true};
@@ -427,7 +427,7 @@ export default class ChannelHeader extends React.Component {
                     id='webrtc-btn'
                     className={'webrtc__button hidden-xs ' + circleClass}
                     >
-                    <i className='material-icons icon icon__members'>voice_chat</i>
+                      <span className='icon icon__members'><MaterialIcon icon='voice_chat'/></span>
                   </div>
                   </button>
                 </PopoverStickOnHover>
