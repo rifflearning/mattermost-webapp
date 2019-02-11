@@ -1,50 +1,44 @@
 import React, {PureComponent} from 'react';
 import MaterialIcon from 'material-icons-react';
+import {isScreenShareSourceAvailable} from '../../utils/webrtc/webrtc';
+import {detect} from 'detect-browser';
+import {logger} from '../../utils/riff';
 import LeaveRoomButton from './LeaveRoomButton';
 import MeetingMediator from './MeetingMediator';
 import {VideoPlaceholder,
-        ErrorNotification,
-        MenuLabel,
-        MenuLabelCentered,
-        Menu,
-        RoomNameEntry
-       } from './styled';
-import { isScreenShareSourceAvailable } from '../../utils/webrtc/webrtc';
-import { detect } from 'detect-browser';
-import { logger } from '../../utils/riff';
-
+    MenuLabel,
+    MenuLabelCentered,
+    Menu,
+    } from './styled';
 
 const browser = detect();
 
-
 const videoStyle = (mediaError) => {
     if (mediaError) {
-        return {'borderRadius': '5px', 'display': 'none'};
-    } else {
-        return {'borderRadius': '5px', 'display': 'inline-block'};
+        return {borderRadius: '5px', display: 'none'};
     }
+    return {borderRadius: '5px', display: 'inline-block'};
 };
 
 const placeholderStyle = (mediaError) => {
     if (!mediaError) {
-        return {'borderRadius': '5px', 'display': 'none'};
-    } else {
-        return {'borderRadius': '5px', 'display': 'inline-block'};
+        return {borderRadius: '5px', display: 'none'};
     }
+    return {borderRadius: '5px', display: 'inline-block'};
 };
 
 const AudioStatus = (props) => {
 
-      const MicMuteButton = props => {
+    const MicMuteButton = (props) => {
         let icon = 'mic';
         let classNames = 'button is-rounded';
 
-         if (props.audioMuted) {
-          icon = 'mic_off';
-          classNames += ' is-danger';
+        if (props.audioMuted) {
+           icon = 'mic_off';
+           classNames += ' is-danger';
         }
 
-         return (
+        return (
             <button
               className={classNames}
               onClick={event => props.handleMuteAudioClick(event, props.audioMuted, props.webrtc)}
@@ -52,35 +46,35 @@ const AudioStatus = (props) => {
               <MaterialIcon icon={icon} />
             </button>
         );
-     }
+    }
 
-     const ScreenShareButton = (props) => {
-      let classNames = "button is-rounded";
-      let icon = "screen_share";
-      let disabled = false;
-      let ariaLabel = "Share Your Screen";
-      if (props.webRtcRemoteSharedScreen) {
-        disabled = true;
-      } else if (props.userSharing) {
-        icon = "stop_screen_share";
-        ariaLabel = "Stop Sharing Your Screen";
-      }
+    const ScreenShareButton = (props) => {
+        let classNames = "button is-rounded";
+        let icon = "screen_share";
+        let disabled = false;
+        let ariaLabel = "Share Your Screen";
+        if (props.webRtcRemoteSharedScreen) {
+          disabled = true;
+        } else if (props.userSharing) {
+          icon = "stop_screen_share";
+          ariaLabel = "Stop Sharing Your Screen";
+        }
 
-      let onClick = (event) => {
-        props.handleScreenShareClick(
-          event,
-          props.userSharing,
-          props.webRtcRemoteSharedScreen,
-          props.webrtc);
-      };
+        let onClick = (event) => {
+            props.handleScreenShareClick(
+                event,
+                props.userSharing,
+                props.webRtcRemoteSharedScreen,
+                props.webrtc);
+        };
 
-      return (
-        <button className={classNames}
-                onClick={onClick}
-                disabled={disabled}
-                aria-label={ariaLabel}>
-          <MaterialIcon icon={icon} />
-        </button>);
+        return (
+            <button className={classNames}
+                    onClick={onClick}
+                    disabled={disabled}
+                    aria-label={ariaLabel}>
+              <MaterialIcon icon={icon} />
+            </button>);
     }
 
     return (<div className="has-text-centered">
