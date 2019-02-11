@@ -100,15 +100,18 @@ class MeetingViz extends React.PureComponent {
     static propTypes = {
         user: PropTypes.object.isRequired,
         allMeetings: PropTypes.array.isRequired,
-        size: PropTypes.exact({
-            height: PropTypes.number.isRequired,
-            width: PropTypes.number.isRequired,
+        size: PropTypes.shape({
+            height: PropTypes.number,
+            width: PropTypes.number,
         }),
         loaded: PropTypes.bool.isRequired,
         meeting: PropTypes.object.isRequired,
         selectedMeetingDuration: PropTypes.string,
         processedUtterances: PropTypes.array.isRequired,
-        influenceData: PropTypes.object.isRequired,
+        influenceData: PropTypes.oneOfType([
+            PropTypes.array,
+            PropTypes.object,
+        ]),
         timelineData: PropTypes.object.isRequired,
 
         loadMeetingData: PropTypes.func.isRequired,
