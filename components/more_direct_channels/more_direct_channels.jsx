@@ -6,6 +6,8 @@ import React from 'react';
 import {Modal} from 'react-bootstrap';
 import {FormattedMessage} from 'react-intl';
 import {Client4} from 'mattermost-redux/client';
+import {emitUserPostedEvent, postListScrollChangeToBottom} from 'actions/global_actions';
+import {createPost} from 'actions/post_actions';
 
 import {browserHistory} from 'utils/browser_history';
 import {openDirectChannelToUser, openGroupChannelToUsers} from 'actions/channel_actions.jsx';
@@ -45,6 +47,8 @@ export default class MoreDirectChannels extends React.Component {
         restrictDirectMessage: PropTypes.string,
         onModalDismissed: PropTypes.func,
         onHide: PropTypes.func,
+
+        makePostToSend: PropTypes.func,
 
         actions: PropTypes.shape({
             getProfiles: PropTypes.func.isRequired,
@@ -138,6 +142,7 @@ export default class MoreDirectChannels extends React.Component {
         this.setState({show: false});
     }
 
+
     setUsersLoadingState = (loadingState) => {
         this.setState({
             loadingUsers: loadingState,
@@ -177,6 +182,12 @@ export default class MoreDirectChannels extends React.Component {
             this.exitToChannel = '/' + this.props.currentTeamName + '/channels/' + channel.name;
             this.setState({saving: false});
             this.handleHide();
+            if (this.props.makePostToSend) {
+                let post = this.props.makePostToSend(channel.id);
+                emitUserPostedEvent(post);
+                createPost(post,[]);
+                postListScrollChangeToBottom();
+            }
         };
 
         const error = () => {

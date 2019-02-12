@@ -14,7 +14,12 @@ class RenderVideos extends React.Component {
             return (
                 <div style={{margin: 'auto'}} className="columns has-text-centered is-centered">
                   <div className="column">
-                    <RemoteVideoContainer ref="remote" peers = {this.props.webRtcPeers} chat={this.props.chat}/>
+                    <RemoteVideoContainer 
+                      ref="remote" 
+                      peers = {this.props.webRtcPeers} 
+                      chat={this.props.chat}
+                      remoteSharedScreen={this.props.webRtcRemoteSharedScreen}
+                    />
                   </div>
                 </div>
             );
@@ -23,6 +28,7 @@ class RenderVideos extends React.Component {
                 <div style={{width: '100%', alignItems: 'center'}}className="columns is-centered is-vcentered">
                   <div className="column">
                     {!this.props.inRoom || !this.props.riff.meetingId ?
+
 
                         <React.Fragment>
                               {this.props.displayRoomName &&

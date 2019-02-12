@@ -2,25 +2,30 @@
 // See LICENSE.txt for license information.
 import d3 from 'utils/libs/d3';
 
-const Gantt = function() {
+const Gantt = function(selector, width) {
     var FIT_TIME_DOMAIN_MODE = 'fit';
     var FIXED_TIME_DOMAIN_MODE = 'fixed';
 
     var margin = {
         top: 20,
-        right: 40,
+        right: 50,
         bottom: 20,
         left: 50,
     };
-    var selector = '#gantt';
+    var selector = selector;
     var timeDomainStart = d3.timeDay.offset(new Date(), -3);
     var timeDomainEnd = d3.timeHour.offset(new Date(), +3);
     var timeDomainMode = FIT_TIME_DOMAIN_MODE; // fixed or fit
     var taskTypes = [];
     var taskStatus = [];
 
+    console.log("DOCUMENT BODY WIDTH", document.body.clientWidth)
     //var height = document.body.clientHeight - margin.top - margin.bottom-5;
-    var width = document.body.clientWidth / 2 - margin.right - margin.left;
+    var initWidth = width ? width : document.body.clientWidth/2;
+    console.log("HAVE WIDTH FROM REF:", width, "BODY WIDTH:", document.body.clientWidth/2);
+    console.log("using init width:", initWidth);
+    var width = (initWidth - (initWidth / 5)) - margin.right - margin.left;;
+    //var width = "100%";
     var height = 250;
 
     //var width = 600;
@@ -50,7 +55,8 @@ const Gantt = function() {
         axisBottom(x).
         tickFormat(d3.timeFormat(tickFormat)).
         tickSize(8).
-        tickPadding(8);
+        tickPadding(8)
+        .ticks(d3.timeMinute.every(15));
 
     var yAxis = d3.axisLeft(y).tickSize(0);
 
@@ -109,6 +115,9 @@ const Gantt = function() {
             attr('height', height + margin.top + margin.bottom).
             append('g').
             attr('class', 'gantt-chart').
+            attr("role", "figure").
+            attr("aria-labelledby", "gantt-label").
+
             attr('width', width + margin.left + margin.right).
             attr('height', height + margin.top + margin.bottom).
             attr(
@@ -116,9 +125,21 @@ const Gantt = function() {
                 'translate(' + margin.left + ', ' + margin.top + ')'
             );
 
+            svg.append("title")
+            .attr("id", "gantt-label")
+            .text("Timeline Chart");
+
+
         svg.selectAll('.chart').
             data(tasks, keyFunction).
             enter().
+            append("g").
+            attr("role", "presentation").
+            attr("aria-label", function(d) {
+              const startTime = d3.timeFormat(tickFormat)(d.startDate);
+              const utteranceLength = Math.round((d.endDate - d.startDate) / 1000);
+              return `${startTime}, ${d.taskName} spoke for ${utteranceLength} seconds`;
+            }).
             append('rect').
             attr('rx', 5).
             attr('ry', 5).
@@ -143,6 +164,7 @@ const Gantt = function() {
         svg.append('g').
             attr('class', 'x axis').
             attr('class', 'axisGray').
+            attr("aria-hidden", "true").
             attr(
                 'transform',
                 'translate(0, ' + (height - margin.top - margin.bottom) + ')'
@@ -153,6 +175,7 @@ const Gantt = function() {
         svg.append('g').
             attr('class', 'y axis').
             attr('class', 'axisGray').
+            attr("aria-hidden", "true").
             transition().
             call(yAxis);
 

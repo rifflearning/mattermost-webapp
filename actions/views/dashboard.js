@@ -1,12 +1,16 @@
-// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
-import {DashboardActionTypes} from 'utils/constants.jsx';
+
 import _ from 'underscore';
 
-import {app, socket} from 'utils/riff';
-import firebaseApp from 'utils/firebase';
+import {DashboardActionTypes} from 'utils/constants.jsx';
+import {app, logger} from 'utils/riff';
 
-const db = firebaseApp.firestore();
+export const loadMoreMeetings = () => {
+    return {
+        type: DashboardActionTypes.DASHBOARD_LOAD_MORE_MEETINGS,
+    };
+};
 
 export const updateMeetingList = (meetings) => {
     return {
@@ -23,21 +27,24 @@ export const selectMeeting = (meeting) => {
     };
 };
 
-export const loadRecentMeetings = (uid, selectedMeeting) => (dispatch) => {
-    console.log("Loading recent meetings for dashboard", uid, selectedMeeting);
+export const loadRecentMeetings = (uid) => (dispatch) => {
     dispatch({
-        type: DashboardActionTypes.DASHBOARD_FETCH_MEETINGS,
-        status: 'loading',
+        type: DashboardActionTypes.DASHBOARD_LOADING_ALL_MEETINGS,
     });
+
+    // set it to not re-fetch. This changes lastFetched to now
+    // we re-set this after the following block of code.
+    dispatch(updateMeetingList([]));
+
     return app.
         service('participants').
         find({query: {_id: uid}}).
         then((res) => {
-            if (res.data.length == 0) {
+            if (res.data.length === 0) {
                 // no found participants. Throw an error to break out early.
                 throw new Error('no participant');
             }
-            console.log('>>fetched participant:', res);
+            logger.debug('>>fetched participant:', res);
             return res.data[0];
         }).
         then((participant) => {
@@ -46,9 +53,9 @@ export const loadRecentMeetings = (uid, selectedMeeting) => (dispatch) => {
         then((meetingIds) => {
             return app.service('meetings').find({query: {_id: meetingIds}});
         }).
-        then((meetingObjects) => {
-            console.log('raw meeting objects received:', meetingObjects);
-            meetingObjects = _.filter(meetingObjects, (m, idx) => {
+        then((allMeetingObjsForParticipant) => {
+            logger.debug('raw meeting objects received:', allMeetingObjsForParticipant);
+            const usefulMeetings = allMeetingObjsForParticipant.filter((m) => {
                 if (!m.endTime) {
                     return true;
                 }
@@ -56,18 +63,17 @@ export const loadRecentMeetings = (uid, selectedMeeting) => (dispatch) => {
                     (new Date(m.endTime).getTime() -
                         new Date(m.startTime).getTime()) /
                     1000;
-
-                //console.log("duration secs:", durationSecs)
                 return durationSecs > 2 * 60;
             });
-            if (meetingObjects.length == 0) {
-                console.log('no meetings over 2 minutes');
+
+            if (usefulMeetings.length === 0) {
                 throw new Error('no meetings after filter');
             }
-            console.log('meeting objs after duration filter:', meetingObjects);
-            return meetingObjects;
 
-            // dispatch(updateMeetingList(meetingObjects));
+            // fetch data for first meeting
+            return usefulMeetings;
+
+            // dispatch(updateMeetingList(usefulMeetings));
         }).
         then((meetingObjects) => {
             const pEvents = _.map(meetingObjects, (m) => {
@@ -76,14 +82,11 @@ export const loadRecentMeetings = (uid, selectedMeeting) => (dispatch) => {
                     find({query: {meeting: m._id, $limit: 500}});
             });
             return Promise.all(pEvents).then((vals) => {
-                console.log('pevents in promise', vals);
+                logger.debug('pevents in promise', vals);
                 return {meetings: meetingObjects, pEvents: vals};
             });
         }).
         then(({meetings, pEvents}) => {
-            console.log('got pevents:', pEvents);
-            console.log('got meetings:', meetings);
-
             // only return meetings that have over 1 participant.
             const numParticipants = _.map(pEvents, (pe) => {
                 return _.uniq(
@@ -99,66 +102,70 @@ export const loadRecentMeetings = (uid, selectedMeeting) => (dispatch) => {
             // because we use the utterance data to inform our shit, the # of attendees will also be wrong.
             // right thing to do here is to try and create a service on the server that will reliably give
             // us # of attendees
-            console.log('num participants:', numParticipants, meetings);
+            logger.debug('num participants:', numParticipants, meetings);
             meetings = _.filter(meetings, (m, idx) => {
                 return numParticipants[idx] >= 2;
             });
-            console.log('kept meetings:', meetings);
-            if (meetings.length == 0) {
+            logger.debug('kept meetings:', meetings);
+            if (meetings.length === 0) {
                 throw new Error('no meetings after nparticipants filter');
             }
             meetings.sort(
                 (a, b) => /*descending*/ -cmpMeetingsByStartTime(a, b)
             );
+
+            // limit to 10 to begin with
+            //meetings = _.first(meetings, 2);
+
             dispatch(updateMeetingList(meetings));
             if (meetings.length > 0) {
                 const newSelectedMeeting = meetings[0];
+                logger.debug('meeting list is now:', meetings);
+                logger.debug('selected meeting is:', meetings[0]._id);
                 dispatch(selectMeeting(newSelectedMeeting));
                 dispatch(loadMeetingData(uid, newSelectedMeeting._id));
             }
-
-            //return meetings;
         }).
         catch((err) => {
-            if (err.message == 'no participant') {
+            if (err.message === 'no participant') {
                 dispatch({
-                    type: DashboardActionTypes.DASHBOARD_FETCH_MEETINGS,
-                    status: 'error',
+                    type: DashboardActionTypes.DASHBOARD_LOADING_ERROR,
+                    status: true,
                     message:
                         'No meetings found. Meetings that last for over two minutes will show up here.',
                 });
-            } else if (err.message == 'no meetings after filter') {
+            } else if (err.message === 'no meetings after filter') {
                 dispatch({
-                    type: DashboardActionTypes.DASHBOARD_FETCH_MEETINGS,
-                    status: 'error',
+                    type: DashboardActionTypes.DASHBOARD_LOADING_ERROR,
+                    status: true,
                     message:
                         "We'll only show meetings that lasted for over two minutes. Go have a riff!",
                 });
             } else if (
-                err.message == 'no meetings after nparticipants filter'
+                err.message === 'no meetings after nparticipants filter'
             ) {
                 dispatch({
-                    type: DashboardActionTypes.DASHBOARD_FETCH_MEETINGS,
-                    status: 'error',
+                    type: DashboardActionTypes.DASHBOARD_LOADING_ERROR,
+                    status: true,
                     message:
                         'Only had meetings by yourself? Come back after some meetings with others to explore some insights.',
                 });
             } else {
-                // infinite loop?
-                console.log("Couldn't retrieve meetings", err);
-                dispatch(loadRecentMeetings(uid));
+                logger.error("Couldn't retrieve meetings", err);
+
+                //dispatch(loadRecentMeetings(uid));
             }
         });
 };
 
 const processUtterances = (utterances, meetingId) => {
-    console.log('processing utterances:', utterances);
+//    logger.debug('processing utterances:', utterances);
 
     // {'participant': [utteranceObject, ...]}
-    var participantUtterances = _.groupBy(utterances, 'participant');
+    const participantUtterances = _.groupBy(utterances, 'participant');
 
     // {'participant': number of utterances}
-    var numUtterances = _.mapObject(participantUtterances, (val, key) => {
+    const numUtterances = _.mapObject(participantUtterances, (val) => {
         return val.length;
     });
     var lengthUtterances = _.mapObject(participantUtterances, (val, key) => {
@@ -195,7 +202,7 @@ const processUtterances = (utterances, meetingId) => {
     );
     const participants = Object.keys(participantUtterances);
 
-    var visualizationData = participants.map((participantId) => {
+    const visualizationData = participants.map((participantId) => {
         return {
 
             //    name: participant['name'],
@@ -215,11 +222,11 @@ const processUtterances = (utterances, meetingId) => {
         };
     });
 
-    console.log("viz data:", visualizationData);
+    logger.debug('viz data:', visualizationData);
 
     _.map(visualizationData, (v) => {
         return Object.assign(v, {
-            displayName: "displayName",
+            displayName: 'displayName',
             meetingId,
         });
     });
@@ -236,86 +243,65 @@ const processUtterances = (utterances, meetingId) => {
     // });
     //return Promise.all(promises);
 
-    console.log("data returned:", visualizationData);
+    logger.debug('data returned:', visualizationData);
     return visualizationData;
 };
 
-/**
+/***************************************************************************
+ * cmpMeetingsByStartTime
  *
  * Comparison functor for meetings based on their start times.
  *
  * @returns {number} -1 if a < b, 1 if a > b, 0 if a = b
  */
-
-/***************************************************************************
- * cmpMeetingsByStartTime                                              */ function cmpMeetingsByStartTime(
-    a,
-    b
-) {
-    return a.startTime < b.startTime ? -1 : a.startTime > b.startTime ? 1 : 0;
+function cmpMeetingsByStartTime(a, b) {
+    return a.startTime < b.startTime ? -1 : a.startTime > b.startTime ? 1 : 0; // eslint-disable-line no-nested-ternary
 }
 
-// goal is to process and create a network of who follows whom
-// each node is a participant
-// each directed edge A->B indicates probability that B follows A.
-export const processNetwork = (uid, utterances, meetingId) => {
+export const processInfluence = (uid, utterances, meetingId) => {
     const participantUtterances = _.groupBy(utterances, 'participant');
     const participants = Object.keys(participantUtterances);
-    const sortedUtterances = _.sortBy(utterances, (u) => {
-        return u.startTime;
-    });
+    const sortedUtterances = _.sortBy(utterances, (u) => { return u.startTime; });
 
-    let recentUttCounts = _.map(sortedUtterances, (ut, idx, l) => {
+    let recentUttCounts = _.map(sortedUtterances, (ut, idx) => {
         // get list of utterances within 2 seconds that are not by the speaker.
-        const recentUtterances = _.filter(
-            sortedUtterances.slice(0, idx),
-            (recentUt) => {
-                const recent =
-                    (new Date(ut.startTime).getTime() -
-                        new Date(recentUt.endTime).getTime()) /
-                        1000 <
-                    2;
-                const sameParticipant = ut.participant == recentUt.participant;
-                return recent && !sameParticipant;
-            }
-        );
+        const recentUtterances = _.filter(sortedUtterances.slice(0, idx), (recentUt) => {
+            const timeDiff = ((new Date(ut.startTime).getTime() - new Date(recentUt.endTime).getTime())/1000);
+            const recent = timeDiff < 3 && timeDiff > 0;
+            const sameParticipant = ut.participant === recentUt.participant;
+            return recent && !sameParticipant;
+        });
         if (recentUtterances.length > 0) {
-            return {
-                participant: ut.participant,
-                counts: _.countBy(recentUtterances, 'participant'),
-            };
+            return {participant: ut.participant,
+                    counts: _.countBy(recentUtterances, 'participant')};
         }
         return false;
     });
 
     recentUttCounts = _.compact(recentUttCounts);
-    console.log('recent utt counts:', recentUttCounts);
+    logger.debug('recent utt counts:', recentUttCounts);
 
     // create object with the following format:
     // {participantId: {participantId: Count, participantId: Count, ...}}
-    const aggregatedCounts = _.reduce(
-        recentUttCounts,
-        (memo, val, idx, l) => {
-            if (!memo[val.participant]) {
-                memo[val.participant] = val.counts;
-            } else {
-                // update count object that's stored in memo, adding new
-                // keys as we need to.
-                // obj here should be an object of {participantId: nUtterances}
-                const obj = memo[val.participant];
-                _.each(_.pairs(val.counts), (pair) => {
-                    if (!obj[pair[0]]) {
-                        obj[pair[0]] = pair[1];
-                    } else {
-                        obj[pair[0]] += pair[1];
-                    }
-                });
-                memo[val.participant] = obj;
-            }
-            return memo;
-        },
-        {}
-    );
+    const aggregatedCounts = _.reduce(recentUttCounts, (memo, val, idx, l) => {
+        if (!memo[val.participant]) {
+            memo[val.participant] = val.counts;
+        } else {
+            // update count object that's stored in memo, adding new
+            // keys as we need to.
+            // obj here should be an object of {participantId: nUtterances}
+            const obj = memo[val.participant];
+            _.each(_.pairs(val.counts), (pair) => {
+                if (!obj[pair[0]]) {
+                    obj[pair[0]] = pair[1];
+                } else {
+                    obj[pair[0]] += pair[1];
+                }
+            });
+            memo[val.participant] = obj;
+        }
+        return memo;
+    }, {});
 
     // limit to only the current user
     //aggregatedCounts = aggregatedCounts[uid];
@@ -329,48 +315,34 @@ export const processNetwork = (uid, utterances, meetingId) => {
         });
     });
 
-    // make edge sizes between 0 and 1, and then multiply by sizeMultiplier
-    const maxEdgeSize = _.max(finalEdges, (e) => {
-        return e.size;
-    }).size;
-    const sizeMultiplier = 15;
-    finalEdges = _.map(finalEdges, (e, idx) => {
-        return {
-            ...e,
-            id: 'e' + idx,
-            size: (e.size / maxEdgeSize) * sizeMultiplier,
-        };
-    });
+    finalEdges = _.map(finalEdges, (e, idx) => { return { ...e,
+                                                          id: 'e' + idx,
+                                                          size: e.size};});
 
     // filter any edges under 0.2 weight
-    finalEdges = _.filter(finalEdges, (e) => {
-        return !(e.size < 0.1 * sizeMultiplier);
-    });
-    let nodes = _.map(participants, (p, idx) => {
-        return {
-            id: p,
-            size: 20,
-        };
-    });
-
-    // sort them for consistent colors
+    //finalEdges = _.filter(finalEdges, (e) => { return !(e.size < 0.1*sizeMultiplier); });
+    let nodes = _.map(participants, (p, idx) => { return {id: p}; });
     nodes = _.sortBy(nodes, 'id');
-    console.log('nodes', nodes, 'edges', finalEdges);
 
+    const barLabels = {};
     const promises = _.map(nodes, (n) => {
-        return app.
-            service('participants').
-            get(n.id).
-            then((res) => {
-                return {...n, label: res.name};
+        return app.service('participants').get(n.id)
+            .then((res) => {
+                barLabels[n.id] = res.name;
+                return {...n,
+                        label: res.name};
             });
     });
 
     return Promise.all(promises).then((values) => {
-        return {
-            nodes: values,
-            edges: finalEdges,
-        };
+        finalEdges = _.map(finalEdges, (e, idx) => {
+            return {
+                ...e,
+                targetName: barLabels[e.target],
+                sourceName: barLabels[e.source],
+            };
+        });
+        return finalEdges;
     });
 };
 
@@ -390,9 +362,9 @@ export const processTimeline = (uid, utterances, meetingId) => {
     });
 
     const participants = Object.keys(participantUtterances);
-    let otherParticipants = _.filter(participants, (p) => { return p != uid; });
-    console.log("local uid:", uid)
-    console.log("other participants:", otherParticipants)
+    let otherParticipants = _.filter(participants, (p) => { return p !== uid; });
+    logger.debug('local uid:', uid);
+    logger.debug('other participants:', otherParticipants);
     const promises = _.map(otherParticipants, (p) => {
         return app.
             service('participants').
@@ -411,52 +383,52 @@ export const processTimeline = (uid, utterances, meetingId) => {
 
     return Promise.all(promises).then((participants) => {
         // add local participant
-        participants = _.sortBy(participants, "id");
+        participants = _.sortBy(participants, 'id');
         participants.unshift({name: 'You',
                               id: uid});
-        console.log("sending sorted participants:", participants);
-        return {utts,
-                participants,
-                startTime,
-                endTime};
+        logger.debug('sending sorted participants:', participants);
+        return {
+            utts,
+            participants,
+            startTime,
+            endTime,
+        };
     });
 };
 
 export const loadMeetingData = (uid, meetingId) => (dispatch) => {
-    console.log("loading meeting data:", uid, meetingId);
+    logger.debug('loading meeting data:', uid, meetingId);
     dispatch({
-        type: DashboardActionTypes.DASHBOARD_FETCH_MEETING_STATS,
+        type: DashboardActionTypes.DASHBOARD_MEETING_LOAD_STATUS,
         status: 'loading',
+        meetingId,
     });
-    console.log('finding utterances for meeting', meetingId);
+    logger.debug('finding utterances for meeting', meetingId);
     return app.
         service('utterances').
-        find({query: {meeting: meetingId, $limit: 10000}}).
+        find({query: {meeting: meetingId, $limit: 10000, stitch: true}}).
         then((utterances) => {
-            console.log('utterances', utterances);
+            logger.debug('>>>', meetingId, 'utterances', utterances);
             return {
                 processedUtterances: processUtterances(utterances, meetingId),
-                processedNetwork: processNetwork(uid, utterances, meetingId),
+                processedInfluence: processInfluence(uid, utterances, meetingId),
                 processedTimeline: processTimeline(uid, utterances, meetingId),
             };
         }).
-        then(({processedUtterances, processedNetwork, processedTimeline}) => {
-            console.log(
+        then(({processedUtterances, processedInfluence, processedTimeline}) => {
+            logger.debug(
                 'utterances:',
                 processedUtterances,
-                'network:',
-                processedNetwork,
-                "timeline:",
+                'influence:',
+                processedInfluence,
+                'timeline:',
                 processedTimeline
             );
 
-            // dispatch processed network data
-            processedNetwork.then((networkObj) => {
-                dispatch({
-                    type: DashboardActionTypes.DASHBOARD_FETCH_MEETING_NETWORK,
-                    status: 'loaded',
-                    networkData: networkObj,
-                });
+            processedInfluence.then((influenceObj) => {
+                dispatch({type: DashboardActionTypes.DASHBOARD_FETCH_MEETING_INFLUENCE,
+                          meetingId,
+                          influenceData: influenceObj});
             });
 
             const promises = _.map(processedUtterances, (u) => {
@@ -468,14 +440,15 @@ export const loadMeetingData = (uid, meetingId) => (dispatch) => {
                     });
             });
             Promise.all(promises).then((processedUtterances) => {
-                console.log('processed utterances:', processedUtterances);
+                logger.debug('processed utterances:', processedUtterances, 'for meeting ID', meetingId);
                 dispatch({
                     type:
-                    DashboardActionTypes.DASHBOARD_FETCH_MEETING_STATS,
-                    status: 'loaded',
+                    DashboardActionTypes.DASHBOARD_FETCH_MEETING_UTTERANCES,
+                    meetingId,
                     processedUtterances,
                 });
             });
+
             // dispatch processed utterance (aggregated) data
             // processedUtterances.then((processedUtterances) => {
             //     const promises = _.map(processedUtterances, (u) => {
@@ -487,7 +460,7 @@ export const loadMeetingData = (uid, meetingId) => (dispatch) => {
             //             });
             //     });
             //     Promise.all(promises).then((processedUtterances) => {
-            //         console.log('processed utterances:', processedUtterances);
+            //         logger.debug('processed utterances:', processedUtterances);
             //         dispatch({
             //             type:
             //                 DashboardActionTypes.DASHBOARD_FETCH_MEETING_STATS,
@@ -498,15 +471,16 @@ export const loadMeetingData = (uid, meetingId) => (dispatch) => {
             // });
 
             processedTimeline.then((processedTimeline) => {
-                console.log('processed timeline:', processedTimeline);
+                logger.debug('processed timeline:', processedTimeline);
                 dispatch({
                     type: DashboardActionTypes.DASHBOARD_FETCH_MEETING_TIMELINE,
-                    status: 'loaded',
+                    meetingId,
                     timelineData: processedTimeline,
                 });
             });
         }).
         catch((err) => {
-            console.log("couldn't retrieve meeting data", err);
+            // re-call load meeting here?
+            logger.error("couldn't retrieve meeting data", err);
         });
 };

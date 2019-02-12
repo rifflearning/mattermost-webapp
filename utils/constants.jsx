@@ -3,6 +3,7 @@
 
 /* eslint-disable no-magic-numbers */
 import keyMirror from 'key-mirror';
+import Permissions from 'mattermost-redux/constants/permissions';
 
 import audioIcon from 'images/icons/audio.svg';
 import codeIcon from 'images/icons/code.svg';
@@ -24,9 +25,8 @@ import defaultThemeImage from 'images/themes/organization.png';
 import windows10ThemeImage from 'images/themes/windows_dark.png';
 import logoWebhook from 'images/webhook_icon.jpg';
 
-import Permissions from 'mattermost-redux/constants/permissions';
-
 import {t} from 'utils/i18n';
+import {customTheme} from 'components/needs_team/theme';
 
 import githubCSS from '!!file-loader?name=files/code_themes/[hash].[ext]!highlight.js/styles/github.css';
 
@@ -98,28 +98,36 @@ export const WebRtcActionTypes = keyMirror({
     JOINED_ROOM: null,
     READY_TO_CALL: null,
     LEAVE_ROOM: null,
-
     MUTE_AUDIO: null,
     UNMUTE_AUDIO: null,
     VOLUME_CHANGED: null,
-
     GET_MEDIA: null,
     GET_MEDIA_ERROR: null,
-
     CHANGE_PEER_RIFF_ID: null,
     ADD_PEER: null,
     REMOVE_PEER: null,
-
     TEXT_CHAT_MSG_UPDATE: null,
-    TEXT_CHAT_SET_BADGE: null
+    TEXT_CHAT_SET_BADGE: null,
+    SHARE_SCREEN: null,
+    STOP_SHARE_SCREEN: null,
+    CHAT_GET_DISPLAY_ERROR: null,
+    REMOVE_SHARED_SCREEN: null,
+    ADD_SHARED_SCREEN: null,
+    ADD_LOCAL_SHARED_SCREEN: null,
+    REMOVE_LOCAL_SHARED_SCREEN: null,
 });
 
 export const DashboardActionTypes = keyMirror({
+    DASHBOARD_LOAD_MORE_MEETINGS: null,
+    DASHBOARD_LOADING_ALL_MEETINGS: null,
+    DASHBOARD_MEETING_LOAD_STATUS: null,
+    DASHBOARD_FETCH_MEETING_UTTERANCES: null,
+    DASHBOARD_LOADING_ERROR: null,
     DASHBOARD_UPDATE_MEETING_LIST: null,
     DASHBOARD_FETCH_MEETINGS: null,
     DASHBOARD_SELECT_MEETING: null,
     DASHBOARD_FETCH_MEETING_STATS: null,
-    DASHBOARD_FETCH_MEETING_NETWORK: null,
+    DASHBOARD_FETCH_MEETING_INFLUENCE: null,
     DASHBOARD_FETCH_MEETING_TIMELINE: null,
     LOG_OUT: null,
 });
@@ -981,31 +989,32 @@ export const Constants = {
     MAX_POST_LEN: 4000,
     EMOJI_SIZE: 16,
     THEMES: {
-        default: {
+        default: customTheme,
+        mattermost: {
             type: 'Mattermost',
-            sidebarBg: "#6e5080",
-            sidebarText: "#ffffff",
-            sidebarUnreadText: "#ffffff",
-            sidebarTextHoverBg: "#6f5d7d",
-            sidebarTextActiveBorder: "#b5a2bf",
-            sidebarTextActiveColor: "#ffffff",
-            sidebarHeaderBg: "#6e5080",
-            sidebarHeaderTextColor: "#ffffff",
-            onlineIndicator: "#8dde5d",
-            awayIndicator: "#ff8b2c",
-            dndIndicator: "#ff5f5f",
-            mentionBj: "#fbfbfb",
-            mentionColor: "#0f758e",
-            centerChannelBg: "#f5f5f5",
-            centerChannelColor: "#4a4a4a",
-            newMessageSeparator: "#ff8800",
-            linkColor: "#0f758e",
-            buttonBg: "#0f758e",
-            buttonColor: "#ffffff",
-            errorTextColor: "#ce5252",
-            mentionHighlightBg: "#fdff8e",
-            mentionHighlightLink: "#0f758e",
-            mentionBg: "#fbfbfb",
+            sidebarBg: '#6e5080',
+            sidebarText: '#ffffff',
+            sidebarUnreadText: '#ffffff',
+            sidebarTextHoverBg: '#6f5d7d',
+            sidebarTextActiveBorder: '#b5a2bf',
+            sidebarTextActiveColor: '#ffffff',
+            sidebarHeaderBg: '#6e5080',
+            sidebarHeaderTextColor: '#ffffff',
+            onlineIndicator: '#8dde5d',
+            awayIndicator: '#ff8b2c',
+            dndIndicator: '#ff5f5f',
+            mentionBj: '#fbfbfb',
+            mentionColor: '#0f758e',
+            centerChannelBg: '#f5f5f5',
+            centerChannelColor: '#4a4a4a',
+            newMessageSeparator: '#ff8800',
+            linkColor: '#0f758e',
+            buttonBg: '#0f758e',
+            buttonColor: '#ffffff',
+            errorTextColor: '#ce5252',
+            mentionHighlightBg: '#fdff8e',
+            mentionHighlightLink: '#0f758e',
+            mentionBg: '#fbfbfb',
             codeTheme: 'github',
             image: mattermostThemeImage,
         },
@@ -1589,6 +1598,7 @@ export const Constants = {
     TRANSPARENT_PIXEL:
         'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
     TRIPLE_BACK_TICKS: /```/g,
+    SYSTEM_BRAND_NAME: 'Riff Edu',
 };
 
 t('suggestion.mention.channels');

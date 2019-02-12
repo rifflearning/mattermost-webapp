@@ -30,3 +30,10 @@ export const socket = io(dataserverUrl, {
 export var app = feathers()
     .configure(socketio(socket))
     .configure(auth({jwt: {}, local: {}}));
+
+export const logger = {
+    debug: window.client_config && window.client_config.react_app_debug ? console.log.bind(window.console) : () => {},
+    info: console.log.bind(window.console),
+    warn: console.warn.bind(window.console),
+    error: console.error.bind(window.console),
+}
