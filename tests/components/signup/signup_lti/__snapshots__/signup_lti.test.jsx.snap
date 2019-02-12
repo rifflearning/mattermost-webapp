@@ -108,10 +108,10 @@ exports[`components/signup/SignupLTI should pick email, username and full name f
             >
               <input
                 className="form-control"
-                defaultValue="Test User"
                 disabled={true}
                 id="fullname"
                 type="text"
+                value=""
               />
             </div>
           </div>
@@ -132,10 +132,10 @@ exports[`components/signup/SignupLTI should pick email, username and full name f
             >
               <input
                 className="form-control"
-                defaultValue="test"
                 disabled={true}
                 id="username"
                 type="text"
+                value="test"
               />
             </div>
           </div>
@@ -156,10 +156,10 @@ exports[`components/signup/SignupLTI should pick email, username and full name f
             >
               <input
                 className="form-control"
-                defaultValue="test@nowhere.com"
                 disabled={true}
                 id="email"
                 type="email"
+                value="test@nowhere.com"
               />
             </div>
           </div>
@@ -287,6 +287,7 @@ exports[`components/signup/SignupLTI should redirect to / when not signup with l
                 disabled={true}
                 id="fullname"
                 type="text"
+                value=""
               />
             </div>
           </div>
@@ -310,6 +311,7 @@ exports[`components/signup/SignupLTI should redirect to / when not signup with l
                 disabled={true}
                 id="username"
                 type="text"
+                value=""
               />
             </div>
           </div>
@@ -333,6 +335,7 @@ exports[`components/signup/SignupLTI should redirect to / when not signup with l
                 disabled={true}
                 id="email"
                 type="email"
+                value=""
               />
             </div>
           </div>
