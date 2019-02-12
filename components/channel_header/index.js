@@ -69,7 +69,7 @@ function mapStateToProps(state, ownProps) {
         isReadOnly: isCurrentChannelReadOnly(state),
         lastViewedChannelName,
         penultimateViewedChannelName,
-        webRtcLink: getWebRtcLink(state, ownProps),
+        webRtcLink: getWebRtcLink(state, ownProps)
     };
 }
 

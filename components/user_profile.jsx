@@ -65,7 +65,6 @@ export default class UserProfile extends React.Component {
         if (this.props.overwriteName) {
             name = this.props.overwriteName;
         }
-
         if (this.props.disablePopover) {
             return <div className='user-popover'>{name}</div>;
         }

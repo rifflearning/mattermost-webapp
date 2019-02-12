@@ -3,6 +3,7 @@ import {browserHistory} from 'utils/browser_history';
 import AppDispatcher from 'dispatcher/app_dispatcher.jsx';
 import {riffAddUserToMeeting} from './views/riff';
 import {app, socket} from 'utils/riff';
+import { logger } from '../utils/riff';
 
 
 export const riffParticipantLeaveRoom = (riffMeetingId, riffId) => dispatch => {
@@ -65,6 +66,24 @@ export const handleReadyClick = (event, props, webrtc) => dispatch =>{
     }
 };
 
+export const handleScreenShareClick = (event, isUserSharing, webRtcRemoteSharedScreen, webrtc) => dispatch => {
+
+    if (isUserSharing) {
+      // TODO function name choice
+      dispatch(stopShareScreen());
+      webrtc.stopScreenShare();
+    } else if (webRtcRemoteSharedScreen) {
+      // someone is already sharing
+      // TODO tell user to quit it
+      logger.debug("Stop that, someone is already sharing!");
+    } else {
+
+      logger.debug("Sharing screen!");
+      dispatch(shareScreen())
+      webrtc.shareScreen();
+    }
+}
+
 export const joinRoom = (roomName) => {
     return {type: WebRtcActionTypes.JOIN_ROOM,
             roomName: roomName};
@@ -77,6 +96,7 @@ export const readyToCall = (roomName) => {
 };
 
 export const getMediaError = (error) => {
+    alert(error)
     return {
         type: WebRtcActionTypes.GET_MEDIA,
         status: 'error',
@@ -177,3 +197,48 @@ export const setTextChatBadge = (badgeValue) => {
             badgeValue};
 }
 
+export const stopShareScreen = () => {
+  return {
+    type: WebRtcActionTypes.STOP_SHARE_SCREEN,
+  };
+};
+
+export const shareScreen = () => {
+  return {
+    type: WebRtcActionTypes.SHARE_SCREEN,
+  };
+};
+
+export const getDisplayError = (error) => {
+  return {
+    type: WebRtcActionTypes.CHAT_GET_DISPLAY_ERROR,
+    error: error
+  };
+};
+
+export const addSharedScreen = (peer) => {
+  return {
+    type: WebRtcActionTypes.ADD_SHARED_SCREEN,
+    peer: peer
+  };
+};
+
+export const removeSharedScreen = () => {
+  return {
+    type: WebRtcActionTypes.REMOVE_SHARED_SCREEN,
+  };
+};
+
+export const addLocalSharedScreen = (screen) => {
+  return {
+    type: WebRtcActionTypes.ADD_LOCAL_SHARED_SCREEN,
+    screen: screen
+  };
+};
+
+export const removeLocalSharedScreen = (screen) => {
+  return {
+    type: WebRtcActionTypes.REMOVE_LOCAL_SHARED_SCREEN,
+    screen: screen
+  };
+};

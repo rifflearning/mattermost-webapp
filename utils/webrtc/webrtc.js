@@ -1,95 +1,139 @@
-import SimpleWebRtc from 'simplewebrtc';
-import * as WebRtcActions from '../../actions/webrtc_actions';
-import sibilant from 'sibilant-webaudio';
-import { app, socket } from '../riff';
-import {updateRiffMeetingId} from '../../actions/views/riff'
+// Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
 
+import SimpleWebRtc from 'simplewebrtc';
+import Sibilant from 'sibilant-webaudio';
+import parse from 'url-parse';
+
+import * as WebRtcActions from '../../actions/webrtc_actions';
+import {updateRiffMeetingId} from '../../actions/views/riff';
+import {app, logger} from '../riff';
 
 export const createWebRtcLink = (teamName, channelName) => {
-    return '/' + teamName + '/' + channelName + '/video' + '/' + generateUID();
-}
+    const link = parse(window.location.href, true);
+    link.set('pathname', `${teamName}/${channelName}/video/${generateUID()}`);
+    logger.debug('Created webrtc Link:', link.href);
+    return link;
+};
 
 function generateUID() {
-    // I generate the UID from two parts here 
+    // I generate the UID from two parts here
     // to ensure the random number provide enough bits.
     var firstPart = (Math.random() * 46656) | 0;
     var secondPart = (Math.random() * 46656) | 0;
-    firstPart = ("000" + firstPart.toString(36)).slice(-3);
-    secondPart = ("000" + secondPart.toString(36)).slice(-3);
+    firstPart = ('000' + firstPart.toString(36)).slice(-3);
+    secondPart = ('000' + secondPart.toString(36)).slice(-3);
     return firstPart + secondPart;
 }
 
+export function isScreenShareSourceAvailable() {
+    // currently we only support chrome v70+ (w/ experimental features enabled, if necessary)
+    // and firefox
+    return (navigator.getDisplayMedia ||
+        navigator.mediaDevices.getDisplayMedia ||
+        Boolean(navigator.mediaDevices.getSupportedConstraints().mediaSource));
+}
 
 export default function (localVideoNode, dispatch, getState) {
     //TODO: make dynamic
     let signalmasterPath = process.env.CLIENT_ENV.SIGNALMASTER_PATH || '';
     signalmasterPath += '/socket.io';
-    let signalmasterUrl = process.env.CLIENT_ENV.SIGNALMASTER_URL;
-    let webRtcConfig = {
+    const signalmasterUrl = process.env.CLIENT_ENV.SIGNALMASTER_URL;
+    const webRtcConfig = {
         localVideoEl: localVideoNode,
-        remoteVideosEl: "",
+        remoteVideosEl: '',
         autoRequestMedia: true,
         url: signalmasterUrl,
         socketio: {
             path: signalmasterPath,
-            forceNew: true
+            forceNew: true,
         },
         media: {
             audio: true,
             video: {
                 width: {ideal: 640},
                 height: {ideal: 480},
-                frameRate: {max: 30}
-            }
+                frameRate: {max: 30},
+            },
         },
-        debug: true
+        debug: true,
     };
 
-    let webrtc = new SimpleWebRtc(webRtcConfig);
+    const webrtc = new SimpleWebRtc(webRtcConfig);
 
-    webrtc.on('videoAdded', function (video, peer) {
-        console.log("added video", video, peer);
+    webrtc.on('videoAdded', (video, peer) => {
+        logger.debug('added video', video, peer);
         dispatch(WebRtcActions.addPeer({peer}));
     });
 
-    webrtc.on('videoRemoved', function (video, peer) {
-        let state = getState();
+    webrtc.on('videoRemoved', (video, peer) => {
+        const state = getState();
+
         // get riffId
         if (state.views.webrtc.inRoom) {
-            dispatch(WebRtcActions.removePeer({peer: peer,
-                                               videoEl: video}));
-            let [riffId, ...rest] = peer.nick.split("|");
+            dispatch(WebRtcActions.removePeer({peer,
+                                               videoEl: video})); // eslint-disable-line indent
+            const [riffId, ...rest] = peer.nick.split('|'); // eslint-disable-line no-unused-vars
+
             //TODO: state get here is wrong.
             dispatch(WebRtcActions.riffParticipantLeaveRoom(state.views.riff.meetingId, riffId));
         }
     });
 
-    webrtc.on('localStreamRequestFailed', function (event) {
+    webrtc.on('screenAdded', (video, peer) => {
+        logger.debug('adding shared screen!', video, 'from', peer);
+        dispatch(WebRtcActions.addSharedScreen({videoEl: video, peer}));
+    });
+
+    webrtc.on('screenRemoved', (video) => {
+        logger.debug('removing shared screen!', video);
+        dispatch(WebRtcActions.removeSharedScreen());
+    });
+
+    webrtc.on('localScreenAdded', (video) => {
+        dispatch(WebRtcActions.addLocalSharedScreen(video));
+    });
+
+    webrtc.on('localScreenRemoved', (video) => {
+        dispatch(WebRtcActions.removeLocalSharedScreen(video));
+    });
+
+    // this happens if the user ends via the chrome button
+    // instead of our button
+    webrtc.on('localScreenStopped', (video) => {
+        dispatch(WebRtcActions.removeLocalSharedScreen(video));
+    });
+
+    webrtc.on('localScreenRequestFailed', () => {
+        dispatch(WebRtcActions.getDisplayError());
+    });
+
+    webrtc.on('localStreamRequestFailed', (event) => {
         dispatch(WebRtcActions.getMediaError(event));
     });
 
-    webrtc.on('localStream', function (stream) {
+    webrtc.on('localStream', (stream) => {
         if (stream.active) {
             dispatch(WebRtcActions.getMediaSuccess());
         }
     });
 
-    webrtc.on('readyToCall', function (video, peer) {
-        let stream = webrtc.webrtc.localStreams[0];
+    webrtc.on('readyToCall', (/*video, peer*/) => {
+        const stream = webrtc.webrtc.localStreams[0];
         dispatch(WebRtcActions.getMediaSuccess());
-        var sib = new sibilant(stream);
+        const sib = new Sibilant(stream);
         if (sib) {
-            webrtc.stopVolumeCollection = function () {
+            webrtc.stopVolumeCollection = () => {
                 // sib.unbind('volumeChange');
             };
 
-            webrtc.startVolumeCollection = function () {
-                sib.bind('volumeChange', function (data) {
-                    let state = getState();
+            webrtc.startVolumeCollection = () => {
+                sib.bind('volumeChange', (data) => {
+                    const state = getState();
                     if (!state.views.webrtc.inRoom) {
                         dispatch(WebRtcActions.volumeChanged(data));
                     }
-                }.bind(getState));
+                });
             };
 
             webrtc.startVolumeCollection();
@@ -101,16 +145,15 @@ export default function (localVideoNode, dispatch, getState) {
                 room: getState().views.webrtc.roomName,
                 startTime: data.start.toISOString(),
                 endTime: data.end.toISOString(),
-                token: getState().views.riff.authToken
-            }).then(function (res) {
+                token: getState().views.riff.authToken,
+            }).then((res) => {
                 dispatch(updateRiffMeetingId(res.meeting));
-            }).catch(function (err) {
+            }).catch((err) => { // eslint-disable-line no-unused-vars
                 // error thrown, throw it?
             });
         });
 
-
-        webrtc.stopSibilant = function () {
+        webrtc.stopSibilant = () => {
             sib.unbind('volumeChange');
             sib.unbind('stoppedSpeaking');
         };
@@ -125,4 +168,5 @@ export default function (localVideoNode, dispatch, getState) {
     };
 
     return webrtc;
-};
+}
+

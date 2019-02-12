@@ -1,14 +1,16 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
+import riffThemeImage from 'images/themes/riff.png';
+
 export const customTheme = {
-    type: 'Mattermost',
-    sidebarBg: '#6e5080',
+    type: 'riff',
+    sidebarBg: '#4e3060',
     sidebarText: '#ffffff',
     sidebarUnreadText: '#ffffff',
     sidebarTextHoverBg: '#6f5d7d',
     sidebarTextActiveBorder: '#b5a2bf',
     sidebarTextActiveColor: '#ffffff',
-    sidebarHeaderBg: '#6e5080',
+    sidebarHeaderBg: '#4e3060',
     sidebarHeaderTextColor: '#ffffff',
     onlineIndicator: '#8dde5d',
     awayIndicator: '#ff8b2c',
@@ -26,4 +28,5 @@ export const customTheme = {
     mentionHighlightLink: '#0f758e',
     mentionBg: '#fbfbfb',
     codeTheme: 'github',
+    image: riffThemeImage,
 };
