@@ -35,7 +35,6 @@ export default class SignupLTI extends React.Component {
 
         this.state = {
             formData: {},
-            name: '',
             loading: false,
             serverError: '',
             usernameError: '',
@@ -49,10 +48,6 @@ export default class SignupLTI extends React.Component {
     componentDidMount() {
         if (this.props.enableSignUpWithLTI) {
             this.decodeRequest(this.extractFormData());
-            const name = this.extractName();
-            this.setState({
-                name: name,
-            });
         } else {
             browserHistory.push('/');
         }
@@ -148,8 +143,8 @@ export default class SignupLTI extends React.Component {
     renderLTISignup = () => {
         const {formData = {}} = this.state;
         const {
-            [LTIConstants.EMAIL_FIELD]: email,
-            [LTIConstants.USERNAME_FIELD]: username,
+            [LTIConstants.EMAIL_FIELD]: email = '',
+            [LTIConstants.USERNAME_FIELD]: username = '',
         } = formData;
 
         let emailError = null;
@@ -203,7 +198,7 @@ export default class SignupLTI extends React.Component {
                                 type='text'
                                 ref='fullname'
                                 className='form-control'
-                                value={this.state.name}
+                                value={this.extractName()}
                                 disabled={true}
                             />
                         </div>
