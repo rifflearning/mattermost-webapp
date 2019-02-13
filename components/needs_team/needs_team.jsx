@@ -109,7 +109,8 @@ export default class NeedsTeam extends React.Component {
         startPeriodicSync();
         // Set up tracking for whether the window is active
         window.isActive = true;
-        Utils.applyTheme(customTheme);
+        const theme = this.props.theme || customTheme;
+        Utils.applyTheme(theme);
 
         if (UserAgent.isIosSafari()) {
             // Use iNoBounce to prevent scrolling past the boundaries of the page
