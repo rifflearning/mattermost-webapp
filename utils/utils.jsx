@@ -499,7 +499,7 @@ export function applyTheme(theme) {
     if (theme.sidebarText) {
         changeCss('.ps-container > .ps-scrollbar-y-rail > .ps-scrollbar-y', 'background:' + theme.sidebarText);
         changeCss('.ps-container:hover .ps-scrollbar-y-rail:hover, .sidebar__switcher button:hover', 'background:' + changeOpacity(theme.sidebarText, 0.15));
-        changeCss('.sidebar--left .nav-pills__container li > h4, .sidebar--left .nav-pills__container li .sidebar-item, .sidebar--left .nav-pills__container li > .nav-more, .sidebar--right, .modal .settings-modal .nav-pills>li button', 'color:' + changeOpacity(theme.sidebarText, 0.6));
+        changeCss('.sidebar--left .nav-pills__container li > h4, .sidebar--left .nav-pills__container li .sidebar-item, .sidebar--left .nav-pills__container li > .nav-more, .sidebar--right, .modal .settings-modal .nav-pills>li button', 'color:' + changeOpacity(theme.sidebarText, 0.7));
         changeCss('@media(max-width: 768px){.modal .settings-modal .settings-table .nav>li>a, .sidebar--menu', 'color:' + changeOpacity(theme.sidebarText, 0.8));
         changeCss('.sidebar--left .add-channel-btn', 'color:' + changeOpacity(theme.sidebarText, 0.8));
         changeCss('.sidebar--left .add-channel-btn:hover, .sidebar--left .add-channel-btn:focus', 'color:' + theme.sidebarText);
