@@ -8,7 +8,7 @@ import {FormattedMessage} from 'react-intl';
 import logoImage from 'images/logo.png';
 import {browserHistory} from 'utils/browser_history';
 import {LTIConstants} from 'utils/constants.jsx';
-import {isValidPassword} from 'utils/utils.jsx';
+import {isValidPassword, localizeMessage} from 'utils/utils.jsx';
 
 import BackButton from 'components/common/back_button.jsx';
 import LoadingScreen from 'components/loading_screen.jsx';
@@ -37,8 +37,6 @@ export default class SignupLTI extends React.Component {
             formData: {},
             loading: false,
             serverError: '',
-            usernameError: '',
-            emailError: '',
             passwordError: '',
             isSubmitting: false,
             invalidRequest: false,
@@ -129,8 +127,6 @@ export default class SignupLTI extends React.Component {
         const {valid, error} = isValidPassword(providedPassword, this.props.passwordConfig);
         if (!valid && error) {
             this.setState({
-                nameError: '',
-                emailError: '',
                 passwordError: error,
                 serverError: '',
             });
@@ -146,20 +142,6 @@ export default class SignupLTI extends React.Component {
             [LTIConstants.EMAIL_FIELD]: email = '',
             [LTIConstants.USERNAME_FIELD]: username = '',
         } = formData;
-
-        let emailError = null;
-        let emailDivStyle = 'form-group';
-        if (this.state.emailError) {
-            emailError = (<label className='control-label'>{this.state.emailError}</label>);
-            emailDivStyle += ' has-error';
-        }
-
-        let usernameError = null;
-        let usernameDivStyle = 'form-group';
-        if (this.state.usernameError) {
-            usernameError = <label className='control-label'>{this.state.usernameError}</label>;
-            usernameDivStyle += ' has-error';
-        }
 
         let passwordError = null;
         let passwordDivStyle = 'form-group';
@@ -200,6 +182,7 @@ export default class SignupLTI extends React.Component {
                                 className='form-control'
                                 value={this.extractName()}
                                 disabled={true}
+                                aria-label={localizeMessage('signup_LTI.fullname', 'Full Name')}
                             />
                         </div>
                     </div>
@@ -210,7 +193,7 @@ export default class SignupLTI extends React.Component {
                                 defaultMessage='Username'
                             />
                         </strong></h5>
-                        <div className={usernameDivStyle}>
+                        <div className='form-group'>
                             <input
                                 id='username'
                                 type='text'
@@ -218,8 +201,8 @@ export default class SignupLTI extends React.Component {
                                 className='form-control'
                                 value={username}
                                 disabled={true}
+                                aria-label={localizeMessage('signup_LTI.username', 'Username')}
                             />
-                            {usernameError}
                         </div>
                     </div>
                     <div className={'margin--extra'}>
@@ -229,7 +212,7 @@ export default class SignupLTI extends React.Component {
                                 defaultMessage='Email Address'
                             />
                         </strong></h5>
-                        <div className={emailDivStyle}>
+                        <div className='form-group'>
                             <input
                                 id='email'
                                 type='email'
@@ -237,8 +220,8 @@ export default class SignupLTI extends React.Component {
                                 className='form-control'
                                 value={email}
                                 disabled={true}
+                                aria-label={localizeMessage('signup_LTI.email', 'Email Address')}
                             />
-                            {emailError}
                         </div>
                     </div>
                     {yourEmailIs}
@@ -258,6 +241,7 @@ export default class SignupLTI extends React.Component {
                                 placeholder=''
                                 maxLength='128'
                                 spellCheck='false'
+                                aria-label={localizeMessage('signup_user_completed.choosePwd', 'Choose your password')}
                             />
                             {passwordError}
                         </div>
@@ -329,6 +313,7 @@ export default class SignupLTI extends React.Component {
                         <img
                             className='signup-team-logo'
                             src={logoImage}
+                            alt=''
                         />
                         <SiteNameAndDescription
                             customDescriptionText={customDescriptionText}
