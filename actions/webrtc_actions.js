@@ -62,6 +62,9 @@ export const handleReadyClick = (event, props, webrtc) => dispatch =>{
         webrtc.stopVolumeCollection();
         webrtc.joinRoom(webRtcRoom, function (err, rd) {
             dispatch(joinedRoom(webRtcRoom));
+            //reset audio
+            dispatch(unmuteAudio());
+            webrtc.unmute();
         });
     }
 };
@@ -96,7 +99,6 @@ export const readyToCall = (roomName) => {
 };
 
 export const getMediaError = (error) => {
-    alert(error)
     return {
         type: WebRtcActionTypes.GET_MEDIA,
         status: 'error',
