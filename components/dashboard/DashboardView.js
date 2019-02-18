@@ -40,6 +40,18 @@ const MeetingTabs = styled.div.attrs({
     }
 `;
 
+const NoMeetingsMessage = styled.div.attrs({
+    className: 'no-meetings-message',
+})`
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%,-50%);
+    text-align: center;
+    color: #4A4A4A;
+    font-size: 28px;
+`;
+
 // TODO Add dispatch and click
 
 // All dispatches were ripped out re-copy back in once server is working
@@ -93,7 +105,16 @@ const DashboardView = (props) => {
               </div>
           ) : (
               <div style={{overflowY: 'scroll'}}>
-                {meetingVisualizations}
+                {props.meetings.length > 0 ?
+                  meetingVisualizations
+                  :
+                  <NoMeetingsMessage>
+                      <div>Welcome to your Riff Dashboard!</div>
+                      <br />
+                      <div>Once you have a Riff video meeting,</div>
+                      <div>your Riff Stats will display here.</div>
+                  </NoMeetingsMessage>
+                }
               </div>
           )}
         </div>
