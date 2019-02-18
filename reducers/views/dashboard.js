@@ -57,14 +57,11 @@ const updateLoadingStatus = (state) => {
 
     logger.debug('meetingLoaded UNZIPPED:', unzipped);
 
-    const meetingLoaded = _.map(unzipped, (triple) => {
-        const bools = _.map(triple, (t) => {return Boolean(t);});
-        logger.debug('meetingLoaded mapped to bools:', bools);
-        return _.every(bools);
-    });
-
+    // a meeting is loaded if all processed datasets for the meeting exist
+    const meetingLoaded = unzipped.map((processedDatasets) => processedDatasets.every((dataset) => Boolean(dataset)));
     logger.debug('meetingLoaded', meetingLoaded);
-    const isLoadedArray = _.map(meetingLoaded, (m) => {return m ? 'loaded' : 'loading';});
+
+    const isLoadedArray = meetingLoaded.map((isLoaded) => {return isLoaded ? 'loaded' : 'loading';});
     return {
         ...state,
         statsStatus: isLoadedArray,
@@ -93,14 +90,16 @@ const dashboard = (state = initialState, action) => {
             shouldFetch: timeDiff,
         };
     }
-    case DashboardActionTypes.DASHBOARD_LOADING_ALL_MEETINGS:
+    case DashboardActionTypes.DASHBOARD_LOADING_ALL_MEETINGS: {
+        const numMeetings = state.meetings.length;
         return {
             ...state,
-            statsStatus: _.map(state.meetings, () => {return 'loading';}),
-            processedUtterances: _.map(state.meetings, () => {return false;}),
-            influenceData: _.map(state.meetings, () => {return false;}),
-            timelineData: _.map(state.meetings, () => {return false;}),
+            statsStatus: new Array(numMeetings).fill('loading'),
+            processedUtterances: new Array(numMeetings).fill(false),
+            influenceData: new Array(numMeetings).fill(false),
+            timelineData: new Array(numMeetings).fill(false),
         };
+    }
     case DashboardActionTypes.DASHBOARD_LOADING_ERROR:
         return {
             ...state,
