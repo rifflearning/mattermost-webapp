@@ -124,22 +124,21 @@ class MeetingViz extends React.Component {
         timelineData: {},
     };
 
-
     shouldComponentUpdate(nextProps, nextState) {
-      let shouldUpdate = false;
+        let shouldUpdate = false;
 
-      if (nextProps.size.width > 0 && this.props.size.width !== nextProps.size.width) {
-         logger.debug('size changed');
-         shouldUpdate = true;
-      }
+        if (nextProps.size.width > 0 && this.props.size.width !== nextProps.size.width) {
+            logger.debug('size changed');
+            shouldUpdate = true;
+        }
 
-      if (this.props.loaded !== nextProps.loaded) {
-         logger.debug('loaded changed')
-         shouldUpdate = true;
-      }
+        if (this.props.loaded !== nextProps.loaded) {
+            logger.debug('loaded changed')
+            shouldUpdate = true;
+        }
 
-      logger.debug("DEBUG Should update?: ", shouldUpdate);
-      return shouldUpdate;
+        logger.debug("DEBUG Should update?: ", shouldUpdate);
+        return shouldUpdate;
     }
 
     constructor(props) {
