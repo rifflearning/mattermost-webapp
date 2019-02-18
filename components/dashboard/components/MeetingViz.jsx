@@ -52,7 +52,7 @@ const mapStateToProps = (state, ownProps) => {
     const meetingId = ownProps.meeting._id;
     const idx = getMeetingIndex(dashboard.meetings, meetingId);
     logger.debug('meeting for this viz is:', riffState.meetings[idx]);
-    logger.debug('timeline for this viz is:', idx, dashboard.timelineData);
+    logger.debug('timeline for this viz is:', idx, dashboard.timelineData[idx]);
     return {
         processedUtterances: dashboard.processedUtterances[idx],
         influenceData: dashboard.influenceData[idx],
@@ -96,7 +96,7 @@ Header.propTypes = {
     selectedMeetingDuration: PropTypes.string,
 };
 
-class MeetingViz extends React.PureComponent {
+class MeetingViz extends React.Component {
     static propTypes = {
         user: PropTypes.object.isRequired,
         allMeetings: PropTypes.array.isRequired,
@@ -123,6 +123,35 @@ class MeetingViz extends React.PureComponent {
         influenceData: {},
         timelineData: {},
     };
+
+    componentDidUpdate(prevProps, prevState) {
+        logger.debug(`--------debug--------`);
+        Object.entries(this.props).forEach(([key, val]) => {
+          if (prevProps[key] !== val) {
+            logger.debug(`DEBUG Prop '${key}' changed`)
+            logger.debug(`DEBUG Previous val: ${JSON.stringify(prevProps[key])}`)
+            logger.debug(`DEBUG New val: ${JSON.stringify(val)} `)
+
+          }
+        });
+    }
+
+    shouldComponentUpdate(nextProps, nextState) {
+      let shouldUpdate = false;
+
+      if (nextProps.size.width > 0 && this.props.size.width !== nextProps.size.width) {
+         logger.debug('size changed');
+         shouldUpdate = true;
+      }
+
+      if (this.props.loaded !== nextProps.loaded) {
+         logger.debug('loaded changed')
+         shouldUpdate = true;
+      }
+
+      logger.debug(" DEBUG Should update?: ", shouldUpdate);
+      return shouldUpdate;
+    }
 
     constructor(props) {
         super(props);

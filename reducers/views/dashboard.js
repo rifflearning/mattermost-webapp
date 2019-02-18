@@ -47,7 +47,7 @@ const updateLoadingStatus = (state) => {
     console.log("meetingLoaded UNZIPPED:", unzipped)
 
     let meetingLoaded = _.map(unzipped, (triple) => {
-        let bools = _.map(triple, (t) => { return !(t === false) });
+        let bools = _.map(triple, (t) => { return Boolean(t)});
         console.log("meetingLoaded mapped to bools:", bools)
         return _.every(bools);
     });
