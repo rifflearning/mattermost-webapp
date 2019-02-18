@@ -247,7 +247,7 @@ const processUtterances = (utterances, meetingId) => {
     });
 
     // {'participant': mean length of utterances in seconds}
-    const meanLengthUtterances = participantUtterances.keys().reduce((meanU, k) => {
+    const meanLengthUtterances = Object.keys(participantUtterances).reduce((meanU, k) => {
         meanU[k] = lengthUtterances[k] / numUtterances[k];
         return meanU;
     }, {});
