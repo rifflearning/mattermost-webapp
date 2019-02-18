@@ -16,7 +16,6 @@ import {
 } from '../../actions/views/dashboard';
 import {getCurrentUser} from 'mattermost-redux/selectors/entities/users';
 import * as RiffServerActionCreators from '../../actions/views/riff';
-import {logger} from '../../utils/riff';
 
 import DashboardView from './DashboardView';
 
@@ -104,7 +103,6 @@ const mapMergeProps = (stateProps, dispatchProps, ownProps) => {
 };
 
 const componentDidUpdate = (props) => {
-    logger.debug("dashboard did update");
     if (props.riffAuthToken && props.shouldFetch) {
         props.loadRecentMeetings(props.user.id);
     }

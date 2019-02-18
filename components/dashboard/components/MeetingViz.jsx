@@ -124,17 +124,6 @@ class MeetingViz extends React.Component {
         timelineData: {},
     };
 
-    componentDidUpdate(prevProps, prevState) {
-        logger.debug(`--------debug--------`);
-        Object.entries(this.props).forEach(([key, val]) => {
-          if (prevProps[key] !== val) {
-            logger.debug(`DEBUG Prop '${key}' changed`)
-            logger.debug(`DEBUG Previous val: ${JSON.stringify(prevProps[key])}`)
-            logger.debug(`DEBUG New val: ${JSON.stringify(val)} `)
-
-          }
-        });
-    }
 
     shouldComponentUpdate(nextProps, nextState) {
       let shouldUpdate = false;
@@ -149,14 +138,13 @@ class MeetingViz extends React.Component {
          shouldUpdate = true;
       }
 
-      logger.debug(" DEBUG Should update?: ", shouldUpdate);
+      logger.debug("DEBUG Should update?: ", shouldUpdate);
       return shouldUpdate;
     }
 
     constructor(props) {
         super(props);
-        this.state = {
-        };
+        this.state = {};
 
         // only load if the data hasn't been loaded yet.
         // NEW: waypoint should take care of this for us.
