@@ -82,7 +82,7 @@
     "redux-persist": "4.9.1",
     "redux-persist-transform-filter": "0.0.18",
     "reselect": "3.0.1",
-    "sibilant-webaudio": "^0.1.5",
+    "sibilant-webaudio": "github:rifflearning/sibilant#f62e2192ab2ab00f3a3dc4392af9c101329069d7",
     "simplewebrtc": "github:jordanreedie/SimpleWebRTC#feature/screen-sharing",
     "smoothscroll-polyfill": "0.4.3",
     "socket.io-client": "^2.1.1",
