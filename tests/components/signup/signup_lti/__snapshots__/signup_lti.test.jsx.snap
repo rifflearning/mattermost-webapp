@@ -12,6 +12,7 @@ exports[`components/signup/SignupLTI should match snapshot 1`] = `
       className="signup-team__container padding--less"
     >
       <img
+        alt=""
         className="signup-team-logo"
         src={null}
       />
@@ -71,6 +72,7 @@ exports[`components/signup/SignupLTI should pick email, username and full name f
       className="signup-team__container padding--less"
     >
       <img
+        alt=""
         className="signup-team-logo"
         src={null}
       />
@@ -107,6 +109,7 @@ exports[`components/signup/SignupLTI should pick email, username and full name f
               className="form-group"
             >
               <input
+                aria-label="Full Name"
                 className="form-control"
                 disabled={true}
                 id="fullname"
@@ -131,6 +134,7 @@ exports[`components/signup/SignupLTI should pick email, username and full name f
               className="form-group"
             >
               <input
+                aria-label="Username"
                 className="form-control"
                 disabled={true}
                 id="username"
@@ -155,6 +159,7 @@ exports[`components/signup/SignupLTI should pick email, username and full name f
               className="form-group"
             >
               <input
+                aria-label="Email Address"
                 className="form-control"
                 disabled={true}
                 id="email"
@@ -189,6 +194,7 @@ exports[`components/signup/SignupLTI should pick email, username and full name f
               className="form-group"
             >
               <input
+                aria-label="Choose your password"
                 className="form-control"
                 id="password"
                 maxLength="128"
@@ -247,6 +253,7 @@ exports[`components/signup/SignupLTI should redirect to / when not signup with l
       className="signup-team__container padding--less"
     >
       <img
+        alt=""
         className="signup-team-logo"
         src={null}
       />
@@ -283,6 +290,7 @@ exports[`components/signup/SignupLTI should redirect to / when not signup with l
               className="form-group"
             >
               <input
+                aria-label="Full Name"
                 className="form-control"
                 disabled={true}
                 id="fullname"
@@ -307,6 +315,7 @@ exports[`components/signup/SignupLTI should redirect to / when not signup with l
               className="form-group"
             >
               <input
+                aria-label="Username"
                 className="form-control"
                 disabled={true}
                 id="username"
@@ -331,6 +340,7 @@ exports[`components/signup/SignupLTI should redirect to / when not signup with l
               className="form-group"
             >
               <input
+                aria-label="Email Address"
                 className="form-control"
                 disabled={true}
                 id="email"
@@ -355,6 +365,7 @@ exports[`components/signup/SignupLTI should redirect to / when not signup with l
               className="form-group"
             >
               <input
+                aria-label="Choose your password"
                 className="form-control"
                 id="password"
                 maxLength="128"
