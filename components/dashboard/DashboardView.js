@@ -1,20 +1,12 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
-import React, {Component, Fragment} from 'react';
-import {withRouter} from 'react-router-dom';
-import styled, {injectGlobal, keyframes} from 'styled-components';
-import {Link} from 'react-router-dom';
-import ReactChartkick, {ColumnChart, PieChart} from 'react-chartkick';
+import React from 'react';
+import styled from 'styled-components';
 import {ScaleLoader} from 'react-spinners';
 import MaterialIcon from 'material-icons-react';
-import Chart from 'chart.js';
-import moment from 'moment';
 import _ from 'underscore';
 
 import MeetingViz from './components/MeetingViz';
-import TurnChart from './components/TurnChart';
-import NetworkChart from './components/NetworkChart';
-import TimelineChart from './components/TimelineChart';
 
 const SpaceBetweeen = styled.div.attrs({
     className: 'space-between',
