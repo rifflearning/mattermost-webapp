@@ -16,7 +16,13 @@ class SharedScreen extends React.Component {
   }
 
   peerAudioTracks() {
-    return this.props.peers.map(this.isolateAudioFromPeer);
+    return this.props.peers.map((peer) => {
+        // don't add audio from shared screen
+        // this would cause echo / reverb
+        if (!this.props.videoEl.id.includes(peer.id)) {
+          return this.isolateAudioFromPeer(peer)
+        }
+    });
   }
 
   render() {
