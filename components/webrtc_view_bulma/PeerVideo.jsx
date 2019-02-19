@@ -1,6 +1,10 @@
 // Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+/* eslint
+    header/header: "off",
+ */
+
 import React from 'react';
 
 import {logger} from '../../utils/riff';
@@ -55,7 +59,7 @@ class PeerVideo extends React.Component {
             style.borderBottomLeftRadius = '5px';
         }
 
-        let classes = 'videoContainer remotes column';
+        const classes = 'videoContainer remotes column';
 
         return (
             <div
