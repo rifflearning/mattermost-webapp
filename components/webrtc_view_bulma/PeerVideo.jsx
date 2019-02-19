@@ -18,9 +18,18 @@ class PeerVideo extends React.Component {
             this.video.style.setProperty('overflow', 'hidden');
             this.video.style.setProperty('display', 'block');
             this.video.style.setProperty('width', '100%');
-            this.video.style.setProperty('height', '100%');
             this.video.style.setProperty('margins', '5px');
             this.video.style.setProperty('border-radius', '5px');
+
+            // when we have less than four peers, we display them in one row.
+            // with more than four, we display them in two rows
+            // set height to account for this
+            if (this.props.peerLength < 4) {
+                this.video.style.setProperty('height', '85vh');
+            } else {
+                this.video.style.setProperty('height', '42vh');
+            }
+
             if (this.props.type === 'peer') {
                 // we don't want to clip any of the shared screen,
                 // so only apply this to peers
@@ -47,15 +56,6 @@ class PeerVideo extends React.Component {
         }
 
         let classes = 'videoContainer remotes column';
-
-        if (this.props.peerLength < 4) {
-            style.width = '100vh';
-            style.height = '80vh';
-        } else {
-            style.width = '50vh';
-            style.height = '40vh';
-            classes += ' is-narrow';
-        }
 
         return (
             <div

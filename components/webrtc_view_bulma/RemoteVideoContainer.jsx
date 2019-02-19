@@ -42,7 +42,29 @@ class RemoteVideoContainer extends React.Component {
         logger.debug('rendering', peerLength, 'peers....', this.props.peers);
         logger.debug('names:', this.props.chat.webRtcPeerDisplayNames);
         logger.debug('riff ids:', this.props.chat.webRtcRiffIds);
-        return this.props.peers.map(this.peerVideo(peerLength));
+        const peerVideos = this.props.peers.map(this.peerVideo(peerLength));
+        if  (peerLength >= 4) {
+            // return the videos separated into two rows
+            // this may not be the best way to do this,
+            // but it's the one i thought of first and
+            // code freeze is tomorrow :)
+            return (
+                <div className="column">
+                    <div className="row">
+                        <div className="columns">
+                            {peerVideos.slice(0, peerLength / 2)}
+                        </div>
+                    </div>
+                    <div className="row" style={{paddingTop: '25px'}}>
+                        <div className="columns">
+                            {peerVideos.slice(peerLength / 2)}
+                        </div>
+                    </div>
+                </div>
+            );
+        } else {
+            return peerVideos;
+        }
     }
 
     videos() {
@@ -54,7 +76,6 @@ class RemoteVideoContainer extends React.Component {
                 />
             );
         }
-
         return this.addPeerVideos();
     }
 

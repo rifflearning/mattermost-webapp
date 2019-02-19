@@ -84,7 +84,7 @@ class WebRtc extends Component {
             <div id='app-content' className=''>
                 <div className="section">
                     <div className="columns is-fullheight">
-                        <div className="column is-3 is-sidebar-menu is-hidden-mobile">
+                        <div className="is-sidebar-menu">
                             <WebRtcSidebar {...this.props}
                                 webrtc={this.webrtc}
                                 localVideoRef={this.localVideoRef}
