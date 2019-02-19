@@ -1,15 +1,19 @@
 // Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+/* eslint
+    header/header: "off",
+ */
+
 import React from 'react';
 import MaterialIcon from 'material-icons-react';
 import {detect} from 'detect-browser';
 
+import MicIcon from 'components/svg/mic_icon';
+import ScreenShareIcon from 'components/svg/screen_share_icon';
 import {isScreenShareSourceAvailable} from 'utils/webrtc/webrtc';
 import {logger} from 'utils/riff';
 
-import MicIcon from 'components/svg/mic_icon'
-import ScreenShareIcon from 'components/svg/screen_share_icon'
 import LeaveRoomButton from './LeaveRoomButton';
 import MeetingMediator from './MeetingMediator';
 import {
