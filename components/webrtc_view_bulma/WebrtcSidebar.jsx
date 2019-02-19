@@ -42,11 +42,11 @@ const placeholderStyle = (mediaError) => {
 
 const AudioStatus = (props) => {
     const MicMuteButton = (mmbProps) => {
-        let icon = <MicEnabledIcon />;
+        let icon = <MicEnabledIcon/>;
         let classNames = 'button is-rounded';
 
         if (mmbProps.audioMuted) {
-            icon = <MicDisabledIcon />;
+            icon = <MicDisabledIcon/>;
             classNames += ' is-danger';
         }
 
@@ -61,14 +61,14 @@ const AudioStatus = (props) => {
     };
 
     const ScreenShareButton = (ssbProps) => {
-        let icon = <ScreenShareStartIcon />;
+        let icon = <ScreenShareStartIcon/>;
         const classNames = 'button is-rounded';
         let disabled = false;
         let ariaLabel = 'Share Your Screen';
         if (ssbProps.webRtcRemoteSharedScreen) {
             disabled = true;
         } else if (ssbProps.userSharing) {
-            icon = <ScreenShareStopIcon />;
+            icon = <ScreenShareStopIcon/>;
             ariaLabel = 'Stop Sharing Your Screen';
         }
 
