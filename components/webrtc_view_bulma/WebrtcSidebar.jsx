@@ -8,6 +8,8 @@ import {detect} from 'detect-browser';
 import {isScreenShareSourceAvailable} from 'utils/webrtc/webrtc';
 import {logger} from 'utils/riff';
 
+import MicIcon from 'components/svg/mic_icon'
+import ScreenShareIcon from 'components/svg/screen_share_icon'
 import LeaveRoomButton from './LeaveRoomButton';
 import MeetingMediator from './MeetingMediator';
 import {
@@ -34,11 +36,9 @@ const placeholderStyle = (mediaError) => {
 
 const AudioStatus = (props) => {
     const MicMuteButton = (mmbProps) => {
-        let icon = 'mic';
         let classNames = 'button is-rounded';
 
         if (mmbProps.audioMuted) {
-            icon = 'mic_off';
             classNames += ' is-danger';
         }
 
@@ -47,20 +47,18 @@ const AudioStatus = (props) => {
                 className={classNames}
                 onClick={(event) => mmbProps.handleMuteAudioClick(event, mmbProps.audioMuted, mmbProps.webrtc)}
             >
-                <MaterialIcon icon={icon}/>
+                <MicIcon audioMuted={mmbProps.audioMuted}/>
             </button>
         );
     };
 
     const ScreenShareButton = (ssbProps) => {
         const classNames = 'button is-rounded';
-        let icon = 'screen_share';
         let disabled = false;
         let ariaLabel = 'Share Your Screen';
         if (ssbProps.webRtcRemoteSharedScreen) {
             disabled = true;
         } else if (ssbProps.userSharing) {
-            icon = 'stop_screen_share';
             ariaLabel = 'Stop Sharing Your Screen';
         }
 
@@ -80,7 +78,7 @@ const AudioStatus = (props) => {
                 disabled={disabled}
                 aria-label={ariaLabel}
             >
-                <MaterialIcon icon={icon}/>
+                <ScreenShareIcon screenSharing={ssbProps.userSharing}/>
             </button>
         );
     };
