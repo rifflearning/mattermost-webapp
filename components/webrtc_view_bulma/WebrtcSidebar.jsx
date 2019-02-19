@@ -244,30 +244,27 @@ class WebRtcSidebar extends React.PureComponent {
     render() {
         return (
             <Menu>
-                {
-                    !this.props.inRoom ?
-                        <MenuLabelCentered>
-                            {'Check your video and microphone before joining.'}
-                        </MenuLabelCentered> :
-                        <MenuLabelCentered> {
-                            this.props.inRoom &&
-                            <LeaveRoomButton
-                                webrtc={this.props.webrtc}
-                                leaveRiffRoom={this.props.riffParticipantLeaveRoom}
-                                leaveRoom={this.props.leaveRoom}
-                            />
-                        }
-                        </MenuLabelCentered>
-                }
+                {!this.props.inRoom ? (
+                    <MenuLabelCentered>
+                        {'Check your video and microphone before joining.'}
+                    </MenuLabelCentered>
+                ) : (
+                    <MenuLabelCentered>
+                        <LeaveRoomButton
+                            webrtc={this.props.webrtc}
+                            leaveRiffRoom={this.props.riffParticipantLeaveRoom}
+                            leaveRoom={this.props.leaveRoom}
+                        />
+                    </MenuLabelCentered>
+                )}
 
                 {!this.props.webRtcLocalSharedScreen ? this.localVideo() : this.localSharedScreen()}
 
-                {
-                    this.props.mediaError &&
+                {this.props.mediaError && (
                     <VideoPlaceholder style={placeholderStyle(this.props.mediaError)}>
                         <p>{"Can't see your video? Make sure your camera is enabled."}</p>
                     </VideoPlaceholder>
-                }
+                )}
 
                 <p
                     className="menu-label"
@@ -278,11 +275,11 @@ class WebRtcSidebar extends React.PureComponent {
 
                 {this.props.inRoom && <AudioStatus {...this.props}/>}
 
-                {
-                    !this.props.inRoom ?
-                        <AudioStatusBar {...this.props}/> :
-                        <MeetingMediator {...this.props}/>
-                }
+                {!this.props.inRoom ? (
+                    <AudioStatusBar {...this.props}/>
+                ) : (
+                    <MeetingMediator {...this.props}/>
+                )}
             </Menu>
         );
     }
