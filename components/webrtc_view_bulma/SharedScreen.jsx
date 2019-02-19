@@ -3,6 +3,7 @@
 
 /* eslint
     header/header: "off",
+    dot-location: ["error", "property"],
  */
 
 import React from 'react';
@@ -24,15 +25,11 @@ class SharedScreen extends React.Component {
     }
 
     peerAudioTracks() {
-        return this.props.peers.map((peer) => {
-            // don't add audio from shared screen
-            // this would cause echo / reverb
-            if (this.props.videoEl.id.includes(peer.id)) {
-                return false;
-            }
-
-            return this.isolateAudioFromPeer(peer);
-        });
+        // don't add audio from shared screen
+        // this would cause echo / reverb
+        return this.props.peers
+            .filter((peer) => !this.props.videoEl.id.includes(peer.id))
+            .map((peer) => this.isolateAudioFromPeer(peer));
     }
 
     render() {
