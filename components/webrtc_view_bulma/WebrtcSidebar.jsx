@@ -9,8 +9,10 @@ import React from 'react';
 import MaterialIcon from 'material-icons-react';
 import {detect} from 'detect-browser';
 
-import MicIcon from 'components/svg/mic_icon';
-import ScreenShareIcon from 'components/svg/screen_share_icon';
+import MicEnabledIcon from 'components/svg/mic_enabled_icon';
+import MicDisabledIcon from 'components/svg/mic_disabled_icon';
+import ScreenShareStartIcon from 'components/svg/screen_share_start_icon';
+import ScreenShareStopIcon from 'components/svg/screen_share_stop_icon';
 import {isScreenShareSourceAvailable} from 'utils/webrtc/webrtc';
 import {logger} from 'utils/riff';
 
@@ -40,9 +42,11 @@ const placeholderStyle = (mediaError) => {
 
 const AudioStatus = (props) => {
     const MicMuteButton = (mmbProps) => {
+        let icon = <MicEnabledIcon />;
         let classNames = 'button is-rounded';
 
         if (mmbProps.audioMuted) {
+            icon = <MicDisabledIcon />;
             classNames += ' is-danger';
         }
 
@@ -51,18 +55,20 @@ const AudioStatus = (props) => {
                 className={classNames}
                 onClick={(event) => mmbProps.handleMuteAudioClick(event, mmbProps.audioMuted, mmbProps.webrtc)}
             >
-                <MicIcon audioMuted={mmbProps.audioMuted}/>
+                {icon}
             </button>
         );
     };
 
     const ScreenShareButton = (ssbProps) => {
+        let icon = <ScreenShareStartIcon />;
         const classNames = 'button is-rounded';
         let disabled = false;
         let ariaLabel = 'Share Your Screen';
         if (ssbProps.webRtcRemoteSharedScreen) {
             disabled = true;
         } else if (ssbProps.userSharing) {
+            icon = <ScreenShareStopIcon />;
             ariaLabel = 'Stop Sharing Your Screen';
         }
 
@@ -82,7 +88,7 @@ const AudioStatus = (props) => {
                 disabled={disabled}
                 aria-label={ariaLabel}
             >
-                <ScreenShareIcon screenSharing={ssbProps.userSharing}/>
+                {icon}
             </button>
         );
     };
