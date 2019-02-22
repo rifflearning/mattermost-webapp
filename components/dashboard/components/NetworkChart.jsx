@@ -1,54 +1,55 @@
-// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
-import React, {Component} from 'react';
-import {withRouter} from 'react-router-dom';
-import styled, {injectGlobal, keyframes} from 'styled-components';
-import {Link} from 'react-router-dom';
-import ReactChartkick, {ColumnChart, PieChart} from 'react-chartkick';
-import {ScaleLoader} from 'react-spinners';
+
+/* eslint
+    header/header: "off",
+    dot-location: ["error", "property"],
+    indent: ["error", 4, { "CallExpression": { "arguments": "first" } }],
+    "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
+ */
+
+import React from 'react';
 import {
     Sigma,
-    SigmaEnableWebGL,
     RandomizeNodePositions,
     RelativeSize,
     EdgeShapes,
     NodeShapes,
 } from 'react-sigma';
 import ForceLink from 'react-sigma/lib/ForceLink';
-import MaterialIcon from 'material-icons-react';
-import Chart from 'chart.js';
-import moment from 'moment';
 import _ from 'underscore';
+
+import {logger} from 'utils/riff';
 
 import ChartCard from './ChartCard';
 
-const colorYou = '#ab45ab';
 const peerColors = ['#f56b6b', '#128EAD', '#7caf5f', '#f2a466'];
 
 const addColorsToData = (networkData, participantId) => {
-    console.log(networkData);
-    let otherNodes = _.map(
-        _.filter(networkData.nodes, (n) => {
-            return n.id != participantId;
-        }),
+    logger.debug(networkData);
+    const otherNodes = _.map(
+        _.filter(networkData.nodes, (n) => n.id !== participantId),
         (n, idx) => {
             return {
                 ...n,
-                color: peerColors[idx]
+                color: peerColors[idx],
             };
         }
     );
-    console.log('other nodes:', otherNodes, "length:", otherNodes.length);
-//    const participantNode = {id: participantId, color: colorYou};
-//    otherNodes.push(participantNode);
+    logger.debug('other nodes:', otherNodes, 'length:', otherNodes.length);
 
-    return {...networkData,
-            nodes: otherNodes};
+    // const participantNode = {id: participantId, color: colorYou};
+    // otherNodes.push(participantNode);
+
+    return {
+        ...networkData,
+        nodes: otherNodes,
+    };
 };
 
 const addLabelsToData = (networkData, participantId) => {
-    let newNodes = _.map(networkData.nodes, (n) => {
-        if (n.id == participantId) {
+    const newNodes = _.map(networkData.nodes, (n) => {
+        if (n.id === participantId) {
             return {
                 ...n,
                 label: 'You',
@@ -57,25 +58,29 @@ const addLabelsToData = (networkData, participantId) => {
         return n;
     });
 
-    return {...networkData,
-            nodes: newNodes};
+    return {
+        ...networkData,
+        nodes: newNodes,
+    };
 };
 
 const chartInfo =
     'This network graph represents who you are most likely to speak after. \
 A stronger connection to another person in your meeting means you are likely paying more \
 attention to what they have to say.';
+
 const NetworkChart = ({processedNetwork, participantId, networkStatus}) => {
-    if (networkStatus == 'loading') {
-        return (<p>Loading..</p>);
-    } else {
-    console.log('data for network:', processedNetwork);
-    processedNetwork = addColorsToData(processedNetwork, participantId);
-    processedNetwork = addLabelsToData(processedNetwork, participantId);
+    if (networkStatus === 'loading') {
+        return (<p>{'Loading..'}</p>);
+    }
+
+    logger.debug('data for network:', processedNetwork);
+    let annotatedNetwork = addColorsToData(processedNetwork, participantId);
+    annotatedNetwork = addLabelsToData(annotatedNetwork, participantId);
 
     const Network = (
         <Sigma
-            graph={processedNetwork}
+            graph={annotatedNetwork}
             renderer='canvas'
             style={{
                 width: '24.8vw',
@@ -86,10 +91,10 @@ const NetworkChart = ({processedNetwork, participantId, networkStatus}) => {
                 clone: false,
                 maxNodeSize: 20,
                 minNodeSize: 20,
-                minEdgeSize: _.min(processedNetwork.edges, (e) => {
+                minEdgeSize: _.min(annotatedNetwork.edges, (e) => {
                     return e.size;
                 }).size,
-                maxEdgeSize: _.max(processedNetwork.edges, (e) => {
+                maxEdgeSize: _.max(annotatedNetwork.edges, (e) => {
                     return e.size;
                 }).size,
                 defaultEdgeColor: 'rgb(243, 108,	110)',
@@ -117,7 +122,6 @@ const NetworkChart = ({processedNetwork, participantId, networkStatus}) => {
             chartInfo={chartInfo}
         />
     );
-    }
 };
 
 export default NetworkChart;

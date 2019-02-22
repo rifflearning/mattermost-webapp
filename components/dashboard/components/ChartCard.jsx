@@ -1,16 +1,19 @@
-// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
-import React, {Component} from 'react';
-import {withRouter} from 'react-router-dom';
-import styled, {injectGlobal, keyframes} from 'styled-components';
-import {Link} from 'react-router-dom';
-import ReactChartkick, {ColumnChart, PieChart} from 'react-chartkick';
-import {ScaleLoader} from 'react-spinners';
+
+/* eslint
+    header/header: "off",
+    dot-location: ["error", "property"],
+    indent: ["error", 4, { "CallExpression": { "arguments": "first" } }],
+ */
+
+import React from 'react';
+import styled from 'styled-components';
 import MaterialIcon from 'material-icons-react';
-import Chart from 'chart.js';
-import moment from 'moment';
 import lifecycle from 'react-pure-lifecycle';
 import {withReducer} from 'recompose';
+
+import {logger} from 'utils/riff';
 
 const CardTitle = styled.div.attrs({
     className: 'title is-5 has-text-left',
@@ -29,15 +32,15 @@ const ChartDiv = styled.div.attrs({
     }
 `;
 
-const WidthCard = (maxWidth) => {
-    console.log('setting max width to:', maxWidth + 'vw');
+const widthCard = (maxWidth) => {
+    logger.debug('setting max width to:', maxWidth + 'vw');
     const Card = styled.div.attrs({
         className: 'card has-text-centered is-centered',
     })`
         display: flex;
         flex-direction: column;
         padding: 1rem;
-        max-width: ${(props) => maxWidth + 'vw'};
+        max-width: ${(/*props*/) => maxWidth + 'vw'};
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     `;
     return Card;
@@ -87,8 +90,8 @@ const methods = {
 //const ChartCard = ({chartDiv, title, maxWidth}) => {
 const ChartCard = enhance((props) => {
     const mw = props.maxWidth ? props.maxWidth : 25;
-    const Card = WidthCard(mw + 2);
-    console.log('chart div:', props.chartDiv);
+    const Card = widthCard(mw + 2);
+    logger.debug('chart div:', props.chartDiv);
     return (
         <Card>
             <CardTitle>
@@ -98,7 +101,7 @@ const ChartCard = enhance((props) => {
                     style={{float: 'right'}}
                 >
                     <a
-                        onClick={(event) =>
+                        onClick={() =>
                             props.dispatch({type: INFO_CLICKED})
                         }
                     >
@@ -113,7 +116,7 @@ const ChartCard = enhance((props) => {
                         style={{float: 'right'}}
                     >
                         <a
-                            onClick={(event) =>
+                            onClick={() =>
                                 props.dispatch({type: INFO_CLICKED})
                             }
                         >
@@ -124,8 +127,8 @@ const ChartCard = enhance((props) => {
                 </ChartInfoDiv>
             )}
             <ChartDiv>
-            {props.chartTable}
-            {props.chartDiv}
+                {props.chartTable}
+                {props.chartDiv}
             </ChartDiv>
         </Card>
     );
