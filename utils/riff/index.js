@@ -69,7 +69,7 @@ export const config = {
 
 // TODO: get the client log level from some real configuration sent from the server
 const configLogLevel = process.env.CLIENT_ENV ? process.env.CLIENT_ENV.RIFF_LOGLEVEL : process.env.RIFF_LOGLEVEL;
-config.logLevel = configLogLevel || 'debug';
+config.logLevel = configLogLevel || 'info';
 logger.setLogLevel(config.logLevel);
 
 // TODO: get the data server url and path from some real configuration sent from the server
