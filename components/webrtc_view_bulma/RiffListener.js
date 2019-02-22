@@ -30,7 +30,6 @@ export default function () {
 
     app.service('participantEvents').on('created', function (obj) {
         let state = getState();
-        console.log('riff listener.participantEvents.created: entered', { obj, expectedRoom: state.views.webrtc.webRtcRoom });
         if (obj.meeting.room === state.views.webrtc.webRtcRoom) {
             console.log('riff listener.participantEvents.created: updating participants',
                          { from: state.views.riff.participants, to: obj.participants, obj });
@@ -43,7 +42,6 @@ export default function () {
     app.service('messages').on('created', function (obj) {
         let state = getState();
         let user = getCurrentUser(state);
-        console.log('riff listener.messages.created', obj, user.id, updateTextChat);
         if (obj.meeting === state.views.riff.meetingId &&
             obj.participant != user.id) {
             dispatch(updateTextChat(
