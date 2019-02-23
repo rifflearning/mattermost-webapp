@@ -105,3 +105,110 @@ export const socket = io(config.dataserverUrl, {
 export var app = feathers()
     .configure(socketio(socket))
     .configure(auth({jwt: {}, local: {}}));
+
+/**
+ * Returns an object whose properties are the values of the specified
+ * property of the members of the given array. The value of those
+ * properties is an array containing the members of the original
+ * array with the property with that value.
+ *
+ * Replaces one use of the underscore package's groupBy function.
+ */
+export function groupByPropertyValue(a, p) {
+    return a.reduce((grouped, cur) => {
+        if (!(p in grouped)) {
+            grouped[cur[p]] = [];
+        }
+        grouped[cur[p]].push(cur);
+        return grouped;
+    }, {});
+}
+
+/**
+ * Returns a new object with the same properties as the given
+ * object, but whose values are those returned by the given
+ * function. The given function takes 2 args, the property
+ * value and the property key.
+ *
+ * Replaces the underscore mapObject function.
+ */
+export function mapObject(o, f) {
+    const newO = {...o};
+    for (const [k, v] of Object.entries(newO)) {
+        newO[k] = f(v, k);
+    }
+    return newO;
+}
+
+/**
+ * Get a comparison functor for the property of an object whose
+ * values can be compared using the standard comparison operators.
+ *
+ * @returns {function(a, b)}
+ *      A function that takes 2 object, a and b, and returns
+ *      -1 if a[prop] < b[prop], 1 if a[prop] > b[prop], 0 if a[prop] = b[prop]
+ */
+export function cmpObjectProp(prop) {
+    return (a, b) => {
+        return a[prop] < b[prop] ? -1 : a[prop] > b[prop] ? 1 : 0; // eslint-disable-line no-nested-ternary
+    };
+}
+
+/**
+ * Return a function that reverses the sense of the given comparison
+ * functor. So when used with the Array.sort it will turn an ascending
+ * sort into a descending sort (and vice-versa).
+ */
+export function reverseCmp(cmp) {
+    return (a, b) => cmp(b, a);
+}
+
+/**
+ * Returns the time difference in seconds between the given
+ * start and end times.
+ */
+export function getDurationInSeconds(startTime, endTime) {
+    const start = new Date(startTime);
+    const end = new Date(endTime);
+    const durationSecs = (end.getTime() - start.getTime()) / 1000;
+    return durationSecs;
+}
+
+/**
+ * Give some name to colors we may want to use
+ * I lifted names from https://graf1x.com/list-of-colors-with-color-names/ that are
+ * similar, but the colors below ARE NOT the official colors for those name!
+ * It's just important to have a more easily recognizable name than the color value
+ * in order to determine where the same color is used in the code.
+ */
+export const Colors = {
+    brightPlum: '#ab45ab',
+    reddishPeach: '#f56b6b',
+    turkoise: '#128ead',
+    sage: '#7caf5f',
+    apricot: '#f2a466',
+    eggplant: '#321325',
+    darkfern: '#3c493f',
+    aquamarine: '#1b998b',
+    lightlava: '#bdc3c7',
+};
+
+/**
+ * List of colors to use for peers in charts and other places it is
+ * useful to associate a color to help distinguish a list of "things".
+ * Use the 1st color (peerColors[0]) as the self color when that matters.
+ *
+ * Note: Where possible, using css would be preferable to using these colors
+ * so this list also exist and needs to be kept in sync w/ what's in
+ * sass/components/_bulma.scss
+ */
+export const PeerColors = [
+    Colors.brightPlum,
+    Colors.reddishPeach,
+    Colors.turkoise,
+    Colors.sage,
+    Colors.apricot,
+    Colors.eggplant,
+    Colors.darkfern,
+    Colors.aquamarine,
+];

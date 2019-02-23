@@ -8,42 +8,42 @@
  */
 
 import React from 'react';
-import ReactChartkick, {PieChart} from 'react-chartkick';
 import {ScaleLoader} from 'react-spinners';
 import Chart from 'chart.js';
-import _ from 'underscore';
+import ReactChartkick, {PieChart} from 'react-chartkick';
 
-import {logger} from 'utils/riff';
+import {cmpObjectProp, logger, PeerColors} from 'utils/riff';
 
 import ChartTable from './ChartTable';
 import ChartCard from './ChartCard';
 
 ReactChartkick.addAdapter(Chart);
 
-const formatChartData = (processedUtterances, participantId) => {
+const formatChartData = (processedUtterances, selfParticipantId) => {
     logger.debug('formatting:', processedUtterances);
 
-    const colorYou = '#ab45ab';
-    let nextOtherUser = 1;
+    const colorYou = PeerColors[0];
 
     const data = [];
-    const peerColors = ['#f56b6b', '#128EAD', '#7caf5f', '#f2a466'];
     const colors = [];
-    const sortedUtterances = _.sortBy(processedUtterances, 'participantId');
 
-    sortedUtterances.forEach((p) => {
-        // our display name from firebase if we've got it.
-        const label = p.name;
+    const othersTurns = processedUtterances
+        .filter((partUtt) => {
+            if (partUtt.participantId === selfParticipantId) {
+                data.push(['You', partUtt.lengthUtterances]);
+                colors.push(colorYou);
+                return false;
+            }
+            return true;
+        })
+        .sort(cmpObjectProp('participantId'))
+        .map((partUtt, i) => [partUtt.name || `User ${i + 1}`, partUtt.lengthUtterances]);
 
-        if (p.participantId === participantId) {
-            data.unshift(['You', p.lengthUtterances]);
-            colors.unshift(colorYou);
-        } else {
-            data.push([label || `User ${nextOtherUser++}`, p.lengthUtterances]);
-            colors.push(peerColors[nextOtherUser++ - 1]);
-        }
-    });
-
+    data.push(...othersTurns);
+    colors.push(...PeerColors.slice(1, othersTurns.length + 1));
+    if (othersTurns.length > PeerColors.length - 1) {
+        logger.warn(`Not enough colors (${PeerColors.length - 1}) for all peers (${othersTurns.length})`);
+    }
     return {data, colors};
 };
 
