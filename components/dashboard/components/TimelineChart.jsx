@@ -45,7 +45,7 @@ const drawGantt = (props) => {
             return pmap;
         }, participantMap);
 
-    const numOtherPeers = participantMap.length - (participantMap[participantId] ? 1 : 0);
+    const numOtherPeers = participants.length - (participantMap[participantId] ? 1 : 0);
     if (numOtherPeers > PeerColors.length - 1) {
         logger.warn(`Not enough colors (${PeerColors.length - 1}) for all peers (${numOtherPeers})`);
     }
