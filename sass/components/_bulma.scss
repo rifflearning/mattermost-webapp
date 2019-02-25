@@ -47,6 +47,17 @@ $pinkHover: rgb(242, 136, 137);
 $purpleHover: rgba(138, 106, 148, 0.7);
 $blue: rgb(19,129,161);
 
+
+$brightPlum: #ab45ab;
+$reddishPeach: #f56b6b;
+$turkoise: #128ead;
+$sage: #7caf5f;
+$apricot: #f2a466;
+$eggplant: #321325;
+$darkfern: #3c493f;
+$aquamarine: #1b998b;
+$lightlava: #bdc3c7;
+
 $primary: $purple;
 $link: $purple;
 
@@ -58,6 +69,38 @@ html {
         text-decoration: none;
     }
   }
+}
+
+// classes for charts and other places where meeting participants need an identifying color
+// Note: some packages don't let us use classes to style (e.g. Chart.js) so this list is also
+// in utils/riff/index.js peerColors.
+.riff-peer-0,
+.riff-peer-self {
+    color: $brightPlum;
+}
+
+.riff-peer-1 {
+    color: $turkoise;
+}
+
+.riff-peer-2 {
+    color: $sage;
+}
+
+.riff-peer-3 {
+    color: $apricot;
+}
+
+.riff-peer-4 {
+    color: $eggplant;
+}
+
+.riff-peer-5 {
+    color: $darkfern;
+}
+
+.riff-peer-6 {
+    color: $aquamarine;
 }
 
 .sigma-scene {

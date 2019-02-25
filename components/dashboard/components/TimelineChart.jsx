@@ -10,16 +10,11 @@
 import React from 'react';
 import {ScaleLoader} from 'react-spinners';
 import lifecycle from 'react-pure-lifecycle';
-import _ from 'underscore';
 
-import {logger} from 'utils/riff';
+import {logger, PeerColors} from 'utils/riff';
 
 import createGantt from './gantt';
 import ChartCard from './ChartCard';
-
-const colorYou = '#ab45ab';
-const colorOther = '#bdc3c7';
-const peerColors = ['#f56b6b', '#128EAD', '#7caf5f', '#f2a466'];
 
 const drawGantt = (props) => {
     logger.debug('GANTT PROPS:', props);
@@ -29,28 +24,38 @@ const drawGantt = (props) => {
     // create map of id: name
     // local user will always be first.
     logger.debug('sorted participants:', participants);
-    const participantNames = _.pluck(participants, 'name');
-    const participantIds = _.pluck(participants, 'id');
-    const participantMap = _.object(participantIds, participantNames);
+    const participantNames = participants.map((p) => p.name);
 
-    const getColor = (pId) => {
-        const pIndex = participantIds.indexOf(pId) - 1;
-        logger.debug(pId, 'participant index:', pIndex, 'color:', peerColors[pIndex]);
-        let color = peerColors[pIndex];
-        if (color === undefined) { // eslint-disable-line no-undefined
-            color = colorOther;
-        }
-        return color;
-    };
+    // create the participant map of id to name and color, filter out and
+    // set the current user first, then add the other participants
+    const participantMap = {};
+    participants
+        .filter((p) => {
+            if (p.id !== participantId) {
+                return true;
+            }
+            participantMap[p.id] = {name: p.name, color: PeerColors[0]};
+            return false;
+        })
+        .reduce((pmap, p, i) => {
+            pmap[p.id] = {
+                name: p.name,
+                color: p.id === participantId ? PeerColors[0] : PeerColors[(i % (PeerColors.length - 1)) + 1],
+            };
+            return pmap;
+        }, participantMap);
+
+    const numOtherPeers = participantMap.length - (participantMap[participantId] ? 1 : 0);
+    if (numOtherPeers > PeerColors.length - 1) {
+        logger.warn(`Not enough colors (${PeerColors.length - 1}) for all peers (${numOtherPeers})`);
+    }
 
     // create extra key 'taskName' detailing name of speaker
-    const utts2 = _.map(utts, (u) => {
-        return {
-            ...u,
-            taskName: participantMap[u.participant],
-            color: u.participant === participantId ? colorYou : getColor(u.participant),
-        };
-    });
+    const utts2 = utts.map((u) => ({
+        ...u,
+        taskName: participantMap[u.participant].name,
+        color: participantMap[u.participant].color,
+    }));
 
     var gantt = createGantt('#gantt-' + props.meeting._id, props.width).taskTypes(participantNames); // eslint-disable-line no-underscore-dangle
     gantt(utts2);
