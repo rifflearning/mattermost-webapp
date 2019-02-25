@@ -1,69 +1,80 @@
-// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
+
+/* eslint
+    header/header: "off",
+    dot-location: ["error", "property"],
+    indent: ["error", 4, { "CallExpression": { "arguments": "first" } }],
+ */
+
 import d3 from 'utils/libs/d3';
+import {logger} from 'utils/riff';
 
-const Gantt = function(selector, width) {
-    var FIT_TIME_DOMAIN_MODE = 'fit';
-    var FIXED_TIME_DOMAIN_MODE = 'fixed';
+const TimeDomainMode = {
+    FIT: 'fit',
+    FIXED: 'fixed',
+};
 
-    var margin = {
+function createGantt(selector, width) {
+    let margin = {
         top: 20,
         right: 50,
         bottom: 20,
         left: 50,
     };
-    var selector = selector;
-    var timeDomainStart = d3.timeDay.offset(new Date(), -3);
-    var timeDomainEnd = d3.timeHour.offset(new Date(), +3);
-    var timeDomainMode = FIT_TIME_DOMAIN_MODE; // fixed or fit
-    var taskTypes = [];
-    var taskStatus = [];
+    let timeDomainStart = d3.timeDay.offset(new Date(), -3);
+    let timeDomainEnd = d3.timeHour.offset(new Date(), +3);
+    let timeDomainMode = TimeDomainMode.FIT; // fixed or fit
+    let taskTypes = [];
+    let taskStatus = [];
 
-    console.log("DOCUMENT BODY WIDTH", document.body.clientWidth)
-    //var height = document.body.clientHeight - margin.top - margin.bottom-5;
-    var initWidth = width ? width : document.body.clientWidth/2;
-    console.log("HAVE WIDTH FROM REF:", width, "BODY WIDTH:", document.body.clientWidth/2);
-    console.log("using init width:", initWidth);
-    var width = (initWidth - (initWidth / 5)) - margin.right - margin.left;;
-    //var width = "100%";
-    var height = 250;
+    logger.debug('DOCUMENT BODY WIDTH', document.body.clientWidth);
 
-    //var width = 600;
+    //let height = document.body.clientHeight - margin.top - margin.bottom-5;
+    const initWidth = width || document.body.clientWidth / 2;
+    logger.debug('HAVE WIDTH FROM REF:', width, 'BODY WIDTH:', document.body.clientWidth / 2);
+    logger.debug('using init width:', initWidth);
+    width = (initWidth - (initWidth / 5)) - margin.right - margin.left;
 
-    var tickFormat = '%H:%M';
+    //let width = '100%';
+    let height = 250;
 
-    var keyFunction = function(d) {
+    //let width = 600;
+
+    let tickFormat = '%H:%M';
+
+    const keyFunction = (d) => {
         return d.startDate + d.taskName + d.endDate;
     };
 
-    var rectTransform = function(d) {
+    const rectTransform = (d) => {
         return 'translate(' + x(d.startDate) + ',' + y(d.taskName) + ')';
     };
 
-    var x = d3.
-        scaleTime().
-        domain([timeDomainStart, timeDomainEnd]).
-        range([0, width]).
-        clamp(true);
+    let x = d3
+        .scaleTime()
+        .domain([timeDomainStart, timeDomainEnd])
+        .range([0, width])
+        .clamp(true);
 
-    var y = d3.
-        scaleBand().
-        domain(taskTypes).
-        range([0, height - margin.top - margin.bottom], 0.1);
+    let y = d3
+        .scaleBand()
+        .domain(taskTypes)
+        .range([0, height - margin.top - margin.bottom], 0.1);
 
-    var xAxis = d3.
-        axisBottom(x).
-        tickFormat(d3.timeFormat(tickFormat)).
-        tickSize(8).
-        tickPadding(8)
+    let xAxis = d3
+        .axisBottom(x)
+        .tickFormat(d3.timeFormat(tickFormat))
+        .tickSize(8)
+        .tickPadding(8)
         .ticks(d3.timeMinute.every(15));
 
-    var yAxis = d3.axisLeft(y).tickSize(0);
+    let yAxis = d3.axisLeft(y).tickSize(0);
 
-    var initTimeDomain = function(tasks) {
-        console.log('initializing time domain with tasks:', tasks);
-        if (timeDomainMode === FIT_TIME_DOMAIN_MODE) {
-            if (tasks === undefined || tasks.length < 1) {
+    const initTimeDomain = (tasks) => {
+        logger.debug('initializing time domain with tasks:', tasks);
+        if (timeDomainMode === TimeDomainMode.FIT) {
+            if (tasks === undefined || tasks.length < 1) { // eslint-disable-line no-undefined
                 timeDomainStart = d3.timeDay.offset(new Date(), -3);
                 timeDomainEnd = d3.timeHour.offset(new Date(), +3);
                 return;
@@ -78,160 +89,159 @@ const Gantt = function(selector, width) {
             //   return a.startDate - b.startDate;
             // });
             timeDomainStart = tasks[0].startDate;
-            console.log('time domain:', timeDomainStart, timeDomainEnd);
+            logger.debug('time domain:', timeDomainStart, timeDomainEnd);
         }
     };
 
-    var initAxis = function() {
-        x = d3.
-            scaleTime().
-            domain([timeDomainStart, timeDomainEnd]).
-            range([0, width]).
-            clamp(true);
-        y = d3.
-            scaleBand().
-            domain(taskTypes).
-            range([0, height - margin.top - margin.bottom], 0.1);
-        xAxis = d3.
-            axisBottom(x).
-            tickFormat(d3.timeFormat(tickFormat)).
-            tickSize(8).
-            tickPadding(8);
+    const initAxis = () => {
+        x = d3
+            .scaleTime()
+            .domain([timeDomainStart, timeDomainEnd])
+            .range([0, width])
+            .clamp(true);
+        y = d3
+            .scaleBand()
+            .domain(taskTypes)
+            .range([0, height - margin.top - margin.bottom], 0.1);
+        xAxis = d3
+            .axisBottom(x)
+            .tickFormat(d3.timeFormat(tickFormat))
+            .tickSize(8)
+            .tickPadding(8);
 
         yAxis = d3.axisLeft(y).tickSize(0);
     };
 
     function gantt(tasks) {
-        console.log('tasks:', tasks);
+        logger.debug('tasks:', tasks);
 
         initTimeDomain(tasks);
         initAxis();
 
-        var svg = d3.
-            select(selector).
-            append('svg').
-            attr('class', 'chart').
-            attr('width', width + margin.left + margin.right).
-            attr('height', height + margin.top + margin.bottom).
-            append('g').
-            attr('class', 'gantt-chart').
-            attr("role", "figure").
-            attr("aria-labelledby", "gantt-label").
+        const svg = d3
+            .select(selector)
+            .append('svg')
+            .attr('class', 'chart')
+            .attr('width', width + margin.left + margin.right)
+            .attr('height', height + margin.top + margin.bottom)
+            .append('g')
+            .attr('class', 'gantt-chart')
+            .attr('role', 'figure')
+            .attr('aria-labelledby', 'gantt-label')
 
-            attr('width', width + margin.left + margin.right).
-            attr('height', height + margin.top + margin.bottom).
-            attr(
+            .attr('width', width + margin.left + margin.right)
+            .attr('height', height + margin.top + margin.bottom)
+            .attr(
                 'transform',
                 'translate(' + margin.left + ', ' + margin.top + ')'
             );
 
-            svg.append("title")
-            .attr("id", "gantt-label")
-            .text("Timeline Chart");
+        svg.append('title')
+            .attr('id', 'gantt-label')
+            .text('Timeline Chart');
 
-
-        svg.selectAll('.chart').
-            data(tasks, keyFunction).
-            enter().
-            append("g").
-            attr("role", "presentation").
-            attr("aria-label", function(d) {
-              const startTime = d3.timeFormat(tickFormat)(d.startDate);
-              const utteranceLength = Math.round((d.endDate - d.startDate) / 1000);
-              return `${startTime}, ${d.taskName} spoke for ${utteranceLength} seconds`;
-            }).
-            append('rect').
-            attr('rx', 5).
-            attr('ry', 5).
-            attr('class', (d) => {
-                if (taskStatus[d.status] == null) {
+        svg.selectAll('.chart')
+            .data(tasks, keyFunction)
+            .enter()
+            .append('g')
+            .attr('role', 'presentation')
+            .attr('aria-label', (d) => {
+                const startTime = d3.timeFormat(tickFormat)(d.startDate);
+                const utteranceLength = Math.round((d.endDate - d.startDate) / 1000);
+                return `${startTime}, ${d.taskName} spoke for ${utteranceLength} seconds`;
+            })
+            .append('rect')
+            .attr('rx', 5)
+            .attr('ry', 5)
+            .attr('class', (d) => {
+                if (taskStatus[d.status] === null) {
                     return 'bar';
                 }
                 return taskStatus[d.status];
-            }).
-            attr('y', 0).
-            attr('transform', rectTransform).
-            attr('height', (d) => {
+            })
+            .attr('y', 0)
+            .attr('transform', rectTransform)
+            .attr('height', (d) => {
                 return y.bandwidth();
-            }).
-            attr('width', (d) => {
+            })
+            .attr('width', (d) => {
                 return Math.max(1, x(d.endDate) - x(d.startDate));
-            }).
-            attr('fill', (d) => {
+            })
+            .attr('fill', (d) => {
                 return d.color;
             });
 
-        svg.append('g').
-            attr('class', 'x axis').
-            attr('class', 'axisGray').
-            attr("aria-hidden", "true").
-            attr(
+        svg.append('g')
+            .attr('class', 'x axis')
+            .attr('class', 'axisGray')
+            .attr('aria-hidden', 'true')
+            .attr(
                 'transform',
                 'translate(0, ' + (height - margin.top - margin.bottom) + ')'
-            ).
-            transition().
-            call(xAxis);
+            )
+            .transition()
+            .call(xAxis);
 
-        svg.append('g').
-            attr('class', 'y axis').
-            attr('class', 'axisGray').
-            attr("aria-hidden", "true").
-            transition().
-            call(yAxis);
+        svg.append('g')
+            .attr('class', 'y axis')
+            .attr('class', 'axisGray')
+            .attr('aria-hidden', 'true')
+            .transition()
+            .call(yAxis);
 
-        console.log('gantt looks like:', gantt);
+        logger.debug('gantt looks like:', gantt);
         return gantt;
     }
 
-    gantt.redraw = function(tasks) {
+    gantt.redraw = (tasks) => {
         initTimeDomain(tasks);
         initAxis();
 
-        var svg = d3.select('.chart');
+        const svg = d3.select('.chart');
 
-        var ganttChartGroup = svg.select('.gantt-chart');
-        var rect = ganttChartGroup.selectAll('rect').data(tasks, keyFunction);
+        const ganttChartGroup = svg.select('.gantt-chart');
+        const rect = ganttChartGroup.selectAll('rect').data(tasks, keyFunction);
 
-        rect.enter().
-            insert('rect', ':first-child').
-            attr('rx', 5).
-            attr('ry', 5).
-            attr('class', (d) => {
+        rect.enter()
+            .insert('rect', ':first-child')
+            .attr('rx', 5)
+            .attr('ry', 5)
+            .attr('class', (d) => {
                 if (taskStatus[d.status] == null) {
                     return 'bar';
                 }
                 return taskStatus[d.status];
-            }).
-            transition().
-            attr('y', 0).
-            attr('transform', rectTransform).
-            attr('height', (d) => {
+            })
+            .transition()
+            .attr('y', 0)
+            .attr('transform', rectTransform)
+            .attr('height', (d) => {
                 return y.bandwidth();
-            }).
-            attr('width', (d) => {
+            })
+            .attr('width', (d) => {
                 return Math.max(1, x(d.endDate) - x(d.startDate));
-            }).
-            attr('fill', (d) => {
+            })
+            .attr('fill', (d) => {
                 return d.color;
             });
 
-        rect.transition().
-            attr('transform', rectTransform).
-            attr('height', (d) => {
+        rect.transition()
+            .attr('transform', rectTransform)
+            .attr('height', (d) => {
                 return y.bandwidth();
-            }).
-            attr('width', (d) => {
+            })
+            .attr('width', (d) => {
                 return Math.max(1, x(d.endDate) - x(d.startDate));
             });
 
         rect.exit().remove();
 
-        svg.select('.x').
-            transition().
-            call(xAxis);
-        svg.select('.y').
-            transition().
-            call(yAxis);
+        svg.select('.x')
+            .transition()
+            .call(xAxis);
+        svg.select('.y')
+            .transition()
+            .call(yAxis);
 
         return gantt;
     };
@@ -248,8 +258,8 @@ const Gantt = function(selector, width) {
         if (!arguments.length) {
             return [timeDomainStart, timeDomainEnd];
         }
-        (timeDomainStart = Number(value[0])),
-        (timeDomainEnd = Number(value[1]));
+        timeDomainStart = Number(value[0]);
+        timeDomainEnd = Number(value[1]);
         return gantt;
     };
 
@@ -270,7 +280,7 @@ const Gantt = function(selector, width) {
         if (!arguments.length) {
             return taskTypes;
         }
-        console.log('setting task types to:', value);
+        logger.debug('setting task types to:', value);
         taskTypes = value;
         return gantt;
     };
@@ -316,6 +326,6 @@ const Gantt = function(selector, width) {
     };
 
     return gantt;
-};
+}
 
-export default Gantt;
+export default createGantt;
