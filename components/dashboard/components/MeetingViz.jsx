@@ -257,7 +257,7 @@ class MeetingViz extends React.Component {
                                             processedTimeline={this.props.timelineData}
                                             loaded={this.props.loaded}
                                             meeting={this.props.meeting}
-                                            participantId={this.props.user.uid}
+                                            participantId={this.props.user.id}
                                             width={this.props.size.width}
                                         />
                                     </div>
