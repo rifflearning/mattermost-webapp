@@ -354,7 +354,6 @@ export default class RhsThread extends React.Component {
                     compactDisplay={this.state.compactDisplay}
                     isFlagged={isFlagged}
                     status={status}
-                    isBusy={this.state.isBusy}
                     removePost={this.props.actions.removePost}
                     previewCollapsed={this.props.previewCollapsed}
                     previewEnabled={this.props.previewEnabled}
@@ -443,7 +442,6 @@ export default class RhsThread extends React.Component {
                             status={rootStatus}
                             previewCollapsed={this.props.previewCollapsed}
                             previewEnabled={this.props.previewEnabled}
-                            isBusy={this.state.isBusy}
                         />
                         {isFakeDeletedPost && <DateSeparator date={rootPostDay}/>}
                         <div

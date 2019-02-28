@@ -40,7 +40,6 @@ export default class RhsComment extends React.Component {
         compactDisplay: PropTypes.bool,
         isFlagged: PropTypes.bool,
         status: PropTypes.string,
-        isBusy: PropTypes.bool,
         removePost: PropTypes.func.isRequired,
         previewCollapsed: PropTypes.string.isRequired,
         previewEnabled: PropTypes.bool.isRequired,
@@ -65,10 +64,6 @@ export default class RhsComment extends React.Component {
 
     shouldComponentUpdate(nextProps, nextState) {
         if (nextProps.status !== this.props.status) {
-            return true;
-        }
-
-        if (nextProps.isBusy !== this.props.isBusy) {
             return true;
         }
 
@@ -245,7 +240,6 @@ export default class RhsComment extends React.Component {
             <UserProfile
                 user={this.props.user}
                 status={status}
-                isBusy={this.props.isBusy}
                 isRHS={true}
                 hasMention={true}
             />
@@ -255,7 +249,6 @@ export default class RhsComment extends React.Component {
             profilePicture = (
                 <PostProfilePicture
                     compactDisplay={this.props.compactDisplay}
-                    isBusy={this.props.isBusy}
                     isRHS={true}
                     post={post}
                     status={this.props.status}
@@ -295,7 +288,6 @@ export default class RhsComment extends React.Component {
                         <UserProfile
                             user={this.props.user}
                             status={status}
-                            isBusy={this.props.isBusy}
                             isRHS={true}
                             hasMention={true}
                         />
