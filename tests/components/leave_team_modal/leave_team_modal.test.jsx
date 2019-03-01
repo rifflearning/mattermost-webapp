@@ -12,7 +12,6 @@ describe('components/LeaveTeamModal', () => {
         currentTeamId: 'team_id',
         onHide: jest.fn(),
         show: false,
-        isBusy: false,
         actions: {
             removeUserFromTeam: jest.fn(),
             toggleSideBarRightMenu: jest.fn(),

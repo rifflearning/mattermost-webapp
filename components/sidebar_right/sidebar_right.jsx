@@ -138,7 +138,6 @@ export default class SidebarRight extends React.Component {
                     <div className='search-bar__container channel-header alt'>{searchForm}</div>
                     <RhsThread
                         previousRhsState={previousRhsState}
-                        isWebrtc={WebrtcStore.isBusy()}
                         currentUser={currentUser}
                         toggleSize={this.toggleSize}
                         shrink={this.onShrink}

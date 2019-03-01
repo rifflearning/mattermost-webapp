@@ -90,10 +90,6 @@ class ProfilePopover extends React.Component {
             return true;
         }
 
-        if (nextProps.isBusy !== this.props.isBusy) {
-            return true;
-        }
-
         // React-Bootstrap Forwarded Props from OverlayTrigger to Popover
         if (nextProps.arrowOffsetLeft !== this.props.arrowOffsetLeft) {
             return true;
@@ -173,7 +169,6 @@ class ProfilePopover extends React.Component {
         delete popoverProps.user;
         delete popoverProps.src;
         delete popoverProps.status;
-        delete popoverProps.isBusy;
         delete popoverProps.hide;
         delete popoverProps.isRHS;
         delete popoverProps.hasMention;

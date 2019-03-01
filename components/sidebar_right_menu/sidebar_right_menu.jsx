@@ -14,7 +14,6 @@ import TeamStore from 'stores/team_store.jsx';
 import UserStore from 'stores/user_store.jsx';
 import {
     Constants,
-    WebrtcActionTypes,
 } from 'utils/constants.jsx';
 import {useSafeUrl} from 'utils/url.jsx';
 import * as UserAgent from 'utils/user_agent.jsx';
@@ -79,13 +78,6 @@ export default class SidebarRightMenu extends React.Component {
     componentWillUnmount() {
         TeamStore.removeChangeListener(this.onChange);
         PreferenceStore.removeChangeListener(this.onChange);
-    }
-
-    handleClick = (e) => {
-        if (WebrtcStore.isBusy()) {
-            WebrtcStore.emitChanged({action: WebrtcActionTypes.IN_PROGRESS});
-            e.preventDefault();
-        }
     }
 
     handleAboutModal = () => {
@@ -279,7 +271,6 @@ export default class SidebarRightMenu extends React.Component {
                             id='createTeam'
                             key='newTeam_a'
                             to='/create_team'
-                            onClick={this.handleClick}
                         >
                             <i className='icon fa fa-plus-square'/>
                             <FormattedMessage
@@ -389,7 +380,6 @@ export default class SidebarRightMenu extends React.Component {
                     <li>
                         <Link
                             to={'/admin_console'}
-                            onClick={this.handleClick}
                         >
                             <i className='icon fa fa-wrench'/>
                             <FormattedMessage
