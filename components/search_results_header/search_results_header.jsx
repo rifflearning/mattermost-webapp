@@ -7,7 +7,6 @@ import {OverlayTrigger, Tooltip} from 'react-bootstrap';
 import {FormattedMessage} from 'react-intl';
 
 import Constants from 'utils/constants.jsx';
-import {localizeMessage} from 'utils/utils.jsx';
 
 export default class SearchResultsHeader extends React.Component {
     static propTypes = {
@@ -107,10 +106,10 @@ export default class SearchResultsHeader extends React.Component {
                             delayShow={Constants.OVERLAY_TIME_DELAY}
                             placement='bottom'
                             overlay={shrinkSidebarTooltip}
-                         >
-                             <i
-                                 className='fa fa-compress'
-                             />
+                        >
+                            <i
+                                className='fa fa-compress'
+                            />
                         </OverlayTrigger>
                     </button>
                     <button
@@ -120,15 +119,15 @@ export default class SearchResultsHeader extends React.Component {
                         onClick={this.props.actions.closeRightHandSide}
                     >
                         <OverlayTrigger
-                              trigger={['hover', 'focus']}
-                              delayShow={Constants.OVERLAY_TIME_DELAY}
-                              placement='bottom'
-                              overlay={closeSidebarTooltip}
-                          >
-                              <i
-                                  className='fa fa-sign-out'
-                              />
-                          </OverlayTrigger>
+                            trigger={['hover', 'focus']}
+                            delayShow={Constants.OVERLAY_TIME_DELAY}
+                            placement='bottom'
+                            overlay={closeSidebarTooltip}
+                        >
+                            <i
+                                className='fa fa-sign-out'
+                            />
+                        </OverlayTrigger>
                     </button>
                 </div>
             </div>
