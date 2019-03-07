@@ -44,15 +44,14 @@ const DashboardView = (props) => {
         );
     });
     const component = () => {
-
         //errored (catch all static message is shown, these errors are all related to having no meetings)
         if (props.loadingError.status) {
             return (
                 <LoadingErrorMessage>
-                    <div>Welcome to your Riff Dashboard!</div>
+                    <div>{'Welcome to your Riff Dashboard!'}</div>
                     <br/>
-                    <div>Once you have a Riff video meeting,</div>
-                    <div>your Riff stats will display here.</div>
+                    <div>{'Once you have a Riff video meeting,'}</div>
+                    <div>{'your Riff stats will display here.'}</div>
                 </LoadingErrorMessage>
             );
         }
@@ -60,8 +59,10 @@ const DashboardView = (props) => {
         //loading, until first meeting's stats are loaded (the above loadingError has also not loaded yet)
         else if (props.statsStatus[0] !== 'loaded') {
             return (
-                <div className='columns has-text-centered is-centered is-vcentered'
-                         style={{minHeight: '80vh', minWidth: '80vw'}}>
+                <div
+                    className='columns has-text-centered is-centered is-vcentered'
+                    style={{minHeight: '80vh', minWidth: '80vw'}}
+                >
                     <ScaleLoader color='#8A6A94'/>
                 </div>
             );
@@ -79,7 +80,6 @@ const DashboardView = (props) => {
         //default
         return false;
     };
-
     return (
         <div className='app__content'>
             {component()}
