@@ -44,40 +44,41 @@ const DashboardView = (props) => {
             />
         );
     });
-
     const component = () => {
-      //errored
-      if (props.loadingError.status) {
-          return (
-              <LoadingErrorMessage>
-                  <div>{'Welcome to your Riff Dashboard!'}</div>
-                  <br/>
-                  <div >{props.loadingError.message}</div>
-              </LoadingErrorMessage>
-          );
-      }
-      //loading, until first meeting's stats are loaded (errors have also not loaded yet)
-      else if (props.statsStatus[0] !== 'loaded') {
-          return (
-              <div className="columns has-text-centered is-centered is-vcentered"
-                       style={{minHeight: "80vh", minWidth: "80vw"}}>
-                  <ScaleLoader color={'#8A6A94'}/>
-              </div>
-          );
-      }
-      //meetings
-      else if (props.meetings.length > 0) {
-          return (
-              <div style={{overflowY: 'scroll'}}>
-                  {meetingVisualizations}
-              </div>
-          );
-      }
-      //default
-      else {
-          return false;
-      }
-    }
+
+        //errored
+        if (props.loadingError.status) {
+            return (
+                <LoadingErrorMessage>
+                    <div>Welcome to your Riff Dashboard!</div>
+                    <br/>
+                    <div >{props.loadingError.message}</div>
+                </LoadingErrorMessage>
+            );
+        }
+
+        //loading, until first meeting's stats are loaded (the above loadingError has also not loaded yet)
+        else if (props.statsStatus[0] !== 'loaded') {
+            return (
+                <div className='columns has-text-centered is-centered is-vcentered'
+                         style={{minHeight: '80vh', minWidth: '80vw'}}>
+                    <ScaleLoader color='#8A6A94'/>
+                </div>
+            );
+        }
+
+        //meetings
+        else if (props.meetings.length > 0) {
+            return (
+                <div style={{overflowY: 'scroll'}}>
+                    {meetingVisualizations}
+                </div>
+            );
+        }
+
+        //default
+        return false;
+    };
 
     return (
         <div className='app__content'>
