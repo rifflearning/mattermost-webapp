@@ -24,7 +24,6 @@ const LoadingErrorMessage = styled.div.attrs({
     text-align: center;
     color: #4A4A4A;
     font-size: 28px;
-    width: 40vw;
 `;
 
 // TODO Add dispatch and click
@@ -46,13 +45,14 @@ const DashboardView = (props) => {
     });
     const component = () => {
 
-        //errored
+        //errored (catch all static message is shown, these errors are all related to having no meetings)
         if (props.loadingError.status) {
             return (
                 <LoadingErrorMessage>
                     <div>Welcome to your Riff Dashboard!</div>
                     <br/>
-                    <div >{props.loadingError.message}</div>
+                    <div>Once you have a Riff video meeting,</div>
+                    <div>your Riff stats will display here.</div>
                 </LoadingErrorMessage>
             );
         }
