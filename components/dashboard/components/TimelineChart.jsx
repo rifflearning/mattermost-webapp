@@ -11,7 +11,7 @@ import React from 'react';
 import {ScaleLoader} from 'react-spinners';
 import lifecycle from 'react-pure-lifecycle';
 
-import {logger, PeerColors} from 'utils/riff';
+import {logger, PeerColors, textTruncate} from 'utils/riff';
 
 import {Gantt} from './gantt';
 import ChartCard from './ChartCard';
@@ -24,7 +24,7 @@ const drawGantt = (props) => {
     // create map of id: name
     // local user will always be first.
     logger.debug('sorted participants:', participants);
-    const participantNames = participants.map((p) => p.name);
+    const participantNames = participants.map((p) => textTruncate(p.name,20));
 
     // create the participant map of id to name and color, filter out and
     // set the current user first, then add the other participants
