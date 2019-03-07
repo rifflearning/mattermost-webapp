@@ -212,3 +212,21 @@ export const PeerColors = [
     Colors.darkfern,
     Colors.aquamarine,
 ];
+
+/**
+ * returns a truncated string, with a maximum character count of maxLength
+ * if no maxLength passed, 100 is used by default
+ * an ending to tag onto the end of the string can be passed, by default an ellipsis(...) is applied
+ */
+export function textTruncate(string, maxLength, ending) {
+    if (maxLength == null) {
+        maxLength = 100;
+    }
+    if (ending == null) {
+        ending = '...';
+    }
+    if (string.length > maxLength) {
+        return string.substring(0, maxLength - ending.length) + ending;
+    }
+    return string;
+};
