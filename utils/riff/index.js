@@ -219,14 +219,16 @@ export const PeerColors = [
  * an ending to tag onto the end of the string can be passed, by default an ellipsis(...) is applied
  */
 export function textTruncate(string, maxLength, ending) {
-    if (maxLength == null) {
-        maxLength = 100;
+    let maxLengthFinal = maxLength;
+    if (maxLengthFinal == null) {
+        maxLengthFinal = 100;
     }
-    if (ending == null) {
-        ending = '...';
+    let endingFinal = ending;
+    if (endingFinal == null) {
+        endingFinal = '...';
     }
-    if (string.length > maxLength) {
-        return string.substring(0, maxLength - ending.length) + ending;
+    if (string.length > maxLengthFinal) {
+        return string.substring(0, maxLengthFinal - endingFinal.length) + endingFinal;
     }
     return string;
-};
+}
