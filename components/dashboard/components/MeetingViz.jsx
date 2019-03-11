@@ -23,7 +23,7 @@ import {logger} from '../../../utils/riff';
 import TurnChart from './TurnChart';
 import InfluenceChart from './InfluenceChart';
 import TimelineChart from './TimelineChart';
-
+import {getIsRhsOpen} from 'selectors/rhs';
 const SpaceBetweeen = styled.div.attrs({
     className: 'space-between',
 })`
@@ -64,6 +64,7 @@ const mapStateToProps = (state, ownProps) => {
         timelineData: dashboard.timelineData[idx],
         selectedMeetingDuration: formatMeetingDuration(dashboard.meetings[idx]),
         loaded: dashboard.statsStatus[idx] === 'loaded',
+        rhsOpen: getIsRhsOpen(state),
     };
 };
 
@@ -176,7 +177,7 @@ class MeetingViz extends React.Component {
                     <Header {...this.props}/>
                     <div className="columns is-centered" style={{marginLeft: '2rem', marginRight: '1rem'}}>
                         <div className="column" style={{paddingBottom: '0px'}}>
-                            <div className="columns is-centered is-hidden-touch">
+                            <div className={`columns is-centered is-hidden-touch ${this.props.rhsOpen ? 'is-hidden' : ''}`}>
                                 <div className="column is-centered has-text-centered">
                                     <TurnChart
                                         processedUtterances={this.props.processedUtterances}
@@ -201,8 +202,8 @@ class MeetingViz extends React.Component {
                                     />
                                 </div>
                             </div>
-                            <div className="columns is-hidden-desktop is-multiline is-centered">
-                                <div className="column has-text-centered is-centered">
+                            <div className={`columns is-multiline is-centered ${this.props.rhsOpen ? '' : 'is-hidden-desktop'}`}>
+                                <div className={`column has-text-centered is-centered is-full-tablet ${this.props.rhsOpen ? 'is-full' : ''}`}>
                                     <TurnChart
                                         processedUtterances={this.props.processedUtterances}
                                         loaded={this.props.loaded}
