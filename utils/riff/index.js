@@ -225,7 +225,7 @@ export function textTruncate(string, maxLength, ending) {
     }
     let endingFinal = ending;
     if (endingFinal == null) {
-        endingFinal = '...';
+        endingFinal = '\u2026';
     }
     if (string.length > maxLengthFinal) {
         return string.substring(0, maxLengthFinal - endingFinal.length) + endingFinal;

@@ -24,7 +24,7 @@ const drawGantt = (props) => {
     // create map of id: name
     // local user will always be first.
     logger.debug('sorted participants:', participants);
-    const truncateLength = props.width < 720 ? 15 : 20;
+    const truncateLength = props.width < 720 ? 13 : 18;
     const participantNames = participants.map((p) => textTruncate(p.name, truncateLength));
 
     // create the participant map of id to name and color, filter out and
