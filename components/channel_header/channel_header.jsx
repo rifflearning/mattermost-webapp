@@ -443,7 +443,10 @@ export default class ChannelHeader extends React.Component {
                                 id='webrtc-btn'
                                 className={'webrtc__button hidden-xs ' + circleClass}
                             >
-                                <span className='icon icon__members'><MaterialIcon icon='voice_chat'/></span>
+                                <span className='icon icon__members'
+                                    aria-label='Start a voice chat'>
+                                    <MaterialIcon icon='voice_chat'/>
+                                </span>
                             </div>
                         </button>
                     </PopoverStickOnHover>
