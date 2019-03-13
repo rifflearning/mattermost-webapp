@@ -209,6 +209,7 @@ class WebRtcSidebar extends React.PureComponent {
                     width="250"
                     style={videoStyle(this.props.mediaError)}
                     ref={this.props.reattachVideo}
+                    aria-label='My video feed'
                 />
                 <canvas
                     id="video-overlay"
