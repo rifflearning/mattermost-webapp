@@ -12,15 +12,18 @@ class RenderVideos extends React.Component {
     render() {
         if (this.props.webRtcPeers.length > 0) {
             return (
-                <div style={{margin: 'auto'}} className="columns has-text-centered is-centered">
-                  <div className="column">
-                    <RemoteVideoContainer 
-                      ref="remote" 
-                      peers = {this.props.webRtcPeers} 
-                      chat={this.props.chat}
-                      remoteSharedScreen={this.props.webRtcRemoteSharedScreen}
-                    />
-                  </div>
+                <div style={{margin: 'auto'}}
+                    className="columns has-text-centered is-centered">
+                    <div className="column"
+                        tabIndex="0"
+                        aria-label={`Video chat.${this.props.webRtcPeers.map((peer,index) => {return `${(this.props.webRtcPeers.length > 1 && index + 1 == this.props.webRtcPeers.length) ? " and" : ""} ${peer.nick.split("|")[1]}`})} ${this.props.webRtcPeers.length > 1 ? "are" : "is"} in the room.`}>
+                        <RemoteVideoContainer
+                            ref="remote"
+                            peers = {this.props.webRtcPeers}
+                            chat={this.props.chat}
+                            remoteSharedScreen={this.props.webRtcRemoteSharedScreen}
+                        />
+                    </div>
                 </div>
             );
         } else {
@@ -54,7 +57,7 @@ class RenderVideos extends React.Component {
                                       <div className="columns is-centered">
                                             {this.props.roDisplayName ?
                                                 <div className='has-text-centered column is-half' style={{whiteSpace: 'nowrap'}}>
-                                                      <h2 className="is-size-4">Joining as: 
+                                                      <h2 className="is-size-4">Joining as:
                                                             <span style={{paddingLeft: '.5rem', color: 'rgb(138,106,148)'}}>
                                                                   {this.props.displayName}
                                                                 </span>
