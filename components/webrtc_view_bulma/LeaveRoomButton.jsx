@@ -28,13 +28,13 @@ const mapMergeProps = (stateProps, dispatchProps, ownProps) => ({
 });
 
 const LeaveButtonView = ({leaveRoom}) => (
-    <a className="button rounded is-danger"
+    <button className="button rounded is-danger"
        style={{'marginTop': '10px'}}
-       onClick={event => leaveRoom(event)} >
-
+       onClick={event => leaveRoom(event)}
+       aria-label='End call'
+    >
       <MaterialIcon icon="call_end"/>
-
-    </a>
+    </button>
 );
 
 
