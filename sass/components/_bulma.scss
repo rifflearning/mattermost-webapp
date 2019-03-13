@@ -163,8 +163,10 @@ html {
 }
 
 //screen reader only
-.sr-only {
-  display: none;
+.a11y-browser-alert {
+    width: 1px;
+    height: 1px;
+    position: fixed;
 }
 
 // Update Bulma's global variables

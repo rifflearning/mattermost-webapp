@@ -213,6 +213,7 @@ export const PeerColors = [
     Colors.aquamarine,
 ];
 
+
 /**
  * Limit the given string to the specifed number of characters.
  * If the string has more characters than the max allowed
@@ -234,4 +235,48 @@ export function textTruncate(s, maxLen = 100, missingCharSuffix = '\u2026') {
     }
 
     return s.slice(0, maxLen - missingCharSuffix.length) + missingCharSuffix;
+
+export function addA11yBrowserAlert(text,priority) {
+    let newAlert = document.createElement('div');
+    let id = 'speak-' + Date.now();
+
+    newAlert.setAttribute('id', id);
+    newAlert.setAttribute('role', 'alert');
+    newAlert.classList.add('a11y-browser-alert');
+    newAlert.setAttribute('aria-live', (priority ? priority : 'polite'));
+    newAlert.setAttribute('aria-atomic', 'true');
+
+    document.body.appendChild(newAlert);
+
+    window.setTimeout(function () {
+        document.getElementById(id).innerHTML = text;
+    }, 100);
+
+    window.setTimeout(function () {
+        document.body.removeChild(document.getElementById(id));
+    }, 1000);
+}
+
+export function getPeerListString(peers) {
+    let returnString = 'Nobody else is here.'
+
+    if(peers.length > 0) {
+        returnString = '';
+        peers.map((peer,index) => {
+            returnString += `${(peers.length > 1 && index + 1 == peers.length) ? ' and ' : ' '}${peer.nick.split('|')[1]}`;
+        });
+    }
+
+    if(peers.length > 0) {
+      if(peers.length > 1) {
+        returnString += ' are';
+      }
+      else {
+        returnString += ' is';
+      }
+
+      returnString += ' in the room.';
+    }
+
+    return returnString;
 }

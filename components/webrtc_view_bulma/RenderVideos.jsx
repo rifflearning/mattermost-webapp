@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import {ScaleLoader} from 'react-spinners';
 import RemoteVideoContainer from './RemoteVideoContainer';
 import * as sc from './styled';
+import {getPeerListString} from 'utils/riff'
 
 class RenderVideos extends React.Component {
     constructor(props) {
@@ -16,7 +17,7 @@ class RenderVideos extends React.Component {
                     className="columns has-text-centered is-centered">
                     <div className="column"
                         tabIndex="0"
-                        aria-label={`Video chat.${this.props.webRtcPeers.map((peer,index) => {return `${(this.props.webRtcPeers.length > 1 && index + 1 == this.props.webRtcPeers.length) ? " and" : ""} ${peer.nick.split("|")[1]}`})} ${this.props.webRtcPeers.length > 1 ? "are" : "is"} in the room.`}>
+                        aria-label={`Video chat.${getPeerListString(this.props.webRtcPeers)}`}>
                         <RemoteVideoContainer
                             ref="remote"
                             peers = {this.props.webRtcPeers}

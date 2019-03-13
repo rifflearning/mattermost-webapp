@@ -4,6 +4,7 @@ import lifecycle from 'react-pure-lifecycle';
 import {ScaleLoader} from 'react-spinners';
 import MaterialIcon from 'material-icons-react';
 
+import {addA11yBrowserAlert, getPeerListString} from 'utils/riff';
 import webrtc from '../../utils/webrtc/webrtc';
 import store from '../../stores/redux_store';
 import RemoteVideoContainer from './RemoteVideoContainer';
@@ -31,7 +32,7 @@ class WebRtc extends Component {
         this.render = this.render.bind(this);
         this.reattachVideo = this.reattachVideo.bind(this);
     }
-    
+
     componentDidMount () {
         console.log("adding local video to:", this.localVideoRef);
         let localVideo = ReactDOM.findDOMNode(this.localVideoRef);
@@ -48,6 +49,14 @@ class WebRtc extends Component {
         this.webrtc.stopLocalVideo();
         this.onUnload();
         window.removeEventListener('beforeunload', this.onUnload);
+    }
+
+    componentDidUpdate(prevProps, prevState) {
+      //just joined room
+      if(!prevProps.inRoom && this.props.inRoom) {
+        ReactDOM.findDOMNode(this.SectionRef).focus();
+        addA11yBrowserAlert(`You joined the chat. ${getPeerListString(this.props.webRtcPeers)}`,'assertive');
+      }
     }
 
     onUnload(event) {
@@ -82,7 +91,7 @@ class WebRtc extends Component {
     render () {
         return (
             <div id='app-content' className=''>
-                <div className="section">
+                <div className="section" tabIndex='0' ref={ref => this.SectionRef = ref}>
                     <div className="columns is-fullheight">
                         <div className="is-sidebar-menu">
                             <WebRtcSidebar {...this.props}
