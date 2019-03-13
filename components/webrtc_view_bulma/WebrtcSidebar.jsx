@@ -168,9 +168,16 @@ const AudioStatusBar = (props) => {
 
     return (
         <div className="has-text-centered" style={{marginTop: '1rem'}}>
-            <div className="level" style={{marginBottom: '5px'}}>
+            <div className="level" style={{marginBottom: '5px', 'cursor':'pointer'}}
+                  aria-label={`Your microphone is ${props.audioMuted ? 'off' : 'on'}.`}
+                  onClick={event => props.handleMuteAudioClick(event, props.audioMuted, props.webrtc)}
+            >
                 <div className="level-item" style={{maxWidth: '20%'}}>
-                    <MaterialIcon icon="mic"/>
+                    {props.audioMuted ?
+                        <MicDisabledIcon/>
+                        :
+                        <MicEnabledIcon/>
+                    }
                 </div>
                 <div className="level-item">
                     <progress
