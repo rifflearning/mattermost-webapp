@@ -213,7 +213,6 @@ export const PeerColors = [
     Colors.aquamarine,
 ];
 
-
 /**
  * Limit the given string to the specifed number of characters.
  * If the string has more characters than the max allowed
@@ -236,6 +235,16 @@ export function textTruncate(s, maxLen = 100, missingCharSuffix = '\u2026') {
 
     return s.slice(0, maxLen - missingCharSuffix.length) + missingCharSuffix;
 
+/**
+ * Temporarily adds a div to the DOM
+ * (for one second)
+ *
+ * Contents of div will be read by screen reader
+ * When passing a priority, the options are:
+ *    1. 'assertive' - will interupt the current speech
+ *    2. 'polite'(default) - will be read when current speech completes
+ *    *Note: these are standards, but exact functionality can vary between screen readers
+ */
 export function addA11yBrowserAlert(text,priority) {
     let newAlert = document.createElement('div');
     let id = 'speak-' + Date.now();
@@ -256,6 +265,17 @@ export function addA11yBrowserAlert(text,priority) {
         document.body.removeChild(document.getElementById(id));
     }, 1000);
 }
+
+/**
+ * When passed an array of peers,
+ * returns 'Nobody else is here.',
+ * or
+ * 'Gerald is in the room.',
+ * or
+ * 'Gerald, Tony, and Markus are in the room.'
+ *
+ * (usernames)
+ */
 
 export function getPeerListString(peers) {
     let returnString = 'Nobody else is here.'
