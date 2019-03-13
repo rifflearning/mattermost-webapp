@@ -162,5 +162,10 @@ html {
     left: 0;
 }
 
+//screen reader only
+.sr-only {
+  display: none;
+}
+
 // Update Bulma's global variables
 $family-sans-serif: "Nunito", sans-serif;
