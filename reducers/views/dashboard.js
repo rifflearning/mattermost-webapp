@@ -104,8 +104,8 @@ const dashboard = (state = initialState, action) => {
         return {
             ...state,
             loadingError: {
-                message:action.message,
-                status:action.status,
+                message: action.message,
+                status: action.status,
             },
         };
 
@@ -116,6 +116,10 @@ const dashboard = (state = initialState, action) => {
                                    state.statsStatus,
                                    action.meetingId,
                                    action.status),
+            loadingError: {
+                status: false,
+                message: '',
+            },
         };
     case DashboardActionTypes.DASHBOARD_FETCH_MEETING_UTTERANCES:
         return updateLoadingStatus({

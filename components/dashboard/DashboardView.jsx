@@ -57,7 +57,7 @@ const DashboardView = (props) => {
         }
 
         //loading, until first meeting's stats are loaded (the above loadingError has also not loaded yet)
-        else if (props.statsStatus[0] !== 'loaded') {
+        if (props.statsStatus[0] !== 'loaded') {
             return (
                 <div
                     className='columns has-text-centered is-centered is-vcentered'
@@ -69,7 +69,7 @@ const DashboardView = (props) => {
         }
 
         //meetings
-        else if (props.meetings.length > 0) {
+        if (props.meetings.length > 0) {
             return (
                 <div style={{overflowY: 'scroll'}}>
                     {meetingVisualizations}
