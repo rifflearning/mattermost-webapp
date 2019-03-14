@@ -1,9 +1,8 @@
-import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
-import { push } from 'connected-react-router';
+import React, {Component} from 'react';
+import {withRouter} from 'react-router-dom';
 import MaterialIcon from 'material-icons-react';
 import {getCurrentUser} from 'mattermost-redux/selectors/entities/users';
-import { connect } from 'react-redux';
+import {connect} from 'react-redux';
 
 
 const mapStateToProps = state => ({
@@ -28,12 +27,13 @@ const mapMergeProps = (stateProps, dispatchProps, ownProps) => ({
 });
 
 const LeaveButtonView = ({leaveRoom}) => (
-    <button className="button rounded is-danger"
-       style={{'marginTop': '10px'}}
-       onClick={event => leaveRoom(event)}
-       aria-label='End call'
+    <button
+        className='button rounded is-danger'
+        style={{'marginTop': '10px'}}
+        onClick={event => leaveRoom(event)}
+        aria-label='End call'
     >
-      <MaterialIcon icon="call_end"/>
+      <MaterialIcon icon='call_end'/>
     </button>
 );
 

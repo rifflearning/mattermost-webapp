@@ -123,7 +123,7 @@ export const getMediaSuccess = () => {
 };
 
 export const addPeer = (peer) => {
-    addA11yBrowserAlert(`${peer.peer.nick.split('|')[1]} joined the room.`,'assertive')
+    addA11yBrowserAlert(`${peer.peer.nick.split('|')[1]} joined the room.`, 'assertive');
 
     return {
         type: WebRtcActionTypes.ADD_PEER,
@@ -132,7 +132,7 @@ export const addPeer = (peer) => {
 };
 
 export const removePeer = (peer) => {
-    addA11yBrowserAlert(`${peer.peer.nick.split('|')[1]} left the room.`,'assertive')
+    addA11yBrowserAlert(`${peer.peer.nick.split('|')[1]} left the room.`, 'assertive');
 
     return {
         type: WebRtcActionTypes.REMOVE_PEER,

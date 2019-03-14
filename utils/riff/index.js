@@ -245,9 +245,11 @@ export function textTruncate(s, maxLen = 100, missingCharSuffix = '\u2026') {
  *    2. 'polite'(default) - will be read when current speech completes
  *    *Note: these are standards, but exact functionality can vary between screen readers
  */
-export function addA11yBrowserAlert(text,priority) {
-    let newAlert = document.createElement('div');
-    let id = 'speak-' + Date.now();
+
+export function addA11yBrowserAlert(text, priority) {
+    const newAlert = document.createElement('div');
+    const id = 'speak-' + Date.now();
+
 
     newAlert.setAttribute('id', id);
     newAlert.setAttribute('role', 'alert');
@@ -257,11 +259,11 @@ export function addA11yBrowserAlert(text,priority) {
 
     document.body.appendChild(newAlert);
 
-    window.setTimeout(function () {
+    window.setTimeout(() => {
         document.getElementById(id).innerHTML = text;
     }, 100);
 
-    window.setTimeout(function () {
+    window.setTimeout(() => {
         document.body.removeChild(document.getElementById(id));
     }, 1000);
 }
@@ -278,24 +280,23 @@ export function addA11yBrowserAlert(text,priority) {
  */
 
 export function getPeerListString(peers) {
-    let returnString = 'Nobody else is here.'
+    let returnString = 'Nobody else is here.';
 
-    if(peers.length > 0) {
+    if (peers.length > 0) {
         returnString = '';
-        peers.map((peer,index) => {
-            returnString += `${(peers.length > 1 && index + 1 == peers.length) ? ' and ' : ' '}${peer.nick.split('|')[1]}`;
-        });
+
+        for (let index = 0; index < peers.length; index++) {
+            returnString += `${(peers.length > 1 && index + 1 === peers.length) ? ' and ' : ' '}${peers[index].nick.split('|')[1]}`;
+        }
     }
 
-    if(peers.length > 0) {
-      if(peers.length > 1) {
-        returnString += ' are';
-      }
-      else {
-        returnString += ' is';
-      }
-
-      returnString += ' in the room.';
+    if (peers.length > 0) {
+        if (peers.length > 1) {
+            returnString += ' are';
+        } else {
+            returnString += ' is';
+        }
+        returnString += ' in the room.';
     }
 
     return returnString;

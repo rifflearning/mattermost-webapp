@@ -51,11 +51,11 @@ class WebRtc extends Component {
         window.removeEventListener('beforeunload', this.onUnload);
     }
 
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps) {
       //just joined room
-      if(!prevProps.inRoom && this.props.inRoom) {
-        ReactDOM.findDOMNode(this.SectionRef).focus();
-        addA11yBrowserAlert(`You joined the chat. ${getPeerListString(this.props.webRtcPeers)}`,'assertive');
+      if (!prevProps.inRoom && this.props.inRoom) {
+          ReactDOM.findDOMNode(this.SectionRef).focus();
+          addA11yBrowserAlert(`You joined the chat. ${getPeerListString(this.props.webRtcPeers)}`, 'assertive');
       }
     }
 

@@ -167,31 +167,30 @@ const AudioStatusBar = (props) => {
     };
 
     return (
-        <div className="has-text-centered" style={{marginTop: '1rem'}}>
-            <div className="level" style={{marginBottom: '5px', 'cursor':'pointer'}}
-                  aria-label={`Your microphone is ${props.audioMuted ? 'off' : 'on'}.`}
-                  onClick={event => props.handleMuteAudioClick(event, props.audioMuted, props.webrtc)}
+        <div className='has-text-centered'
+            style={{marginTop: '1rem'}}
+        >
+            <div className='level'
+                style={{marginBottom: '5px', 'cursor':'pointer'}}
+                aria-label={`Your microphone is ${props.audioMuted ? 'off' : 'on'}.`}
+                onClick={event => props.handleMuteAudioClick(event, props.audioMuted, props.webrtc)}
             >
-                <div className="level-item" style={{maxWidth: '20%'}}>
-                    {props.audioMuted ?
-                        <MicDisabledIcon/>
-                        :
-                        <MicEnabledIcon/>
-                    }
+                <div className='level-item' style={{maxWidth: '20%'}}>
+                    {props.audioMuted ? <MicDisabledIcon/>:<MicEnabledIcon/>}
                 </div>
-                <div className="level-item">
+                <div className='level-item'>
                     <progress
                         style={{maxWidth: '100%', margin: 0}}
-                        className="progress is-success"
+                        className='progress is-success'
                         value={props.volume}
-                        max="100"
+                        max='100'
                     />
                 </div>
             </div>
             {!isScreenShareSourceAvailable() && screenShareWarning()}
             <MenuLabelCentered>
                 <p>
-                    {'Having trouble? '}<a href="/room">{'Refresh the page'}</a>{' and allow access to your camera and mic.'}
+                    {'Having trouble? '}<a href='/room'>{'Refresh the page'}</a>{' and allow access to your camera and mic.'}
                 </p>
             </MenuLabelCentered>
         </div>
@@ -208,20 +207,20 @@ class WebRtcSidebar extends React.PureComponent {
         return (
             <React.Fragment>
                 <video
-                    className="local-video"
-                    id="local-video"
+                    className='local-video'
+                    id='local-video'
 
                     // this is necessary for thumos. yes, it is upsetting.
-                    height="175"
-                    width="250"
+                    height='175'
+                    width='250'
                     style={videoStyle(this.props.mediaError)}
                     ref={this.props.reattachVideo}
                     aria-label='My video feed'
                 />
                 <canvas
-                    id="video-overlay"
-                    height="175"
-                    width="250"
+                    id='video-overlay'
+                    height='175'
+                    width='250'
                     style={{display: 'none'}}
                 />
             </React.Fragment>
