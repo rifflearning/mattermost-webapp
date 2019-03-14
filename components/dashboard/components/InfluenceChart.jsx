@@ -137,7 +137,7 @@ const getBarGraph = (influenceType, BarGraphData, options) => {
 
 const chartInfoMine = 'This graph shows how many times each person spoke first after you finished speaking. Frequent first-responses indicate that a person is engaged by what you have to say.';
 const chartInfoTheirs = 'This graph shows how many times you spoke first after another person finished speaking. Frequent first-responses indicate that you are engaged by what another person is saying.';
-const BarChart = ({processedInfluence, participantId, influenceType, loaded}) => {
+const BarChart = ({processedInfluence, participantId, influenceType, loaded, meeting}) => {
     //processedInfluence = addColorsToData(processedInfluence, participantId);
 
     const chartTitle = influenceType === 'mine' ? 'Who You Influenced' : 'Who Influenced You';
@@ -174,6 +174,7 @@ const BarChart = ({processedInfluence, participantId, influenceType, loaded}) =>
             chartDiv={loaded ? BarGraph : loadingDiv}
             chartInfo={chartInfoText}
             chartTable={loaded ? chartTable : false}
+            meetingId={meeting._id}
         />
     );
 };

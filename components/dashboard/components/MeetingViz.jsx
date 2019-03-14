@@ -188,6 +188,7 @@ class MeetingViz extends React.Component {
                                         processedUtterances={this.props.processedUtterances}
                                         loaded={this.props.loaded}
                                         participantId={this.props.user.id}
+                                        meeting={this.props.meeting}
                                     />
                                 </div>
                                 <div className='column is-centered' >
@@ -196,6 +197,7 @@ class MeetingViz extends React.Component {
                                         processedInfluence={this.props.influenceData}
                                         loaded={this.props.loaded}
                                         participantId={this.props.user.id}
+                                        meeting={this.props.meeting}
                                     />
                                 </div>
                                 <div className='column is-centered' >
@@ -204,6 +206,7 @@ class MeetingViz extends React.Component {
                                         processedInfluence={this.props.influenceData}
                                         loaded={this.props.loaded}
                                         participantId={this.props.user.id}
+                                        meeting={this.props.meeting}
                                     />
                                 </div>
                             </div>
@@ -213,6 +216,7 @@ class MeetingViz extends React.Component {
                                         processedUtterances={this.props.processedUtterances}
                                         loaded={this.props.loaded}
                                         participantId={this.props.user.id}
+                                        meeting={this.props.meeting}
                                     />
                                 </div>
 
@@ -224,6 +228,7 @@ class MeetingViz extends React.Component {
                                                 processedInfluence={this.props.influenceData}
                                                 loaded={this.props.loaded}
                                                 participantId={this.props.user.id}
+                                                meeting={this.props.meeting}
                                             />
                                         </div>
                                         <div className='column is-half has-text-centered is-centered'>
@@ -232,6 +237,7 @@ class MeetingViz extends React.Component {
                                                 processedInfluence={this.props.influenceData}
                                                 loaded={this.props.loaded}
                                                 participantId={this.props.user.id}
+                                                meeting={this.props.meeting}
                                             />
                                         </div>
                                     </div>
@@ -242,6 +248,7 @@ class MeetingViz extends React.Component {
                                                 processedInfluence={this.props.influenceData}
                                                 loaded={this.props.loaded}
                                                 participantId={this.props.user.id}
+                                                meeting={this.props.meeting}
                                             />
                                         </div>
                                         <div className='column has-text-centered is-centered'>
@@ -250,6 +257,7 @@ class MeetingViz extends React.Component {
                                                 processedInfluence={this.props.influenceData}
                                                 loaded={this.props.loaded}
                                                 participantId={this.props.user.id}
+                                                meeting={this.props.meeting}
                                             />
                                         </div>
                                     </div>

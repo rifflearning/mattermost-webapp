@@ -51,21 +51,6 @@ const widthCard = (maxWidth) => {
     return Card;
 };
 
-const ChartInfoDiv = styled.div`
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    height: 100%;
-    width: 100%;
-    background-color: rgba(171, 69, 171, 0.9);
-    z-index: 1;
-
-    button {
-        background: none;
-        border: none;
-    }
-`;
-
 const ChartInfo = styled.p.attrs({
     className: 'has-text-weight-bold is-size-6',
 })`
@@ -99,6 +84,41 @@ const methods = {
 
 //const ChartCard = ({chartDiv, title, maxWidth}) => {
 const ChartCard = enhance((props) => {
+
+    const chartInfoClicked = () => {
+      props.dispatch({type: INFO_CLICKED});
+      //need to use timeout, because div is not in DOM yet
+      setTimeout(() => {
+        document.getElementById(`chart-info-${props.meetingId}-${props.title}`).focus();
+      },100)
+    }
+
+    const chartInfoClosed = () => {
+      props.dispatch({type: INFO_CLICKED});
+      //need to use timeout, won't throw error without, since div exists, but other elements take focus priority if not using timeout
+      setTimeout(() => {
+        document.getElementById(`chart-info-btn-${props.meetingId}-${props.title}`).focus();
+      },100)
+    }
+
+    const ChartInfoDiv = styled.div.attrs({
+        tabIndex: '-1',
+        id: `chart-info-${props.meetingId}-${props.title}`,
+    })`
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        height: 100%;
+        width: 100%;
+        background-color: rgba(171, 69, 171, 0.9);
+        z-index: 1;
+
+        button {
+            background: none;
+            border: none;
+        }
+    `;
+
     const mw = props.maxWidth ? props.maxWidth : 25;
     const Card = widthCard(mw + 2);
     logger.debug('chart div:', props.chartDiv);
@@ -111,24 +131,22 @@ const ChartCard = enhance((props) => {
                     style={{float: 'right'}}
                 >
                     <button
-                        onClick={() =>
-                            props.dispatch({type: INFO_CLICKED})
-                        }
+                        onClick={chartInfoClicked}
+                        aria-describedby={`chart-info-${props.meetingId}-${props.title}`}
+                        id={`chart-info-btn-${props.meetingId}-${props.title}`}
                     >
                         <MaterialIcon icon='info'/>
                     </button>
                 </span>
             </CardTitle>
             {props.isInfoOpen && (
-                <ChartInfoDiv>
+                <ChartInfoDiv meetingId={props.meetingId}>
                     <span
                         className='has-text-right'
                         style={{float: 'right'}}
                     >
                         <button
-                            onClick={() =>
-                                props.dispatch({type: INFO_CLICKED})
-                            }
+                            onClick={chartInfoClosed}
                         >
                             <MaterialIcon icon='close'/>
                         </button>

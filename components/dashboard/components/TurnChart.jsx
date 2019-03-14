@@ -11,7 +11,7 @@ import React from 'react';
 import {ScaleLoader} from 'react-spinners';
 import Chart from 'chart.js';
 import ReactChartkick, {PieChart} from 'react-chartkick';
-
+import _ from 'underscore';
 import {cmpObjectProp, logger, PeerColors} from 'utils/riff';
 
 import ChartTable from './ChartTable';
@@ -52,7 +52,7 @@ const chartInfo =
 equal speaking time across all members is associated with higher creativity, more trust between \
 group members, and better brainstorming.';
 
-const TurnChart = ({processedUtterances, participantId, loaded}) => {
+const TurnChart = ({processedUtterances, participantId, loaded, meeting}) => {
     let chartDiv;
     let chartTable;
     if (loaded) {
@@ -120,6 +120,7 @@ const TurnChart = ({processedUtterances, participantId, loaded}) => {
             chartInfo={chartInfo}
             maxWidth={100}
             chartTable={loaded ? chartTable : false}
+            meetingId={meeting._id}
         />
     );
 };
