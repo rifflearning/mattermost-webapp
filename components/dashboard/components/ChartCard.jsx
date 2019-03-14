@@ -59,6 +59,11 @@ const ChartInfoDiv = styled.div`
     width: 100%;
     background-color: rgba(171, 69, 171, 0.9);
     z-index: 1;
+
+    button {
+        background: none;
+        border: none;
+    }
 `;
 
 const ChartInfo = styled.p.attrs({
@@ -120,13 +125,13 @@ const ChartCard = enhance((props) => {
                         className='has-text-right'
                         style={{float: 'right'}}
                     >
-                        <a
+                        <button
                             onClick={() =>
                                 props.dispatch({type: INFO_CLICKED})
                             }
                         >
                             <MaterialIcon icon='close'/>
-                        </a>
+                        </button>
                     </span>
                     <ChartInfo>{props.chartInfo}</ChartInfo>
                 </ChartInfoDiv>
