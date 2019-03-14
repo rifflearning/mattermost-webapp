@@ -21,6 +21,11 @@ const CardTitle = styled.div.attrs({
     margin-left: 1rem;
     margin-right: 1rem;
     color: rgb(138, 106, 148);
+
+    button {
+        background: none;
+        border: none;
+    }
 `;
 
 const ChartDiv = styled.div.attrs({
@@ -100,13 +105,13 @@ const ChartCard = enhance((props) => {
                     className='has-text-right'
                     style={{float: 'right'}}
                 >
-                    <a
+                    <button
                         onClick={() =>
                             props.dispatch({type: INFO_CLICKED})
                         }
                     >
                         <MaterialIcon icon='info'/>
-                    </a>
+                    </button>
                 </span>
             </CardTitle>
             {props.isInfoOpen && (
