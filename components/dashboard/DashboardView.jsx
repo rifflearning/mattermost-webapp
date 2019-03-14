@@ -3,12 +3,15 @@
 
 /* eslint
     header/header: "off",
+    dot-location: ["error", "property"],
+    indent: ["error", 4, { "CallExpression": { "arguments": "first" } }],
+    "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
+    "no-underscore-dangle": ["error", { "allow": [ "_id" ] }],
  */
 
 import React from 'react';
 import styled from 'styled-components';
 import {ScaleLoader} from 'react-spinners';
-import _ from 'underscore';
 
 import {logger} from 'utils/riff';
 
@@ -32,10 +35,10 @@ const LoadingErrorMessage = styled.div.attrs({
 
 const DashboardView = (props) => {
     logger.debug('only loading:', props.numLoadedMeetings, 'Meetings');
-    const meetingVisualizations = _.map(_.first(props.meetings, props.numLoadedMeetings), (m) => {
+    const meetingVisualizations = props.meetings.slice(0, props.numLoadedMeetings).map((m) => {
         return (
             <MeetingViz
-                key={m._id} // eslint-disable-line no-underscore-dangle
+                key={m._id}
                 meeting={m}
                 allMeetings={props.meetings}
                 maybeLoadNextMeeting={props.maybeLoadNextMeeting}
@@ -80,6 +83,7 @@ const DashboardView = (props) => {
         //default
         return false;
     };
+
     return (
         <div className='app__content'>
             {component()}
