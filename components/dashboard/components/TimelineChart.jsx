@@ -1,12 +1,6 @@
 // Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-/* eslint
-    header/header: "off",
-    dot-location: ["error", "property"],
-    indent: ["error", 4, { "CallExpression": { "arguments": "first" } }],
- */
-
 import React from 'react';
 import {ScaleLoader} from 'react-spinners';
 import lifecycle from 'react-pure-lifecycle';
@@ -107,7 +101,8 @@ const TimelineView = (props) => {
         chartDiv = (
             <ScaleLoader color={'#8A6A94'}/>
         );
-    } else {
+    }
+    else {
         chartDiv = <div id={'gantt-' + props.meeting._id}/>; // eslint-disable-line no-underscore-dangle
     }
     return (

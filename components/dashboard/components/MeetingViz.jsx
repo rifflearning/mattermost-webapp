@@ -1,11 +1,6 @@
 // Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-/* eslint
-    header/header: "off",
-    indent: ["error", 4, { "CallExpression": { "arguments": "first" } }]
- */
-
 import React from 'react';
 import {connect} from 'react-redux';
 import sizeMe from 'react-sizeme';
@@ -56,7 +51,7 @@ const formatMeetingDuration = (meeting) => {
 const mapStateToProps = (state, ownProps) => {
     const {lti, dashboard, riff} = state.views;
     const riffState = {...lti, ...dashboard, ...riff};
-    const meetingId = ownProps.meeting._id; // eslint-disable-line no-underscore-dangle
+    const meetingId = ownProps.meeting._id;
     const idx = getMeetingIndex(dashboard.meetings, meetingId);
     logger.debug('meeting for this viz is:', riffState.meetings[idx]);
     logger.debug('timeline for this viz is:', idx, dashboard.timelineData[idx]);
@@ -167,8 +162,8 @@ class MeetingViz extends React.Component {
         if (!this.props.loaded) {
             logger.debug('NOT loaded, waypoint loading this meeting...', event);
             this.props.loadMeetingData(this.props.user.id,
-                                       this.props.meeting._id); // eslint-disable-line no-underscore-dangle
-            this.props.maybeLoadNextMeeting(this.props.meeting._id, this.props.allMeetings); // eslint-disable-line no-underscore-dangle
+                                       this.props.meeting._id);
+            this.props.maybeLoadNextMeeting(this.props.meeting._id, this.props.allMeetings);
         }
     }
 
@@ -177,11 +172,14 @@ class MeetingViz extends React.Component {
             <Waypoint onEnter={this.loadThisAndMaybeMore}>
                 <div>
                     <Header {...this.props}/>
-                    <div className='columns is-centered'
+                    <div
+                        className='columns is-centered'
                         style={{marginLeft: '2rem', marginRight: '1rem'}}
                     >
-                        <div className='column'
-                            style={{paddingBottom: '0px'}}>
+                        <div
+                            className='column'
+                            style={{paddingBottom: '0px'}}
+                        >
                             <div className={`columns is-centered is-hidden-touch ${this.props.rhsOpen ? 'is-hidden' : ''}`}>
                                 <div className='column is-centered has-text-centered'>
                                     <TurnChart
@@ -264,7 +262,8 @@ class MeetingViz extends React.Component {
                                 </div>
                             </div>
 
-                            <div className='section'
+                            <div
+                                className='section'
                                 style={{padding: '0px'}}
                             >
                                 <div className='columns is-centered'>

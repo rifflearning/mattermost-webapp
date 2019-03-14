@@ -1,12 +1,6 @@
 // Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-/* eslint
-    header/header: "off",
-    dot-location: ["error", "property"],
-    indent: ["error", 4, { "CallExpression": { "arguments": "first" } }],
- */
-
 import d3 from 'utils/libs/d3';
 import {logger} from 'utils/riff';
 
@@ -273,10 +267,7 @@ export class Gantt {
             .attr('rx', 5)
             .attr('ry', 5)
             .attr('class', (d) => {
-                if (this.taskStatus[d.status] == null) {
-                    return 'bar';
-                }
-                return this.taskStatus[d.status];
+                return this.taskStatus[d.status] || 'bar';
             })
             .transition()
             .attr('y', 0)
@@ -320,7 +311,8 @@ export class Gantt {
             if (tasks === undefined || tasks.length < 1) { // eslint-disable-line no-undefined
                 timeDomainStart = [d3.timeDay.offset(new Date(), -3), d3.timeHour.offset(new Date(), +3)];
                 timeDomainEnd = [d3.timeDay.offset(new Date(), -3), d3.timeHour.offset(new Date(), +3)];
-            } else {
+            }
+            else {
                 // TODO: need the earliest startDate and the latest endDate, depending on how the tasks
                 // overlap that may not be the start of the first and the end of the last. Check!
                 timeDomainStart = tasks[0].startDate;
