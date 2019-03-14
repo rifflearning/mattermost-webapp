@@ -13,7 +13,7 @@ import lifecycle from 'react-pure-lifecycle';
 
 import {logger, PeerColors} from 'utils/riff';
 
-import createGantt from './gantt';
+import {Gantt} from './gantt';
 import ChartCard from './ChartCard';
 
 const drawGantt = (props) => {
@@ -45,7 +45,7 @@ const drawGantt = (props) => {
             return pmap;
         }, participantMap);
 
-    const numOtherPeers = participantMap.length - (participantMap[participantId] ? 1 : 0);
+    const numOtherPeers = participants.length - (participantMap[participantId] ? 1 : 0);
     if (numOtherPeers > PeerColors.length - 1) {
         logger.warn(`Not enough colors (${PeerColors.length - 1}) for all peers (${numOtherPeers})`);
     }
@@ -57,8 +57,9 @@ const drawGantt = (props) => {
         color: participantMap[u.participant].color,
     }));
 
-    var gantt = createGantt('#gantt-' + props.meeting._id, props.width).taskTypes(participantNames); // eslint-disable-line no-underscore-dangle
-    gantt(utts2);
+    const gantt = new Gantt(`#gantt-${props.meeting._id}`, props.width); // eslint-disable-line no-underscore-dangle
+    gantt.taskTypes = participantNames;
+    gantt.draw(utts2);
 };
 
 const componentDidMount = (props) => {
@@ -90,7 +91,7 @@ const chartInfo =
 // participants: [{id, name, ...}, ...]
 const TimelineView = (props) => {
     logger.debug('timeline props:', props);
-    var chartDiv;
+    let chartDiv;
     if (!props.loaded) { // eslint-disable-line no-negated-condition
         chartDiv = (
             <ScaleLoader color={'#8A6A94'}/>
