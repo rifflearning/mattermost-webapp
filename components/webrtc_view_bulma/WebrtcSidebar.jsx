@@ -54,6 +54,7 @@ const AudioStatus = (props) => {
             <button
                 className={classNames}
                 onClick={(event) => mmbProps.handleMuteAudioClick(event, mmbProps.audioMuted, mmbProps.webrtc)}
+                aria-label={`Your microphone is ${mmbProps.audioMuted ? 'off' : 'on'}.`}
             >
                 {icon}
             </button>
