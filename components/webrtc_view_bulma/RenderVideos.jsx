@@ -104,12 +104,14 @@ class RenderVideos extends React.Component {
 
                             <div className='columns has-text-centered is-centered'>
                                 <div className='has-text-centered is-centered column'>
-                                    <a
+                                    <button
                                         className='button is-outlined is-primary'
                                         style={{marginTop: '10px'}}
                                         disabled={this.props.joinButtonDisabled}
                                         onClick={this.props.handleReadyClick}
-                                    >{'Join Room'}</a>
+                                    >
+                                        {'Join Room'}
+                                    </button>
                                     {this.props.joinRoomStatus === 'error' &&
                                         <sc.ErrorNotification>
                                             <button
