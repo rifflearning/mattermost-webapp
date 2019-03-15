@@ -117,6 +117,7 @@ class RenderVideos extends React.Component {
                                             <button
                                                 className='delete'
                                                 onClick={this.props.clearJoinRoomError}
+                                                aria-label='Close form error message'
                                             />
                                             {this.props.joinRoomMessage}
                                         </sc.ErrorNotification>
