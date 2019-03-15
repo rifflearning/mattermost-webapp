@@ -84,41 +84,12 @@ const methods = {
 
 //const ChartCard = ({chartDiv, title, maxWidth}) => {
 const ChartCard = enhance((props) => {
-    const chartInfoClicked = () => {
-        props.dispatch({type: INFO_CLICKED});
-
-        //need to use timeout, because div is not in DOM yet
-        setTimeout(() => {
-            document.getElementById(`chart-info-${props.meetingId}-${props.title}`).focus();
-        }, 100);
-    };
-
     const chartInfoClosed = () => {
         props.dispatch({type: INFO_CLICKED});
-
-        //need to use timeout, won't throw error without, since div exists, but other elements take focus priority if not using timeout
         setTimeout(() => {
-            document.getElementById(`chart-info-btn-${props.meetingId}-${props.title}`).focus();
+            document.getElementById(`chart-info-btn-${props.chartCardId}`).focus();
         }, 100);
     };
-
-    const ChartInfoDiv = styled.div.attrs({
-        tabIndex: '-1',
-        id: `chart-info-${props.meetingId}-${props.title}`,
-    })`
-        position: absolute;
-        top: 0px;
-        left: 0px;
-        height: 100%;
-        width: 100%;
-        background-color: rgba(171, 69, 171, 0.9);
-        z-index: 1;
-
-        button {
-            background: none;
-            border: none;
-        }
-    `;
 
     const mw = props.maxWidth ? props.maxWidth : 25;
     const Card = widthCard(mw + 2);
@@ -132,28 +103,21 @@ const ChartCard = enhance((props) => {
                     style={{float: 'right'}}
                 >
                     <button
-                        onClick={chartInfoClicked}
-                        aria-describedby={`chart-info-${props.meetingId}-${props.title}`}
-                        id={`chart-info-btn-${props.meetingId}-${props.title}`}
+                        onClick={() => props.dispatch({type: INFO_CLICKED})}
+                        aria-describedby={`chart-info-${props.chartCardId}`}
+                        id={`chart-info-btn-${props.chartCardId}`}
+                        tabIndex='-1'
                     >
                         <MaterialIcon icon='info'/>
                     </button>
                 </span>
             </CardTitle>
             {props.isInfoOpen && (
-                <ChartInfoDiv meetingId={props.meetingId}>
-                    <span
-                        className='has-text-right'
-                        style={{float: 'right'}}
-                    >
-                        <button
-                            onClick={chartInfoClosed}
-                        >
-                            <MaterialIcon icon='close'/>
-                        </button>
-                    </span>
-                    <ChartInfo>{props.chartInfo}</ChartInfo>
-                </ChartInfoDiv>
+                <ChartInfoDiv
+                    id={`chart-info-${props.chartCardId}`}
+                    close={chartInfoClosed}
+                    chartInfo={props.chartInfo}
+                />
             )}
             <ChartDiv>
                 {props.chartTable}
@@ -162,5 +126,35 @@ const ChartCard = enhance((props) => {
         </Card>
     );
 });
+
+class ChartInfoDiv extends React.Component {
+    componentDidMount() {
+        this.ChartInfoDiv.focus();
+    }
+    render() {
+        return (
+            <div
+                id={this.props.id}
+                className='chart-info-div'
+                ref={(ref) => {
+                    this.ChartInfoDiv = ref;
+                }}
+                tabIndex='-1'
+            >
+                <span
+                    className='has-text-right'
+                    style={{float: 'right'}}
+                >
+                    <button
+                        onClick={this.props.close}
+                    >
+                        <MaterialIcon icon='close'/>
+                    </button>
+                </span>
+                <ChartInfo>{this.props.chartInfo}</ChartInfo>
+            </div>
+        );
+    }
+}
 
 export default lifecycle(methods)(ChartCard);

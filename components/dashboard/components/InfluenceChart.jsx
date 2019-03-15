@@ -174,7 +174,7 @@ const BarChart = ({processedInfluence, participantId, influenceType, loaded, mee
             chartDiv={loaded ? BarGraph : loadingDiv}
             chartInfo={chartInfoText}
             chartTable={loaded ? chartTable : false}
-            meetingId={meeting._id} // eslint-disable-line no-underscore-dangle
+            chartCardId={`cc-${meeting._id}-${chartTitle.replace(' ', '-')}`} // eslint-disable-line no-underscore-dangle
         />
     );
 };

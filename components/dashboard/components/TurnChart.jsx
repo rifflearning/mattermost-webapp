@@ -11,7 +11,6 @@ import React from 'react';
 import {ScaleLoader} from 'react-spinners';
 import Chart from 'chart.js';
 import ReactChartkick, {PieChart} from 'react-chartkick';
-import _ from 'underscore';
 
 import {cmpObjectProp, logger, PeerColors} from 'utils/riff';
 
@@ -121,7 +120,7 @@ const TurnChart = ({processedUtterances, participantId, loaded, meeting}) => {
             chartInfo={chartInfo}
             maxWidth={100}
             chartTable={loaded ? chartTable : false}
-            meetingId={meeting._id} // eslint-disable-line no-underscore-dangle
+            chartCardId={`cc-${meeting._id}-Speaking-Time`} // eslint-disable-line no-underscore-dangle
         />
     );
 };

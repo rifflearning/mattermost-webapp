@@ -169,5 +169,20 @@ html {
     position: fixed;
 }
 
+.chart-info-div {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 100%;
+    background-color: rgba(171, 69, 171, 0.9);
+    z-index: 1;
+
+    button {
+        background: none;
+        border: none;
+    }
+}
+
 // Update Bulma's global variables
 $family-sans-serif: "Nunito", sans-serif;
