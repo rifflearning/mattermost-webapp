@@ -125,7 +125,7 @@ const TimelineView = (props) => {
             chartInfo={chartInfo}
             maxWidth={100}
             setWidth={props.width}
-            meetingId={props.meeting._id}
+            meetingId={props.meeting._id} // eslint-disable-line no-underscore-dangle
         />
     );
 };

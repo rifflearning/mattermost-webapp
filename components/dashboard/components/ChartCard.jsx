@@ -84,22 +84,23 @@ const methods = {
 
 //const ChartCard = ({chartDiv, title, maxWidth}) => {
 const ChartCard = enhance((props) => {
-
     const chartInfoClicked = () => {
-      props.dispatch({type: INFO_CLICKED});
-      //need to use timeout, because div is not in DOM yet
-      setTimeout(() => {
-        document.getElementById(`chart-info-${props.meetingId}-${props.title}`).focus();
-      },100)
-    }
+        props.dispatch({type: INFO_CLICKED});
+
+        //need to use timeout, because div is not in DOM yet
+        setTimeout(() => {
+            document.getElementById(`chart-info-${props.meetingId}-${props.title}`).focus();
+        }, 100);
+    };
 
     const chartInfoClosed = () => {
-      props.dispatch({type: INFO_CLICKED});
-      //need to use timeout, won't throw error without, since div exists, but other elements take focus priority if not using timeout
-      setTimeout(() => {
-        document.getElementById(`chart-info-btn-${props.meetingId}-${props.title}`).focus();
-      },100)
-    }
+        props.dispatch({type: INFO_CLICKED});
+
+        //need to use timeout, won't throw error without, since div exists, but other elements take focus priority if not using timeout
+        setTimeout(() => {
+            document.getElementById(`chart-info-btn-${props.meetingId}-${props.title}`).focus();
+        }, 100);
+    };
 
     const ChartInfoDiv = styled.div.attrs({
         tabIndex: '-1',
