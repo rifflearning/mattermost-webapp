@@ -24,7 +24,17 @@ const drawGantt = (props) => {
     // create map of id: name
     // local user will always be first.
     logger.debug('sorted participants:', participants);
-    const truncateLength = props.width < 720 ? 13 : 18;
+
+    //since the decision was made to limit the length of the name on the y-axis if overflowing,
+    //the breakpoint at which the name should be truncated,
+    //is 720px (width of parent, <MeetingViz/>)
+    //what seemed to work was truncating the name to 13 characters, plus an ellipsis
+
+    const truncateBreakPoint = 720;
+    const minTruncateLength = 13;
+    const maxTruncateLength = 18; //even though signup limits to 22 char, this is a safety net, 22 char can break
+
+    const truncateLength = props.width < truncateBreakPoint ? minTruncateLength : maxTruncateLength;
     const participantNames = participants.map((p) => textTruncate(p.name, truncateLength));
 
     // create the participant map of id to name and color, filter out and
