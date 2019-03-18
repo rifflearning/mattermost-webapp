@@ -5,22 +5,16 @@ import {ScaleLoader} from 'react-spinners';
 import MaterialIcon from 'material-icons-react';
 
 import {addA11yBrowserAlert, getPeerListString} from 'utils/riff';
+
 import webrtc from '../../utils/webrtc/webrtc';
 import store from '../../stores/redux_store';
-import RemoteVideoContainer from './RemoteVideoContainer';
 import RenderVideos from './RenderVideos';
-import LeaveRoomButton from './LeaveRoomButton';
 import WebRtcSidebar from './WebrtcSidebar';
 import TextChat from './TextChat';
-import {VideoPlaceholder,
-        ErrorNotification,
-        MenuLabel,
-        MenuLabelCentered,
-        Menu,
-        RoomNameEntry
-       } from './styled';
-
-
+import {ErrorNotification,
+    MenuLabel,
+    MenuLabelCentered,
+} from './styled';
 
 // needs to be a regular component because we need to use
 // refs in order to request a local stream with SimpleWebRTC.
@@ -52,11 +46,11 @@ class WebRtc extends Component {
     }
 
     componentDidUpdate(prevProps) {
-      //just joined room
-      if (!prevProps.inRoom && this.props.inRoom) {
-          ReactDOM.findDOMNode(this.SectionRef).focus();
-          addA11yBrowserAlert(`You joined the chat. ${getPeerListString(this.props.webRtcPeers)}`, 'assertive');
-      }
+        //just joined room
+        if (!prevProps.inRoom && this.props.inRoom) {
+            ReactDOM.findDOMNode(this.SectionRef).focus();
+            addA11yBrowserAlert(`You joined the chat. ${getPeerListString(this.props.webRtcPeers)}`, 'assertive');
+        }
     }
 
     onUnload(event) {
@@ -91,7 +85,11 @@ class WebRtc extends Component {
     render () {
         return (
             <div id='app-content' className=''>
-                <div className="section" tabIndex='0' ref={ref => this.SectionRef = ref}>
+                <div
+                    className='section'
+                    tabIndex='0'
+                    ref={(ref) => this.SectionRef = ref}
+                >
                     <div className="columns is-fullheight">
                         <div className="is-sidebar-menu">
                             <WebRtcSidebar {...this.props}

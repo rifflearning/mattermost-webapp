@@ -234,6 +234,7 @@ export function textTruncate(s, maxLen = 100, missingCharSuffix = '\u2026') {
     }
 
     return s.slice(0, maxLen - missingCharSuffix.length) + missingCharSuffix;
+}
 
 /**
  * Temporarily adds a div to the DOM
@@ -249,7 +250,6 @@ export function textTruncate(s, maxLen = 100, missingCharSuffix = '\u2026') {
 export function addA11yBrowserAlert(text, priority) {
     const newAlert = document.createElement('div');
     const id = 'speak-' + Date.now();
-
 
     newAlert.setAttribute('id', id);
     newAlert.setAttribute('role', 'alert');

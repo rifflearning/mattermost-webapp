@@ -1,26 +1,30 @@
 import React from 'react';
 import styled from 'styled-components';
+
 import {ScaleLoader} from 'react-spinners';
+
+import {getPeerListString} from 'utils/riff';
+
 import RemoteVideoContainer from './RemoteVideoContainer';
 import * as sc from './styled';
-import {getPeerListString} from 'utils/riff'
+
 
 class RenderVideos extends React.Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         if (this.props.webRtcPeers.length > 0) {
             return (
-                <div style={{margin: 'auto'}}
-                    className='columns has-text-centered is-centered'>
-                    <div className='column'
+                <div
+                    style={{margin: 'auto'}}
+                    className='columns has-text-centered is-centered'
+                >
+                    <div
+                        className='column'
                         tabIndex='0'
-                        aria-label={`Video chat.${getPeerListString(this.props.webRtcPeers)}`}>
+                        aria-label={`Video chat.${getPeerListString(this.props.webRtcPeers)}`}
+                    >
                         <RemoteVideoContainer
                             ref='remote'
-                            peers = {this.props.webRtcPeers}
+                            peers={this.props.webRtcPeers}
                             chat={this.props.chat}
                             remoteSharedScreen={this.props.webRtcRemoteSharedScreen}
                         />
