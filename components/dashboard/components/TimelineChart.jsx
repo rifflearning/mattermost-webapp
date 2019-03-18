@@ -11,7 +11,7 @@ import React from 'react';
 import {ScaleLoader} from 'react-spinners';
 import lifecycle from 'react-pure-lifecycle';
 
-import {logger, PeerColors} from 'utils/riff';
+import {logger, PeerColors, textTruncate} from 'utils/riff';
 
 import {Gantt} from './gantt';
 import ChartCard from './ChartCard';
@@ -24,7 +24,18 @@ const drawGantt = (props) => {
     // create map of id: name
     // local user will always be first.
     logger.debug('sorted participants:', participants);
-    const participantNames = participants.map((p) => p.name);
+
+    //since the decision was made to limit the length of the name on the y-axis if overflowing,
+    //the breakpoint at which the name should be truncated,
+    //is 720px (width of parent, <MeetingViz/>)
+    //what seemed to work was truncating the name to 13 characters, plus an ellipsis
+
+    const maxNarrowWidth = 720;
+    const maxNameLenNarrow = 13;
+    const maxNameLenWide = 18; //even though signup limits to 22 char, this is a safety net, 22 char can break
+
+    const truncateLength = props.width < maxNarrowWidth ? maxNameLenNarrow : maxNameLenWide;
+    const participantNames = participants.map((p) => textTruncate(p.name, truncateLength));
 
     // create the participant map of id to name and color, filter out and
     // set the current user first, then add the other participants

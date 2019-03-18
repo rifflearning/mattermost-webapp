@@ -212,3 +212,26 @@ export const PeerColors = [
     Colors.darkfern,
     Colors.aquamarine,
 ];
+
+/**
+ * Limit the given string to the specifed number of characters.
+ * If the string has more characters than the max allowed
+ * a new string will be returned which is exactly max characters long
+ * consisting of a suffix of an ellipsis character (U+2026) OR the given
+ * missing character string, and the 1st characters from the given
+ * string to make the returned sting have the max length.
+ *
+ * @param {string} s - The string whose length should not exceed maxLen
+ * @param {number} maxLen - The maximum length of the returned string. default: 100
+ * @param {string} missingCharSuffix - The suffix to replace the truncated
+ *      end of the returned string with. default: ellipsis character
+ *
+ * @returns a string with a maximum of maxLen characters
+ */
+export function textTruncate(s, maxLen = 100, missingCharSuffix = '\u2026') {
+    if (s.length <= maxLen) {
+        return s;
+    }
+
+    return s.slice(0, maxLen - missingCharSuffix.length) + missingCharSuffix;
+}

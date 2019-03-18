@@ -199,6 +199,7 @@ export class Gantt {
             .attr('class', 'chart')
             .attr('width', containerSize.width)
             .attr('height', containerSize.height)
+            .style('overflow', 'visible')
             .append('g')
             .attr('class', 'gantt-chart')
             .attr('role', 'figure')
