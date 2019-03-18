@@ -415,8 +415,8 @@ export default class ChannelHeader extends React.Component {
                 style={{cursor: this.webRtcDisabled() ? 'default' : 'pointer'}}
             >
                 <Link
-                    target="_blank"
-                    id="videochat"
+                    target='_blank'
+                    id='videochat'
                     disabled={this.webRtcDisabled()}
                     to={this.props.webRtcLink.pathname}
                     onClick={() => {
@@ -432,7 +432,7 @@ export default class ChannelHeader extends React.Component {
                 >
                     <PopoverStickOnHover
                         component={webrtcTooltip}
-                        placement="bottom"
+                        placement='bottom'
                         delay={Constants.WEBRTC_TIME_DELAY}
                     >
                         <button
@@ -443,7 +443,12 @@ export default class ChannelHeader extends React.Component {
                                 id='webrtc-btn'
                                 className={'webrtc__button hidden-xs ' + circleClass}
                             >
-                                <span className='icon icon__members'><MaterialIcon icon='voice_chat'/></span>
+                                <span
+                                    className='icon icon__members'
+                                    aria-label='Start a voice chat'
+                                >
+                                    <MaterialIcon icon='voice_chat'/>
+                                </span>
                             </div>
                         </button>
                     </PopoverStickOnHover>
