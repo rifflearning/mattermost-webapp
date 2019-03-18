@@ -18,12 +18,14 @@ import PropTypes from 'prop-types';
 import {
     loadMeetingData,
 } from '../../../actions/views/dashboard';
+
 import {logger} from '../../../utils/riff';
+
+import {getIsRhsOpen} from 'selectors/rhs';
 
 import TurnChart from './TurnChart';
 import InfluenceChart from './InfluenceChart';
 import TimelineChart from './TimelineChart';
-
 const SpaceBetweeen = styled.div.attrs({
     className: 'space-between',
 })`
@@ -64,6 +66,7 @@ const mapStateToProps = (state, ownProps) => {
         timelineData: dashboard.timelineData[idx],
         selectedMeetingDuration: formatMeetingDuration(dashboard.meetings[idx]),
         loaded: dashboard.statsStatus[idx] === 'loaded',
+        rhsOpen: getIsRhsOpen(state),
     };
 };
 
@@ -174,17 +177,20 @@ class MeetingViz extends React.Component {
             <Waypoint onEnter={this.loadThisAndMaybeMore}>
                 <div>
                     <Header {...this.props}/>
-                    <div className="columns is-centered" style={{marginLeft: '2rem', marginRight: '1rem'}}>
-                        <div className="column" style={{paddingBottom: '0px'}}>
-                            <div className="columns is-centered is-hidden-touch">
-                                <div className="column is-centered has-text-centered">
+                    <div className='columns is-centered'
+                        style={{marginLeft: '2rem', marginRight: '1rem'}}
+                    >
+                        <div className='column'
+                            style={{paddingBottom: '0px'}}>
+                            <div className={`columns is-centered is-hidden-touch ${this.props.rhsOpen ? 'is-hidden' : ''}`}>
+                                <div className='column is-centered has-text-centered'>
                                     <TurnChart
                                         processedUtterances={this.props.processedUtterances}
                                         loaded={this.props.loaded}
                                         participantId={this.props.user.id}
                                     />
                                 </div>
-                                <div className="column is-centered" >
+                                <div className='column is-centered' >
                                     <InfluenceChart
                                         influenceType={'mine'}
                                         processedInfluence={this.props.influenceData}
@@ -192,7 +198,7 @@ class MeetingViz extends React.Component {
                                         participantId={this.props.user.id}
                                     />
                                 </div>
-                                <div className="column is-centered" >
+                                <div className='column is-centered' >
                                     <InfluenceChart
                                         influenceType={'theirs'}
                                         processedInfluence={this.props.influenceData}
@@ -201,8 +207,8 @@ class MeetingViz extends React.Component {
                                     />
                                 </div>
                             </div>
-                            <div className="columns is-hidden-desktop is-multiline is-centered">
-                                <div className="column has-text-centered is-centered">
+                            <div className={`columns is-multiline is-centered ${this.props.rhsOpen ? '' : 'is-hidden-desktop'}`}>
+                                <div className={`column has-text-centered is-centered is-full-tablet ${this.props.rhsOpen ? 'is-full' : ''}`}>
                                     <TurnChart
                                         processedUtterances={this.props.processedUtterances}
                                         loaded={this.props.loaded}
@@ -210,9 +216,9 @@ class MeetingViz extends React.Component {
                                     />
                                 </div>
 
-                                <div className="column">
-                                    <div className="columns is-multiline is-hidden-mobile">
-                                        <div className="column is-half has-text-centered is-centered">
+                                <div className='column'>
+                                    <div className='columns is-multiline is-hidden-mobile'>
+                                        <div className='column is-half has-text-centered is-centered'>
                                             <InfluenceChart
                                                 influenceType={'mine'}
                                                 processedInfluence={this.props.influenceData}
@@ -220,7 +226,7 @@ class MeetingViz extends React.Component {
                                                 participantId={this.props.user.id}
                                             />
                                         </div>
-                                        <div className="column is-half has-text-centered is-centered">
+                                        <div className='column is-half has-text-centered is-centered'>
                                             <InfluenceChart
                                                 influenceType={'theirs'}
                                                 processedInfluence={this.props.influenceData}
@@ -229,8 +235,8 @@ class MeetingViz extends React.Component {
                                             />
                                         </div>
                                     </div>
-                                    <div className="columns is-multiline is-hidden-tablet">
-                                        <div className="column has-text-centered is-centered">
+                                    <div className='columns is-multiline is-hidden-tablet'>
+                                        <div className='column has-text-centered is-centered'>
                                             <InfluenceChart
                                                 influenceType={'mine'}
                                                 processedInfluence={this.props.influenceData}
@@ -238,7 +244,7 @@ class MeetingViz extends React.Component {
                                                 participantId={this.props.user.id}
                                             />
                                         </div>
-                                        <div className="column has-text-centered is-centered">
+                                        <div className='column has-text-centered is-centered'>
                                             <InfluenceChart
                                                 influenceType={'theirs'}
                                                 processedInfluence={this.props.influenceData}
@@ -250,9 +256,11 @@ class MeetingViz extends React.Component {
                                 </div>
                             </div>
 
-                            <div className="section" style={{padding: '0px'}}>
-                                <div className="columns is-centered">
-                                    <div className="column is-centered has-text-centered">
+                            <div className='section'
+                                style={{padding: '0px'}}
+                            >
+                                <div className='columns is-centered'>
+                                    <div className='column is-centered has-text-centered'>
                                         <TimelineChart
                                             processedTimeline={this.props.timelineData}
                                             loaded={this.props.loaded}
