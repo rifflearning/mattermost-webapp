@@ -1599,24 +1599,6 @@ export const Constants = {
         'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
     TRIPLE_BACK_TICKS: /```/g,
     SYSTEM_BRAND_NAME: 'Riff Edu',
-    SCREEN_BREAKPOINTS: {
-        desktop: {
-            min: 1088,
-            max: 10000,
-        },
-        touch: {
-            min: 0,
-            max: 1087,
-        },
-        tablet: {
-            min: 769,
-            max: 1087,
-        },
-        mobile: {
-            min: 0,
-            max: 768,
-        },
-    },
 };
 
 t('suggestion.mention.channels');
