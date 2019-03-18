@@ -8,7 +8,7 @@ const initialState = {
 
     joinRoomStatus: 'waiting',
     joinRoomMessage: '',
-
+    shouldFocusJoinRoomError: false,
     inRoom: false,
     roomName: '',
 
@@ -47,7 +47,8 @@ const webrtc = (state = initialState, action) => {
     case(WebRtcActionTypes.JOIN_ROOM_STATUS):
         return {...state,
                 joinRoomStatus: action.status,
-                joinRoomMessage: action.msg
+                joinRoomMessage: action.msg,
+                shouldFocusJoinRoomError: action.status === 'error'
                }
 
     case(WebRtcActionTypes.ADD_PEER):
@@ -148,12 +149,12 @@ const webrtc = (state = initialState, action) => {
                             badge: action.badgeValue}};
 
     case(WebRtcActionTypes.SHARE_SCREEN):
-        return {...state, 
-            userSharing: true};                   
+        return {...state,
+            userSharing: true};
 
     case(WebRtcActionTypes.STOP_SHARE_SCREEN):
-        return {...state, 
-            webRtcLocalSharedScreen: null, 
+        return {...state,
+            webRtcLocalSharedScreen: null,
             userSharing: false};
 
     case(WebRtcActionTypes.CHAT_GET_DISPLAY_ERROR):
@@ -185,6 +186,9 @@ const webrtc = (state = initialState, action) => {
           ...state,
           webRtcLocalSharedScreen: null,
           userSharing: false};
+    case(WebRtcActionTypes.FOCUS_JOIN_ROOM_ERROR_COMPLETE):
+        return {...state,
+            shouldFocusJoinRoomError: false};
     default:
         return state;
     }

@@ -10,6 +10,14 @@ import RemoteVideoContainer from './RemoteVideoContainer';
 import * as sc from './styled';
 
 class RenderVideos extends React.Component {
+    componentDidUpdate(prevProps, prevState) {
+        //just updated DOM, which has an error message...focus on error
+        if (!prevProps.shouldFocusJoinRoomError && this.props.shouldFocusJoinRoomError && this.JoinRoomErrorRef) {
+            this.JoinRoomErrorRef.focus();
+            this.props.focusJoinRoomErrorComplete();
+        }
+    }
+
     render() {
         if (this.props.webRtcPeers.length > 0) {
             return (
@@ -104,6 +112,21 @@ class RenderVideos extends React.Component {
 
                             <div className='columns has-text-centered is-centered'>
                                 <div className='has-text-centered is-centered column'>
+                                    {this.props.joinRoomStatus === 'error' &&
+                                        <div
+                                            tabIndex='-1'
+                                            ref={ref => this.JoinRoomErrorRef = ref}
+                                        >
+                                            <sc.ErrorNotification>
+                                                <button
+                                                    className='delete'
+                                                    onClick={this.props.clearJoinRoomError}
+                                                    aria-label='Close form error message'
+                                                />
+                                                {this.props.joinRoomMessage}
+                                            </sc.ErrorNotification>
+                                        </div>
+                                    }
                                     <button
                                         className='button is-outlined is-primary'
                                         style={{marginTop: '10px'}}
@@ -112,16 +135,6 @@ class RenderVideos extends React.Component {
                                     >
                                         {'Join Room'}
                                     </button>
-                                    {this.props.joinRoomStatus === 'error' &&
-                                        <sc.ErrorNotification>
-                                            <button
-                                                className='delete'
-                                                onClick={this.props.clearJoinRoomError}
-                                                aria-label='Close form error message'
-                                            />
-                                            {this.props.joinRoomMessage}
-                                        </sc.ErrorNotification>
-                                    }
                                 </div>
                             </div>
                         </React.Fragment>

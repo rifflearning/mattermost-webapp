@@ -129,6 +129,8 @@ class WebRtc extends Component {
                                 )}
                                 roDisplayName={true}
                                 webRtcRemoteSharedScreen={this.props.webRtcRemoteSharedScreen}
+                                focusJoinRoomErrorComplete={this.props.focusJoinRoomErrorComplete}
+                                shouldFocusJoinRoomError={this.props.shouldFocusJoinRoomError}
                             />
                             {this.props.inRoom && <TextChat/>}
                         </div>

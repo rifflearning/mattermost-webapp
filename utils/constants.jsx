@@ -115,6 +115,7 @@ export const WebRtcActionTypes = keyMirror({
     ADD_SHARED_SCREEN: null,
     ADD_LOCAL_SHARED_SCREEN: null,
     REMOVE_LOCAL_SHARED_SCREEN: null,
+    FOCUS_JOIN_ROOM_ERROR_COMPLETE: null,
 });
 
 export const DashboardActionTypes = keyMirror({
