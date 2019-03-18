@@ -30,11 +30,11 @@ const drawGantt = (props) => {
     //is 720px (width of parent, <MeetingViz/>)
     //what seemed to work was truncating the name to 13 characters, plus an ellipsis
 
-    const truncateBreakPoint = 720;
-    const minTruncateLength = 13;
-    const maxTruncateLength = 18; //even though signup limits to 22 char, this is a safety net, 22 char can break
+    const maxNarrowWidth = 720;
+    const maxNameLenNarrow = 13;
+    const maxNameLenWide = 18; //even though signup limits to 22 char, this is a safety net, 22 char can break
 
-    const truncateLength = props.width < truncateBreakPoint ? minTruncateLength : maxTruncateLength;
+    const truncateLength = props.width < maxNarrowWidth ? maxNameLenNarrow : maxNameLenWide;
     const participantNames = participants.map((p) => textTruncate(p.name, truncateLength));
 
     // create the participant map of id to name and color, filter out and
