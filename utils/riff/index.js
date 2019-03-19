@@ -191,6 +191,8 @@ export const Colors = {
     darkfern: '#3c493f',
     aquamarine: '#1b998b',
     lightlava: '#bdc3c7',
+    lightroyal: '#8a6a94',
+    brightred: '#f44336',
 };
 
 /**
@@ -246,15 +248,14 @@ export function textTruncate(s, maxLen = 100, missingCharSuffix = '\u2026') {
  *    2. 'polite'(default) - will be read when current speech completes
  *    *Note: these are standards, but exact functionality can vary between screen readers
  */
-
-export function addA11yBrowserAlert(text, priority) {
+export function addA11yBrowserAlert(text, priority = 'polite') {
     const newAlert = document.createElement('div');
     const id = 'speak-' + Date.now();
 
     newAlert.setAttribute('id', id);
     newAlert.setAttribute('role', 'alert');
     newAlert.classList.add('a11y-browser-alert');
-    newAlert.setAttribute('aria-live', (priority ? priority : 'polite'));
+    newAlert.setAttribute('aria-live', priority);
     newAlert.setAttribute('aria-atomic', 'true');
 
     document.body.appendChild(newAlert);
@@ -269,35 +270,34 @@ export function addA11yBrowserAlert(text, priority) {
 }
 
 /**
- * When passed an array of peers,
- * returns 'Nobody else is here.',
- * or
- * 'Gerald is in the room.',
- * or
- * 'Gerald, Tony, and Markus are in the room.'
+ * Convert a peer array into a readable string listing those peers
+ * using their nicknames.
+ * Useful for a11y aria labels.
  *
- * (usernames)
+ * examples:
+ * 0 peers: 'Nobody else is here.'
+ * 1 peer : 'Gerald is in the room.'
+ * 2 peers: 'Aretha and Patty are in the room.'
+ * 3 peers: 'Gerald, Tony and Markus are in the room.'
+ * 4 peers: 'Liz, Gerald, Rebecca and Markus are in the room.'
  */
-
-export function getPeerListString(peers) {
-    let returnString = 'Nobody else is here.';
-
-    if (peers.length > 0) {
-        returnString = '';
-
-        for (let index = 0; index < peers.length; index++) {
-            returnString += `${(peers.length > 1 && index + 1 === peers.length) ? ' and ' : ' '}${peers[index].nick.split('|')[1]}`;
-        }
+export function readablePeers(peers) {
+    // No peers is easy
+    if (peers.length === 0) {
+        return 'Nobody else is here.';
     }
 
-    if (peers.length > 0) {
-        if (peers.length > 1) {
-            returnString += ' are';
-        } else {
-            returnString += ' is';
-        }
-        returnString += ' in the room.';
+    const readableSuffix = 'in the room.';
+    const peerNames = peers.map((p) => p.nick.split('|')[1]);
+
+    // 1 peer is easy
+    if (peerNames.length === 1) {
+        return `${peerNames[0]} is ${readableSuffix}`;
     }
 
-    return returnString;
+    // comma separate all names except the last one which is separated by 'and'
+    const readablePeerList = [peerNames.slice(0, -1).join(', '), peerNames.slice(-1)].join(' and ');
+
+    // multiple peers
+    return `${readablePeerList} are ${readableSuffix}`;
 }
