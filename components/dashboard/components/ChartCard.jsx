@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import MaterialIcon from 'material-icons-react';
 import lifecycle from 'react-pure-lifecycle';
@@ -128,6 +129,18 @@ const ChartCard = enhance((props) => {
 });
 
 class ChartInfoDiv extends React.Component {
+    static propTypes = {
+
+        /** Unique string to use as the id attribute for the component */
+        id: PropTypes.string.isRequired,
+
+        /** Handler to call to stop displaying the ChartInfo */
+        close: PropTypes.func.isRequired,
+
+        /** Description of what the chart shows */
+        chartInfo: PropTypes.string.isRequired,
+    }
+
     componentDidMount() {
         this.ChartInfoDiv.focus();
     }
