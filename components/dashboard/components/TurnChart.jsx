@@ -52,7 +52,7 @@ const chartInfo =
 equal speaking time across all members is associated with higher creativity, more trust between \
 group members, and better brainstorming.';
 
-const TurnChart = ({processedUtterances, participantId, loaded}) => {
+const TurnChart = ({processedUtterances, participantId, loaded, meeting}) => {
     let chartDiv;
     let chartTable;
     if (loaded) {
@@ -120,6 +120,7 @@ const TurnChart = ({processedUtterances, participantId, loaded}) => {
             chartInfo={chartInfo}
             maxWidth={100}
             chartTable={loaded ? chartTable : false}
+            chartCardId={`cc-${meeting._id}-Speaking-Time`} // eslint-disable-line no-underscore-dangle
         />
     );
 };

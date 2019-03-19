@@ -8,6 +8,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import MaterialIcon from 'material-icons-react';
 import lifecycle from 'react-pure-lifecycle';
@@ -21,6 +22,11 @@ const CardTitle = styled.div.attrs({
     margin-left: 1rem;
     margin-right: 1rem;
     color: rgb(138, 106, 148);
+
+    button {
+        background: none;
+        border: none;
+    }
 `;
 
 const ChartDiv = styled.div.attrs({
@@ -45,16 +51,6 @@ const widthCard = (maxWidth) => {
     `;
     return Card;
 };
-
-const ChartInfoDiv = styled.div`
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    height: 100%;
-    width: 100%;
-    background-color: rgba(171, 69, 171, 0.9);
-    z-index: 1;
-`;
 
 const ChartInfo = styled.p.attrs({
     className: 'has-text-weight-bold is-size-6',
@@ -89,6 +85,16 @@ const methods = {
 
 //const ChartCard = ({chartDiv, title, maxWidth}) => {
 const ChartCard = enhance((props) => {
+    const chartInfoClosed = () => {
+        props.dispatch({type: INFO_CLICKED});
+
+        // need to use timeout, won't throw error without, since div exists, but other
+        // elements take focus priority if not using timeout
+        setTimeout(() => {
+            document.getElementById(`chart-info-btn-${props.chartCardId}`).focus();
+        }, 100);
+    };
+
     const mw = props.maxWidth ? props.maxWidth : 25;
     const Card = widthCard(mw + 2);
     logger.debug('chart div:', props.chartDiv);
@@ -100,31 +106,22 @@ const ChartCard = enhance((props) => {
                     className='has-text-right'
                     style={{float: 'right'}}
                 >
-                    <a
-                        onClick={() =>
-                            props.dispatch({type: INFO_CLICKED})
-                        }
+                    <button
+                        onClick={() => props.dispatch({type: INFO_CLICKED})}
+                        aria-describedby={`chart-info-${props.chartCardId}`}
+                        id={`chart-info-btn-${props.chartCardId}`}
+                        tabIndex='-1'
                     >
                         <MaterialIcon icon='info'/>
-                    </a>
+                    </button>
                 </span>
             </CardTitle>
             {props.isInfoOpen && (
-                <ChartInfoDiv>
-                    <span
-                        className='has-text-right'
-                        style={{float: 'right'}}
-                    >
-                        <a
-                            onClick={() =>
-                                props.dispatch({type: INFO_CLICKED})
-                            }
-                        >
-                            <MaterialIcon icon='close'/>
-                        </a>
-                    </span>
-                    <ChartInfo>{props.chartInfo}</ChartInfo>
-                </ChartInfoDiv>
+                <ChartInfoDiv
+                    id={`chart-info-${props.chartCardId}`}
+                    close={chartInfoClosed}
+                    chartInfo={props.chartInfo}
+                />
             )}
             <ChartDiv>
                 {props.chartTable}
@@ -133,5 +130,47 @@ const ChartCard = enhance((props) => {
         </Card>
     );
 });
+
+class ChartInfoDiv extends React.Component {
+    static propTypes = {
+
+        /** Unique string to use as the id attribute for the component */
+        id: PropTypes.string.isRequired,
+
+        /** Handler to call to stop displaying the ChartInfo */
+        close: PropTypes.func.isRequired,
+
+        /** Description of what the chart shows */
+        chartInfo: PropTypes.string.isRequired,
+    }
+
+    componentDidMount() {
+        this.ChartInfoDiv.focus();
+    }
+    render() {
+        return (
+            <div
+                id={this.props.id}
+                className='chart-info-div'
+                ref={(ref) => {
+                    this.ChartInfoDiv = ref;
+                }}
+                tabIndex='-1'
+            >
+                <span
+                    className='has-text-right'
+                    style={{float: 'right'}}
+                >
+                    <button
+                        onClick={this.props.close}
+                    >
+                        <MaterialIcon icon='close'/>
+                    </button>
+                </span>
+                <ChartInfo>{this.props.chartInfo}</ChartInfo>
+            </div>
+        );
+    }
+}
 
 export default lifecycle(methods)(ChartCard);

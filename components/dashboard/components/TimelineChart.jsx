@@ -125,6 +125,7 @@ const TimelineView = (props) => {
             chartInfo={chartInfo}
             maxWidth={100}
             setWidth={props.width}
+            chartCardId={`cc-${props.meeting._id}-Timeline`} // eslint-disable-line no-underscore-dangle
         />
     );
 };
