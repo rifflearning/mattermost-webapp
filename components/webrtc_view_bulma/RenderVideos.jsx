@@ -10,7 +10,7 @@ import RemoteVideoContainer from './RemoteVideoContainer';
 import * as sc from './styled';
 
 class RenderVideos extends React.Component {
-    componentDidUpdate(prevProps, prevState) {
+    componentDidUpdate(prevProps /*, prevState*/) {
         //just updated DOM, which has an error message...focus on error
         if (!prevProps.shouldFocusJoinRoomError && this.props.shouldFocusJoinRoomError && this.JoinRoomErrorRef) {
             this.JoinRoomErrorRef.focus();
@@ -115,7 +115,9 @@ class RenderVideos extends React.Component {
                                     {this.props.joinRoomStatus === 'error' &&
                                         <div
                                             tabIndex='-1'
-                                            ref={ref => this.JoinRoomErrorRef = ref}
+                                            ref={(ref) => {
+                                                this.JoinRoomErrorRef = ref;
+                                            }}
                                         >
                                             <sc.ErrorNotification>
                                                 <button
