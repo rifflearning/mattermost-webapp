@@ -3,6 +3,10 @@
 
 /* eslint
     header/header: "off",
+    dot-location: ["error", "property"],
+    indent: ["error", 4, { "CallExpression": { "arguments": "first" } }],
+    "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
+    "no-underscore-dangle": ["error", { "allow": [ "_id" ] }],
  */
 
 import React from 'react';
@@ -14,7 +18,7 @@ import MicDisabledIcon from 'components/svg/mic_disabled_icon';
 import ScreenShareStartIcon from 'components/svg/screen_share_start_icon';
 import ScreenShareStopIcon from 'components/svg/screen_share_stop_icon';
 import {isScreenShareSourceAvailable} from 'utils/webrtc/webrtc';
-import {logger} from 'utils/riff';
+import {logger, Colors} from 'utils/riff';
 
 import LeaveRoomButton from './LeaveRoomButton';
 import MeetingMediator from './MeetingMediator';
@@ -54,6 +58,7 @@ const AudioStatus = (props) => {
             <button
                 className={classNames}
                 onClick={(event) => mmbProps.handleMuteAudioClick(event, mmbProps.audioMuted, mmbProps.webrtc)}
+                aria-label={`Your microphone is ${mmbProps.audioMuted ? 'off' : 'on'}.`}
             >
                 {icon}
             </button>
@@ -125,7 +130,7 @@ const AudioStatusBar = (props) => {
                     <p>
                         {'Screen Sharing is Disabled.'}
                         {'To enable screen sharing, please&nbsp;'}
-                        <a href="#" onClick={howToEnableAlert}>{'turn on experimental features'}</a>
+                        <a href='#' onClick={howToEnableAlert}>{'turn on experimental features'}</a>
                         {'&nbsp;in Chrome.'}
                     </p>
                 );
@@ -158,7 +163,7 @@ const AudioStatusBar = (props) => {
 
         return (
             <div style={{paddingBottom: '20px'}}>
-                <MaterialIcon icon="warning" color="#f44336"/>
+                <MaterialIcon icon='warning' color={Colors.brightred}/>
                 <div>
                     {text}
                 </div>
@@ -167,24 +172,32 @@ const AudioStatusBar = (props) => {
     };
 
     return (
-        <div className="has-text-centered" style={{marginTop: '1rem'}}>
-            <div className="level" style={{marginBottom: '5px'}}>
-                <div className="level-item" style={{maxWidth: '20%'}}>
-                    <MaterialIcon icon="mic"/>
+        <div
+            className='has-text-centered'
+            style={{marginTop: '1rem'}}
+        >
+            <div
+                className='level'
+                style={{marginBottom: '5px', cursor: 'pointer'}}
+                aria-label={`Your microphone is ${props.audioMuted ? 'off' : 'on'}.`}
+                onClick={(event) => props.handleMuteAudioClick(event, props.audioMuted, props.webrtc)}
+            >
+                <div className='level-item' style={{maxWidth: '20%'}}>
+                    {props.audioMuted ? <MicDisabledIcon/> : <MicEnabledIcon/>}
                 </div>
-                <div className="level-item">
+                <div className='level-item'>
                     <progress
                         style={{maxWidth: '100%', margin: 0}}
-                        className="progress is-success"
+                        className='progress is-success'
                         value={props.volume}
-                        max="100"
+                        max='100'
                     />
                 </div>
             </div>
             {!isScreenShareSourceAvailable() && screenShareWarning()}
             <MenuLabelCentered>
                 <p>
-                    {'Having trouble? '}<a href="/room">{'Refresh the page'}</a>{' and allow access to your camera and mic.'}
+                    {'Having trouble? '}<a href='/room'>{'Refresh the page'}</a>{' and allow access to your camera and mic.'}
                 </p>
             </MenuLabelCentered>
         </div>
@@ -201,19 +214,20 @@ class WebRtcSidebar extends React.PureComponent {
         return (
             <React.Fragment>
                 <video
-                    className="local-video"
-                    id="local-video"
+                    className='local-video'
+                    id='local-video'
 
                     // this is necessary for thumos. yes, it is upsetting.
-                    height="175"
-                    width="250"
+                    height='175'
+                    width='250'
                     style={videoStyle(this.props.mediaError)}
                     ref={this.props.reattachVideo}
+                    aria-label='My video feed'
                 />
                 <canvas
-                    id="video-overlay"
-                    height="175"
-                    width="250"
+                    id='video-overlay'
+                    height='175'
+                    width='250'
                     style={{display: 'none'}}
                 />
             </React.Fragment>
@@ -250,9 +264,10 @@ class WebRtcSidebar extends React.PureComponent {
     }
 
     render() {
+        const inLobby = !this.props.inRoom;
         return (
             <Menu>
-                {!this.props.inRoom ? (
+                {inLobby ? (
                     <MenuLabelCentered>
                         {'Check your video and microphone before joining.'}
                     </MenuLabelCentered>
@@ -266,7 +281,7 @@ class WebRtcSidebar extends React.PureComponent {
                     </MenuLabelCentered>
                 )}
 
-                {!this.props.webRtcLocalSharedScreen ? this.localVideo() : this.localSharedScreen()}
+                {this.props.webRtcLocalSharedScreen ? this.localSharedScreen() : this.localVideo()}
 
                 {this.props.mediaError && (
                     <VideoPlaceholder style={placeholderStyle(this.props.mediaError)}>
@@ -275,18 +290,19 @@ class WebRtcSidebar extends React.PureComponent {
                 )}
 
                 <p
-                    className="menu-label"
+                    className='menu-label'
                     style={{marginBottom: '0px'}}
                 >
                     {this.props.user.email}
                 </p>
 
-                {this.props.inRoom && <AudioStatus {...this.props}/>}
-
-                {!this.props.inRoom ? (
+                {inLobby ? (
                     <AudioStatusBar {...this.props}/>
                 ) : (
-                    <MeetingMediator {...this.props}/>
+                    <React.Fragment>
+                        <AudioStatus {...this.props}/>
+                        <MeetingMediator {...this.props}/>
+                    </React.Fragment>
                 )}
             </Menu>
         );

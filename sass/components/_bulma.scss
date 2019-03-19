@@ -162,5 +162,12 @@ html {
     left: 0;
 }
 
+//screen reader only
+.a11y-browser-alert {
+    width: 1px;
+    height: 1px;
+    position: fixed;
+}
+
 // Update Bulma's global variables
 $family-sans-serif: "Nunito", sans-serif;

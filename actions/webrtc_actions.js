@@ -7,7 +7,7 @@
     indent: ["error", 4, { "CallExpression": { "arguments": "first" } }]
  */
 
-import {app, logger} from 'utils/riff';
+import {app, logger, addA11yBrowserAlert} from 'utils/riff';
 import {WebRtcActionTypes} from 'utils/constants.jsx';
 import {browserHistory} from 'utils/browser_history';
 
@@ -123,6 +123,8 @@ export const getMediaSuccess = () => {
 };
 
 export const addPeer = (peer) => {
+    addA11yBrowserAlert(`${peer.peer.nick.split('|')[1]} joined the room.`, 'assertive');
+
     return {
         type: WebRtcActionTypes.ADD_PEER,
         peer,
@@ -130,6 +132,8 @@ export const addPeer = (peer) => {
 };
 
 export const removePeer = (peer) => {
+    addA11yBrowserAlert(`${peer.peer.nick.split('|')[1]} left the room.`, 'assertive');
+
     return {
         type: WebRtcActionTypes.REMOVE_PEER,
         peer,

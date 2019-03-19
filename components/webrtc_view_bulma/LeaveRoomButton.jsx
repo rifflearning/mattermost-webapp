@@ -1,17 +1,18 @@
-import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
-import { push } from 'connected-react-router';
+// Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
+
+import React from 'react';
+import {withRouter} from 'react-router-dom';
+import {connect} from 'react-redux';
 import MaterialIcon from 'material-icons-react';
 import {getCurrentUser} from 'mattermost-redux/selectors/entities/users';
-import { connect } from 'react-redux';
 
-
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
     meetingId: state.views.riff.meetingId,
-    uid: getCurrentUser(state).id
+    uid: getCurrentUser(state).id,
 });
 
-const mapDispatchToProps = (dispatch, ownProps) => ({
+const mapDispatchToProps = (/*dispatch, ownProps*/) => ({
 });
 
 const mapMergeProps = (stateProps, dispatchProps, ownProps) => ({
@@ -24,19 +25,19 @@ const mapMergeProps = (stateProps, dispatchProps, ownProps) => ({
         ownProps.leaveRoom();
         ownProps.webrtc.leaveRoom();
         ownProps.webrtc.stopSibilant();
-    }
+    },
 });
 
 const LeaveButtonView = ({leaveRoom}) => (
-    <a className="button rounded is-danger"
-       style={{'marginTop': '10px'}}
-       onClick={event => leaveRoom(event)} >
-
-      <MaterialIcon icon="call_end"/>
-
-    </a>
+    <button
+        className='button rounded is-danger'
+        style={{marginTop: '10px'}}
+        onClick={(event) => leaveRoom(event)}
+        aria-label='End call'
+    >
+        <MaterialIcon icon='call_end'/>
+    </button>
 );
-
 
 export default withRouter(connect(
     mapStateToProps,

@@ -191,6 +191,8 @@ export const Colors = {
     darkfern: '#3c493f',
     aquamarine: '#1b998b',
     lightlava: '#bdc3c7',
+    lightroyal: '#8a6a94',
+    brightred: '#f44336',
 };
 
 /**
@@ -234,4 +236,68 @@ export function textTruncate(s, maxLen = 100, missingCharSuffix = '\u2026') {
     }
 
     return s.slice(0, maxLen - missingCharSuffix.length) + missingCharSuffix;
+}
+
+/**
+ * Temporarily adds a div to the DOM
+ * (for one second)
+ *
+ * Contents of div will be read by screen reader
+ * When passing a priority, the options are:
+ *    1. 'assertive' - will interupt the current speech
+ *    2. 'polite'(default) - will be read when current speech completes
+ *    *Note: these are standards, but exact functionality can vary between screen readers
+ */
+export function addA11yBrowserAlert(text, priority = 'polite') {
+    const newAlert = document.createElement('div');
+    const id = 'speak-' + Date.now();
+
+    newAlert.setAttribute('id', id);
+    newAlert.setAttribute('role', 'alert');
+    newAlert.classList.add('a11y-browser-alert');
+    newAlert.setAttribute('aria-live', priority);
+    newAlert.setAttribute('aria-atomic', 'true');
+
+    document.body.appendChild(newAlert);
+
+    window.setTimeout(() => {
+        document.getElementById(id).innerHTML = text;
+    }, 100);
+
+    window.setTimeout(() => {
+        document.body.removeChild(document.getElementById(id));
+    }, 1000);
+}
+
+/**
+ * Convert a peer array into a readable string listing those peers
+ * using their nicknames.
+ * Useful for a11y aria labels.
+ *
+ * examples:
+ * 0 peers: 'Nobody else is here.'
+ * 1 peer : 'Gerald is in the room.'
+ * 2 peers: 'Aretha and Patty are in the room.'
+ * 3 peers: 'Gerald, Tony and Markus are in the room.'
+ * 4 peers: 'Liz, Gerald, Rebecca and Markus are in the room.'
+ */
+export function readablePeers(peers) {
+    // No peers is easy
+    if (peers.length === 0) {
+        return 'Nobody else is here.';
+    }
+
+    const readableSuffix = 'in the room.';
+    const peerNames = peers.map((p) => p.nick.split('|')[1]);
+
+    // 1 peer is easy
+    if (peerNames.length === 1) {
+        return `${peerNames[0]} is ${readableSuffix}`;
+    }
+
+    // comma separate all names except the last one which is separated by 'and'
+    const readablePeerList = [peerNames.slice(0, -1).join(', '), peerNames.slice(-1)].join(' and ');
+
+    // multiple peers
+    return `${readablePeerList} are ${readableSuffix}`;
 }
