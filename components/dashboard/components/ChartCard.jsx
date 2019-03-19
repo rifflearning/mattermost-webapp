@@ -87,6 +87,9 @@ const methods = {
 const ChartCard = enhance((props) => {
     const chartInfoClosed = () => {
         props.dispatch({type: INFO_CLICKED});
+
+        // need to use timeout, won't throw error without, since div exists, but other
+        // elements take focus priority if not using timeout
         setTimeout(() => {
             document.getElementById(`chart-info-btn-${props.chartCardId}`).focus();
         }, 100);
