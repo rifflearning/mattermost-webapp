@@ -487,12 +487,12 @@ export default class SignupEmail extends React.Component {
                             customDescriptionText={customDescriptionText}
                             siteName={siteName}
                         />
-                        <h4 className='color--light'>
+                        <p className='color--light h4'>
                             <FormattedMessage
                                 id='signup_user_completed.lets'
                                 defaultMessage="Let's create your account"
                             />
-                        </h4>
+                        </p>
                         <span className='color--light'>
                             <FormattedMessage
                                 id='signup_user_completed.haveAccount'
