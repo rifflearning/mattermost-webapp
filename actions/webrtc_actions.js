@@ -262,3 +262,10 @@ export const removeLocalSharedScreen = (screen) => {
         screen,
     };
 };
+
+export const focusJoinRoomErrorComplete = (screen) => {
+    return {
+        type: WebRtcActionTypes.FOCUS_JOIN_ROOM_ERROR_COMPLETE,
+        screen,
+    };
+};

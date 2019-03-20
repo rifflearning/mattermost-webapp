@@ -10,6 +10,14 @@ import RemoteVideoContainer from './RemoteVideoContainer';
 import * as sc from './styled';
 
 class RenderVideos extends React.Component {
+    componentDidUpdate(prevProps /*, prevState*/) {
+        //just updated DOM, which has an error message...focus on error
+        if (!prevProps.shouldFocusJoinRoomError && this.props.shouldFocusJoinRoomError && this.JoinRoomErrorRef) {
+            this.JoinRoomErrorRef.focus();
+            this.props.focusJoinRoomErrorComplete();
+        }
+    }
+
     render() {
         if (this.props.webRtcPeers.length > 0) {
             return (
@@ -104,21 +112,31 @@ class RenderVideos extends React.Component {
 
                             <div className='columns has-text-centered is-centered'>
                                 <div className='has-text-centered is-centered column'>
-                                    <a
+                                    {this.props.joinRoomStatus === 'error' &&
+                                        <div
+                                            tabIndex='-1'
+                                            ref={(ref) => {
+                                                this.JoinRoomErrorRef = ref;
+                                            }}
+                                        >
+                                            <sc.ErrorNotification>
+                                                <button
+                                                    className='delete'
+                                                    onClick={this.props.clearJoinRoomError}
+                                                    aria-label='Close form error message'
+                                                />
+                                                {this.props.joinRoomMessage}
+                                            </sc.ErrorNotification>
+                                        </div>
+                                    }
+                                    <button
                                         className='button is-outlined is-primary'
                                         style={{marginTop: '10px'}}
                                         disabled={this.props.joinButtonDisabled}
                                         onClick={this.props.handleReadyClick}
-                                    >{'Join Room'}</a>
-                                    {this.props.joinRoomStatus === 'error' &&
-                                        <sc.ErrorNotification>
-                                            <button
-                                                className='delete'
-                                                onClick={this.props.clearJoinRoomError}
-                                            />
-                                            {this.props.joinRoomMessage}
-                                        </sc.ErrorNotification>
-                                    }
+                                    >
+                                        {'Join Room'}
+                                    </button>
                                 </div>
                             </div>
                         </React.Fragment>
