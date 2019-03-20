@@ -46,6 +46,7 @@ export default class SignupEmail extends React.Component {
 
         this.getInviteInfo = this.getInviteInfo.bind(this);
         this.renderEmailSignup = this.renderEmailSignup.bind(this);
+        this.renderTerms = this.renderTerms.bind(this);
         this.isUserValid = this.isUserValid.bind(this);
 
         this.state = this.getInviteInfo();
@@ -271,6 +272,34 @@ export default class SignupEmail extends React.Component {
         }
     }
 
+    renderTerms() {
+      const {
+          termsOfServiceLink,
+          privacyPolicyLink,
+          enableSignUpWithEmail,
+          siteName,
+      } = this.props;
+
+      let terms = null;
+      if (!this.state.noOpenServerError && enableSignUpWithEmail) {
+          terms = (
+              <p className='margin--extra'>
+                  <FormattedMarkdownMessage
+                      id='create_team.agreement'
+                      defaultMessage='By proceeding to create your account and use {siteName}, you agree to our [Terms of Service]({TermsOfServiceLink}) and [Privacy Policy]({PrivacyPolicyLink}). If you do not agree, you cannot use {siteName}.'
+                      values={{
+                          siteName,
+                          TermsOfServiceLink: termsOfServiceLink,
+                          PrivacyPolicyLink: privacyPolicyLink,
+                      }}
+                  />
+              </p>
+          );
+      }
+
+      return terms;
+    }
+
     renderEmailSignup() {
         let emailError = null;
         let emailHelpText = (
@@ -338,12 +367,12 @@ export default class SignupEmail extends React.Component {
             <form>
                 <div className='inner__content'>
                     <div className={emailContainerStyle}>
-                        <h5><strong>
+                        <label for='email'><strong>
                             <FormattedMessage
                                 id='signup_user_completed.whatis'
                                 defaultMessage="What's your email address?"
                             />
-                        </strong></h5>
+                        </strong></label>
                         <div className={emailDivStyle}>
                             <input
                                 id='email'
@@ -363,12 +392,12 @@ export default class SignupEmail extends React.Component {
                     </div>
                     {yourEmailIs}
                     <div className='margin--extra'>
-                        <h5><strong>
+                        <label for='name'><strong>
                             <FormattedMessage
                                 id='signup_user_completed.chooseUser'
                                 defaultMessage='Choose your username'
                             />
-                        </strong></h5>
+                        </strong></label>
                         <div className={nameDivStyle}>
                             <input
                                 id='name'
@@ -385,12 +414,12 @@ export default class SignupEmail extends React.Component {
                         </div>
                     </div>
                     <div className='margin--extra'>
-                        <h5><strong>
+                        <label for='password'><strong>
                             <FormattedMessage
                                 id='signup_user_completed.choosePwd'
                                 defaultMessage='Choose your password'
                             />
-                        </strong></h5>
+                        </strong></label>
                         <div className={passwordDivStyle}>
                             <input
                                 id='password'
@@ -404,6 +433,7 @@ export default class SignupEmail extends React.Component {
                             {passwordError}
                         </div>
                     </div>
+                    {this.renderTerms()}
                     <p className='margin--extra'>
                         <button
                             id='createAccountButton'
@@ -428,9 +458,7 @@ export default class SignupEmail extends React.Component {
             customDescriptionText,
             enableSignUpWithEmail,
             location,
-            privacyPolicyLink,
             siteName,
-            termsOfServiceLink,
         } = this.props;
 
         let serverError = null;
@@ -451,23 +479,6 @@ export default class SignupEmail extends React.Component {
             emailSignup = this.renderEmailSignup();
         } else {
             return null;
-        }
-
-        let terms = null;
-        if (!this.state.noOpenServerError && emailSignup) {
-            terms = (
-                <p>
-                    <FormattedMarkdownMessage
-                        id='create_team.agreement'
-                        defaultMessage='By proceeding to create your account and use {siteName}, you agree to our [Terms of Service]({TermsOfServiceLink}) and [Privacy Policy]({PrivacyPolicyLink}). If you do not agree, you cannot use {siteName}.'
-                        values={{
-                            siteName,
-                            TermsOfServiceLink: termsOfServiceLink,
-                            PrivacyPolicyLink: privacyPolicyLink,
-                        }}
-                    />
-                </p>
-            );
         }
 
         if (this.state.noOpenServerError) {
@@ -510,7 +521,6 @@ export default class SignupEmail extends React.Component {
                         </span>
                         {emailSignup}
                         {serverError}
-                        {terms}
                     </div>
                 </div>
             </div>
