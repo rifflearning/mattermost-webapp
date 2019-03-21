@@ -168,6 +168,7 @@ export default class SignupEmail extends React.Component {
                 passwordError: '',
                 serverError: '',
             });
+            this.refs.email.focus();
             return false;
         }
 
@@ -178,6 +179,7 @@ export default class SignupEmail extends React.Component {
                 passwordError: '',
                 serverError: '',
             });
+            this.refs.email.focus();
             return false;
         }
 
@@ -189,6 +191,7 @@ export default class SignupEmail extends React.Component {
                 passwordError: '',
                 serverError: '',
             });
+            this.refs.name.focus();
             return false;
         }
 
@@ -200,6 +203,7 @@ export default class SignupEmail extends React.Component {
                 passwordError: '',
                 serverError: '',
             });
+            this.refs.name.focus();
             return false;
         } else if (usernameError) {
             this.setState({
@@ -216,6 +220,7 @@ export default class SignupEmail extends React.Component {
                 passwordError: '',
                 serverError: '',
             });
+            this.refs.name.focus();
             return false;
         }
 
@@ -228,6 +233,7 @@ export default class SignupEmail extends React.Component {
                 passwordError: error,
                 serverError: '',
             });
+            this.refs.password.focus();
             return false;
         }
 
@@ -312,7 +318,7 @@ export default class SignupEmail extends React.Component {
         );
         let emailDivStyle = 'form-group';
         if (this.state.emailError) {
-            emailError = (<label className='control-label'>{this.state.emailError}</label>);
+            emailError = (<label className='control-label' id='email-error'>{this.state.emailError}</label>);
             emailHelpText = '';
             emailDivStyle += ' has-error';
         }
@@ -332,7 +338,7 @@ export default class SignupEmail extends React.Component {
         );
         let nameDivStyle = 'form-group';
         if (this.state.nameError) {
-            nameError = <label className='control-label'>{this.state.nameError}</label>;
+            nameError = <label className='control-label' id='name-error'>{this.state.nameError}</label>;
             nameHelpText = '';
             nameDivStyle += ' has-error';
         }
@@ -367,7 +373,7 @@ export default class SignupEmail extends React.Component {
             <form>
                 <div className='inner__content'>
                     <div className={emailContainerStyle}>
-                        <label for='email'><strong>
+                        <label htmlFor='email'><strong>
                             <FormattedMessage
                                 id='signup_user_completed.whatis'
                                 defaultMessage="What's your email address?"
@@ -385,6 +391,7 @@ export default class SignupEmail extends React.Component {
                                 autoFocus={true}
                                 spellCheck='false'
                                 autoCapitalize='off'
+                                aria-describedby='email-error'
                             />
                             {emailError}
                             {emailHelpText}
@@ -392,7 +399,7 @@ export default class SignupEmail extends React.Component {
                     </div>
                     {yourEmailIs}
                     <div className='margin--extra'>
-                        <label for='name'><strong>
+                        <label htmlFor='name'><strong>
                             <FormattedMessage
                                 id='signup_user_completed.chooseUser'
                                 defaultMessage='Choose your username'
@@ -408,13 +415,14 @@ export default class SignupEmail extends React.Component {
                                 maxLength={Constants.MAX_USERNAME_LENGTH}
                                 spellCheck='false'
                                 autoCapitalize='off'
+                                aria-describedby='name-error'
                             />
                             {nameError}
                             {nameHelpText}
                         </div>
                     </div>
                     <div className='margin--extra'>
-                        <label for='password'><strong>
+                        <label htmlFor='password'><strong>
                             <FormattedMessage
                                 id='signup_user_completed.choosePwd'
                                 defaultMessage='Choose your password'
