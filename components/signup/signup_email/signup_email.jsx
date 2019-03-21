@@ -279,31 +279,31 @@ export default class SignupEmail extends React.Component {
     }
 
     renderTerms() {
-      const {
-          termsOfServiceLink,
-          privacyPolicyLink,
-          enableSignUpWithEmail,
-          siteName,
-      } = this.props;
+        const {
+            termsOfServiceLink,
+            privacyPolicyLink,
+            enableSignUpWithEmail,
+            siteName,
+        } = this.props;
 
-      let terms = null;
-      if (!this.state.noOpenServerError && enableSignUpWithEmail) {
-          terms = (
-              <p className='margin--extra'>
-                  <FormattedMarkdownMessage
-                      id='create_team.agreement'
-                      defaultMessage='By proceeding to create your account and use {siteName}, you agree to our [Terms of Service]({TermsOfServiceLink}) and [Privacy Policy]({PrivacyPolicyLink}). If you do not agree, you cannot use {siteName}.'
-                      values={{
-                          siteName,
-                          TermsOfServiceLink: termsOfServiceLink,
-                          PrivacyPolicyLink: privacyPolicyLink,
-                      }}
-                  />
-              </p>
-          );
-      }
+        let terms = null;
+        if (!this.state.noOpenServerError && enableSignUpWithEmail) {
+            terms = (
+                <p className='margin--extra'>
+                    <FormattedMarkdownMessage
+                        id='create_team.agreement'
+                        defaultMessage='By proceeding to create your account and use {siteName}, you agree to our [Terms of Service]({TermsOfServiceLink}) and [Privacy Policy]({PrivacyPolicyLink}). If you do not agree, you cannot use {siteName}.'
+                        values={{
+                            siteName,
+                            TermsOfServiceLink: termsOfServiceLink,
+                            PrivacyPolicyLink: privacyPolicyLink,
+                        }}
+                    />
+                </p>
+            );
+        }
 
-      return terms;
+        return terms;
     }
 
     renderEmailSignup() {
@@ -318,7 +318,14 @@ export default class SignupEmail extends React.Component {
         );
         let emailDivStyle = 'form-group';
         if (this.state.emailError) {
-            emailError = (<label className='control-label' id='email-error'>{this.state.emailError}</label>);
+            emailError = (
+                <label
+                    className='control-label'
+                    id='email-error'
+                >
+                    {this.state.emailError}
+                </label>
+            );
             emailHelpText = '';
             emailDivStyle += ' has-error';
         }
@@ -338,7 +345,14 @@ export default class SignupEmail extends React.Component {
         );
         let nameDivStyle = 'form-group';
         if (this.state.nameError) {
-            nameError = <label className='control-label' id='name-error'>{this.state.nameError}</label>;
+            nameError = (
+                <label
+                    className='control-label'
+                    id='name-error'
+                >
+                    {this.state.nameError}
+                </label>
+            );
             nameHelpText = '';
             nameDivStyle += ' has-error';
         }
@@ -346,7 +360,14 @@ export default class SignupEmail extends React.Component {
         let passwordError = null;
         let passwordDivStyle = 'form-group';
         if (this.state.passwordError) {
-            passwordError = <label className='control-label' id='password-error'>{this.state.passwordError}</label>;
+            passwordError = (
+                <label
+                    className='control-label'
+                    id='password-error'
+                >
+                    {this.state.passwordError}
+                </label>
+            );
             passwordDivStyle += ' has-error';
         }
 
