@@ -340,7 +340,7 @@ export default class SignupEmail extends React.Component {
         let passwordError = null;
         let passwordDivStyle = 'form-group';
         if (this.state.passwordError) {
-            passwordError = <label className='control-label'>{this.state.passwordError}</label>;
+            passwordError = <label className='control-label' id='password-error'>{this.state.passwordError}</label>;
             passwordDivStyle += ' has-error';
         }
 
@@ -429,6 +429,7 @@ export default class SignupEmail extends React.Component {
                                 placeholder=''
                                 maxLength='128'
                                 spellCheck='false'
+                                aria-describedby='password-error'
                             />
                             {passwordError}
                         </div>
