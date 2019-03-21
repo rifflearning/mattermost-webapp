@@ -33,7 +33,7 @@ test:
   only:
     - feature/CI_gitlab
 
-deploy_review:
+.deploy_review:
   stage: deploy
   image: coxauto/aws-ebcli
   variables:
@@ -51,7 +51,7 @@ deploy_review:
   except:
     - master
 
-stop_review:
+.stop_review:
   stage: deploy
   image: coxauto/aws-ebcli
   variables:
@@ -69,7 +69,7 @@ stop_review:
   when:
     manual
 
-deploy:
+.deploy:
   stage: deploy
   image: coxauto/aws-ebcli
   script:
