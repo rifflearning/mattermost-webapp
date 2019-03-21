@@ -41,6 +41,8 @@ export default class SignupLTI extends React.Component {
             isSubmitting: false,
             invalidRequest: false,
         };
+
+        this.renderTerms = this.renderTerms.bind(this);
     }
 
     componentDidMount() {
@@ -146,21 +148,30 @@ export default class SignupLTI extends React.Component {
         let passwordError = null;
         let passwordDivStyle = 'form-group';
         if (this.state.passwordError) {
-            passwordError = <label className='control-label'>{this.state.passwordError}</label>;
+            passwordError = (
+                <label
+                    className='control-label'
+                    id='password-error'
+                >
+                    {this.state.passwordError}
+                </label>
+            );
             passwordDivStyle += ' has-error';
         }
 
         let yourEmailIs = null;
         if (email) {
             yourEmailIs = (
-                <FormattedMarkdownMessage
-                    id='signup_user_completed.emailIs'
-                    defaultMessage="Your email address is **{email}**. You'll use this address to sign in to {siteName}."
-                    values={{
-                        email,
-                        siteName: this.props.siteName,
-                    }}
-                />
+                <span id='email-disabled-label'>
+                    <FormattedMarkdownMessage
+                        id='signup_user_completed.emailIs'
+                        defaultMessage="Your email address is **{email}**. You'll use this address to sign in to {siteName}."
+                        values={{
+                            email,
+                            siteName: this.props.siteName,
+                        }}
+                    />
+                </span>
             );
         }
 
@@ -168,12 +179,12 @@ export default class SignupLTI extends React.Component {
             <form>
                 <div className='inner__content'>
                     <div className='margin--extra'>
-                        <h5><strong>
+                        <p className='h5'><strong>
                             <FormattedMessage
                                 id='signup_LTI.fullname'
                                 defaultMessage='Full Name'
                             />
-                        </strong></h5>
+                        </strong></p>
                         <div className='form-group'>
                             <input
                                 id='fullname'
@@ -183,16 +194,28 @@ export default class SignupLTI extends React.Component {
                                 value={this.extractName()}
                                 disabled={true}
                                 aria-label={localizeMessage('signup_LTI.fullname', 'Full Name')}
+                                aria-describedby='fullname-disabled-label'
                             />
+                            <span
+                                className='help-block'
+                                id='fullname-disabled-label'
+                            >
+                                <FormattedMessage
+                                    id='signup_user_completed.textInputDisabled'
+                                    values={{
+                                        value: 'name',
+                                    }}
+                                />
+                            </span>
                         </div>
                     </div>
                     <div className='margin--extra'>
-                        <h5><strong>
+                        <p className='h5'><strong>
                             <FormattedMessage
                                 id='signup_LTI.username'
                                 defaultMessage='Username'
                             />
-                        </strong></h5>
+                        </strong></p>
                         <div className='form-group'>
                             <input
                                 id='username'
@@ -202,16 +225,28 @@ export default class SignupLTI extends React.Component {
                                 value={username}
                                 disabled={true}
                                 aria-label={localizeMessage('signup_LTI.username', 'Username')}
+                                aria-describedby='username-disabled-label'
                             />
+                            <span
+                                className='help-block'
+                                id='username-disabled-label'
+                            >
+                                <FormattedMessage
+                                    id='signup_user_completed.textInputDisabled'
+                                    values={{
+                                        value: 'username',
+                                    }}
+                                />
+                            </span>
                         </div>
                     </div>
                     <div className={'margin--extra'}>
-                        <h5><strong>
+                        <p className='h5'><strong>
                             <FormattedMessage
                                 id='signup_LTI.email'
                                 defaultMessage='Email Address'
                             />
-                        </strong></h5>
+                        </strong></p>
                         <div className='form-group'>
                             <input
                                 id='email'
@@ -221,17 +256,18 @@ export default class SignupLTI extends React.Component {
                                 value={email}
                                 disabled={true}
                                 aria-label={localizeMessage('signup_LTI.email', 'Email Address')}
+                                aria-describedby='email-disabled-label'
                             />
                         </div>
                     </div>
                     {yourEmailIs}
                     <div className='margin--extra'>
-                        <h5><strong>
+                        <p className='h5'><strong>
                             <FormattedMessage
                                 id='signup_user_completed.choosePwd'
                                 defaultMessage='Choose your password'
                             />
-                        </strong></h5>
+                        </strong></p>
                         <div className={passwordDivStyle}>
                             <input
                                 id='password'
@@ -242,10 +278,12 @@ export default class SignupLTI extends React.Component {
                                 maxLength='128'
                                 spellCheck='false'
                                 aria-label={localizeMessage('signup_user_completed.choosePwd', 'Choose your password')}
+                                aria-describedby='password-error'
                             />
                             {passwordError}
                         </div>
                     </div>
+                    {this.renderTerms()}
                     <p className='margin--extra'>
                         <button
                             id='createAccountButton'
@@ -265,12 +303,34 @@ export default class SignupLTI extends React.Component {
         );
     };
 
-    render() {
+    renderTerms() {
         const {
-            customDescriptionText,
             privacyPolicyLink,
             siteName,
             termsOfServiceLink,
+        } = this.props;
+
+        const terms = (
+            <p className='margin--extra'>
+                <FormattedMarkdownMessage
+                    id='create_team.agreement'
+                    defaultMessage='By proceeding to create your account and use {siteName}, you agree to our [Terms of Service]({TermsOfServiceLink}) and [Privacy Policy]({PrivacyPolicyLink}). If you do not agree, you cannot use {siteName}.'
+                    values={{
+                        siteName,
+                        TermsOfServiceLink: termsOfServiceLink,
+                        PrivacyPolicyLink: privacyPolicyLink,
+                    }}
+                />
+            </p>
+        );
+
+        return terms;
+    }
+
+    render() {
+        const {
+            customDescriptionText,
+            siteName,
         } = this.props;
 
         let serverError = null;
@@ -287,19 +347,6 @@ export default class SignupLTI extends React.Component {
         }
 
         let ltiSignup = this.renderLTISignup();
-        const terms = (
-            <p>
-                <FormattedMarkdownMessage
-                    id='create_team.agreement'
-                    defaultMessage='By proceeding to create your account and use {siteName}, you agree to our [Terms of Service]({TermsOfServiceLink}) and [Privacy Policy]({PrivacyPolicyLink}). If you do not agree, you cannot use {siteName}.'
-                    values={{
-                        siteName,
-                        TermsOfServiceLink: termsOfServiceLink,
-                        PrivacyPolicyLink: privacyPolicyLink,
-                    }}
-                />
-            </p>
-        );
 
         if (this.state.invalidRequest) {
             ltiSignup = null;
@@ -319,15 +366,14 @@ export default class SignupLTI extends React.Component {
                             customDescriptionText={customDescriptionText}
                             siteName={siteName}
                         />
-                        <h4 className='color--light'>
+                        <p className='color--light h4'>
                             <FormattedMessage
                                 id='signup_user_completed.lets'
                                 defaultMessage="Let's create your account"
                             />
-                        </h4>
+                        </p>
                         {ltiSignup}
                         {serverError}
-                        {terms}
                     </div>
                 </div>
             </div>
