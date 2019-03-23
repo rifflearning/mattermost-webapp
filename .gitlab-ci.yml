@@ -27,6 +27,9 @@ npm-install:
         key: ${CI_COMMIT_REF_SLUG}
         paths:
             - node_modules/
+    only:
+        - merge_requests
+        - tags
 
 check-style:
     stage: test
@@ -44,7 +47,6 @@ check-style:
     only:
         - merge_requests
         - tags
-        - /gitlab/
 
 test:
     stage: test
@@ -65,7 +67,6 @@ test:
     only:
         - merge_requests
         - tags
-        - /gitlab/
 
 build:
     stage: test     # test rather than build, as it doesn't need to complete before testing
@@ -83,4 +84,3 @@ build:
     only:
         - merge_requests
         - tags
-        - /gitlab/
