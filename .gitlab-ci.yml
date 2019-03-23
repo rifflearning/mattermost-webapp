@@ -7,6 +7,18 @@ image: node:10
 #    paths:
 #        - node_modules/
 
+.job_template: &std_job
+    cache: &pull_module_cache
+        key: ${CI_COMMIT_REF_SLUG}
+        policy: pull
+        paths:
+            - node_modules/
+    only: &only_constraints
+        - merge_requests
+        - /^(fix|feature|meta)/
+        - tags
+
+
 stages:
     - setup
     - test
@@ -23,64 +35,41 @@ npm-install:
     stage: setup
     script:
         - npm install
+    only: *only_constraints
     cache:
         key: ${CI_COMMIT_REF_SLUG}
         paths:
             - node_modules/
-    only:
-        - merge_requests
-        - tags
 
 check-style:
+    <<: *std_job
     stage: test
     script:
         - make check-style-ci THRESHOLD=1830
-    cache:
-        key: ${CI_COMMIT_REF_SLUG}
-        policy: pull
-        paths:
-            - node_modules/
     artifacts:
         when: always
         paths:
             - build/check-style.log.html
-    only:
-        - merge_requests
-        - tags
 
 test:
+    <<: *std_job
     stage: test
     script:
         - make test-ci
         - tail --lines=14 build/test.log
     allow_failure: true
-    cache:
-        key: ${CI_COMMIT_REF_SLUG}
-        policy: pull
-        paths:
-            - node_modules/
     artifacts:
         when: always
         paths:
             - build/test.log
             - build/test-results.xml
-    only:
-        - merge_requests
-        - tags
 
 build:
+    <<: *std_job
     stage: test     # test rather than build, as it doesn't need to complete before testing
     script:
         - make build > build/build.log
-    cache:
-        key: ${CI_COMMIT_REF_SLUG}
-        policy: pull
-        paths:
-            - node_modules/
     artifacts:
         when: always
         paths:
             - build/build.log
-    only:
-        - merge_requests
-        - tags
