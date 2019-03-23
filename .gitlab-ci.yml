@@ -1,5 +1,12 @@
 image: node:10
 
+before_script:
+    # setting unsafe-perm and shell config is needed to get the mattermost-redux
+    # dependency correctly installed BECAUSE it is a git url w/ a prepare script
+    # AND the node image user is root! npm acts differently when run as root!
+    - npm config set unsafe-perm true
+    - npm config set shell /bin/bash
+
 check-style:
     stage: test
     script:
