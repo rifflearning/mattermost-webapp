@@ -3,7 +3,7 @@ image: node:10
 check-style:
     stage: test
     script:
-        - make check-style
+        - make check-style-ci
     only:
         - merge_requests
         - tags
@@ -12,7 +12,7 @@ check-style:
 test:
     stage: test
     script:
-        - make test
+        - make test-ci
     only:
         - merge_requests
         - tags
