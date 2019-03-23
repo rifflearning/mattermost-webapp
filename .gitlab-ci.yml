@@ -31,8 +31,7 @@ npm-install:
 check-style:
     stage: test
     script:
-        - make check-style-ci
-    allow_failure: true
+        - make check-style-ci THRESHOLD=1830
     cache:
         key: ${CI_COMMIT_REF_SLUG}
         policy: pull
@@ -41,7 +40,7 @@ check-style:
     artifacts:
         when: always
         paths:
-            - build/check-style.log
+            - build/check-style.log.html
     only:
         - merge_requests
         - tags

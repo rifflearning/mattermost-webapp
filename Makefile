@@ -69,8 +69,10 @@ emojis: ## Creates emoji JSX file and extracts emoji images from the system font
 	bundle install --gemfile=$(EMOJI_TOOLS_DIR)/Gemfile
 	BUNDLE_GEMFILE=$(EMOJI_TOOLS_DIR)/Gemfile bundle exec $(EMOJI_TOOLS_DIR)/make-emojis
 
+check-style-ci : THRESHOLD ?= 1830
 check-style-ci: node_modules ## Checks JS file for ESLint conformity but only output summary for gitlab job log
-	npm run check --silent >build/check-style.log || (sed -n -e '/. [[:digit:]]\+ problems/,$$p' build/check-style.log ; false)
+	-npm run check --silent -- --format=html >build/check-style.log.html
+	build/check-style-ci-report.sh build/check-style.log.html $(THRESHOLD)
 
 test-ci: node_modules ## Runs tests but only output summary for gitlab job log
 	npm run test --silent >build/test.log 2>&1 || (sed -n -e '/^Snapshot /,$$p' build/test.log ; false)
