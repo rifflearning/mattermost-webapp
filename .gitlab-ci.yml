@@ -1,81 +1,75 @@
-image: docker:latest
-services:
-  - docker:dind
-variables:
-  DOCKER_DRIVER: overlay2
-  IMAGE_TAG: $CI_REGISTRY_IMAGE/riffedu-webapp:$CI_COMMIT_SHA
-  BUILD_IMAGE_TAG: $CI_REGISTRY_IMAGE/build:latest
-  ECR_BUILD_IMAGE_TAG: $ECR_REPOSITORY_URL/build:latest
-  ECR_IMAGE_TAG: $ECR_REPOSITORY_URL:$CI_COMMIT_SHA
-  AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-  AWS_SECRET_ACCESS_KEY: $AWS_SECRET_KEY
-before_script:
-  - apk add --no-cache curl jq python py-pip
-  - pip install awscli
+image: node:10
 
-build:
-  stage: build
-  before_script:
-    - docker login -u gitlab-ci-token -p $CI_JOB_TOKEN $CI_REGISTRY
-  script:
-    - docker pull $BUILD_IMAGE_TAG || true
-    - docker build --build-arg MATTERMOST_SERVER_REPO=$MM_SERVER_REPO --build-arg RIFF_SERVER_URL=$RIFF_SERVER_URL --build-arg SIGNALMASTER_URL=$SIGNALMASTER_URL --build-arg MM_SQLSETTINGS_DATASOURCE=$MM_SQLSETTINGS_DATASOURCE -t $BUILD_IMAGE_TAG --cache-from $BUILD_IMAGE_TAG .
-    - docker push $BUILD_IMAGE_TAG
-    - docker build --build-arg MATTERMOST_SERVER_REPO=$MM_SERVER_REPO --build-arg RIFF_SERVER_URL=$RIFF_SERVER_URL --build-arg SIGNALMASTER_URL=$SIGNALMASTER_URL --build-arg MM_SQLSETTINGS_DATASOURCE=$MM_SQLSETTINGS_DATASOURCE -t $IMAGE_TAG  --cache-from $IMAGE_TAG --cache-from $BUILD_IMAGE_TAG .
-    - docker push $IMAGE_TAG
-  tags:
-    - docker
+# Cache modules in between jobs (caching setup copied from https://docs.gitlab.com/ee/ci/caching/index.html)
+# Use specific job cache settings to allow 1 setup job to push, and all other jobs to pull
+#cache:
+#    key: ${CI_COMMIT_REF_SLUG}
+#    paths:
+#        - node_modules/
+
+.job_template: &std_job
+    cache: &pull_module_cache
+        key: ${CI_COMMIT_REF_SLUG}
+        policy: pull
+        paths:
+            - node_modules/
+    only: &only_constraints
+        - merge_requests
+        - /^(fix|feature|meta)/
+        - tags
+
+
+stages:
+    - setup
+    - test
+    - deploy
+
+before_script:
+    # setting unsafe-perm and shell config is needed to get the mattermost-redux
+    # dependency correctly installed BECAUSE it is a git url w/ a prepare script
+    # AND the node image user is root! npm acts differently when run as root!
+    - npm config set unsafe-perm true
+    - npm config set shell /bin/bash
+
+npm-install:
+    stage: setup
+    script:
+        - npm install
+    only: *only_constraints
+    cache:
+        key: ${CI_COMMIT_REF_SLUG}
+        paths:
+            - node_modules/
+
+check-style:
+    <<: *std_job
+    stage: test
+    script:
+        - make check-style-ci THRESHOLD=1830
+    artifacts:
+        when: always
+        paths:
+            - build/check-style.log.html
 
 test:
-  stage: test
-  script:
-    - make test
-  only:
-    - feature/CI_gitlab
+    <<: *std_job
+    stage: test
+    script:
+        - make test-ci
+        - tail --lines=14 build/test.log
+    allow_failure: true
+    artifacts:
+        when: always
+        paths:
+            - build/test.log
+            - build/test-results.xml
 
-deploy_review:
-  stage: deploy
-  image: coxauto/aws-ebcli
-  variables:
-    AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
-    AWS_SECRET_ACCESS_KEY: $AWS_SECRET_KEY
-  script:
-    - echo $AWS_ACCESS_KEY_ID
-    - ./deploy.sh
-  environment:
-    name: review/$CI_COMMIT_REF_NAME
-    url: http://riffedu-webapp-$CI_ENVIRONMENT_SLUG.us-west-2.elasticbeanstalk.com
-    on_stop: stop_review
-  only:
-    - branches
-  except:
-    - master
-
-stop_review:
-  stage: deploy
-  image: coxauto/aws-ebcli
-  variables:
-    GIT_STRATEGY: none
-  script:
-    - eb init riffedu-webapp -r us-west-2 -p docker-17.09.1-ce
-    - eb terminate --force "$CI_ENVIRONMENT_SLUG" | tee "$CIRCLE_ARTIFACTS/eb_deploy_output.txt"
-  environment:
-    name: review/$CI_COMMIT_REF_NAME
-    action: stop
-  only:
-    - branches
-  except:
-    - master
-  when:
-    manual
-
-deploy:
-  stage: deploy
-  image: coxauto/aws-ebcli
-  script:
-    - ./deploy.sh
-  environment:
-    name: development
-    url: http://riffedu-webapp-dev.us-west-2.elasticbeanstalk.com
-  only:
-    - master
+build:
+    <<: *std_job
+    stage: test     # test rather than build, as it doesn't need to complete before testing
+    script:
+        - make build > build/build.log
+    artifacts:
+        when: always
+        paths:
+            - build/build.log
