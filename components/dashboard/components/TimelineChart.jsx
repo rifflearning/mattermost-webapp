@@ -19,11 +19,11 @@ import ChartCard from './ChartCard';
 const drawGantt = (props) => {
     logger.debug('GANTT PROPS:', props);
     const {processedTimeline, participantId} = props;
-    const {utts, participants} = processedTimeline;
+    const {utts, sortedParticipants} = processedTimeline;
 
     // create map of id: name
     // local user will always be first.
-    logger.debug('sorted participants:', participants);
+    logger.debug('sorted participants:', sortedParticipants);
 
     //since the decision was made to limit the length of the name on the y-axis if overflowing,
     //the breakpoint at which the name should be truncated,
@@ -35,12 +35,12 @@ const drawGantt = (props) => {
     const maxNameLenWide = 18; //even though signup limits to 22 char, this is a safety net, 22 char can break
 
     const truncateLength = props.width < maxNarrowWidth ? maxNameLenNarrow : maxNameLenWide;
-    const participantNames = participants.map((p) => textTruncate(p.name, truncateLength));
+    const participantNames = sortedParticipants.map((p) => textTruncate(p.name, truncateLength));
 
     // create the participant map of id to name and color, filter out and
     // set the current user first, then add the other participants
     const participantMap = {};
-    participants
+    sortedParticipants
         .filter((p) => {
             if (p.id !== participantId) {
                 return true;
@@ -56,7 +56,7 @@ const drawGantt = (props) => {
             return pmap;
         }, participantMap);
 
-    const numOtherPeers = participants.length - (participantMap[participantId] ? 1 : 0);
+    const numOtherPeers = sortedParticipants.length - (participantMap[participantId] ? 1 : 0);
     if (numOtherPeers > PeerColors.length - 1) {
         logger.warn(`Not enough colors (${PeerColors.length - 1}) for all peers (${numOtherPeers})`);
     }
@@ -99,7 +99,7 @@ const chartInfo =
 
 // processedTimeline:
 // processedUtterances: [list of utterances...]
-// participants: [{id, name, ...}, ...]
+// sortedParticipants: [{id, name, ...}, ...]
 const TimelineView = (props) => {
     logger.debug('timeline props:', props);
     let chartDiv;
