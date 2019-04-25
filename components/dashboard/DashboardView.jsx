@@ -11,7 +11,6 @@
 
 import React from 'react';
 import styled from 'styled-components';
-import {ScaleLoader} from 'react-spinners';
 
 import {logger} from 'utils/riff';
 
