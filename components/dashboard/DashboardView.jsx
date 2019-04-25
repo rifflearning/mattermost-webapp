@@ -59,18 +59,6 @@ const DashboardView = (props) => {
             );
         }
 
-        //loading, until first meeting's stats are loaded (the above loadingError has also not loaded yet)
-        if (props.statsStatus[0] !== 'loaded') {
-            return (
-                <div
-                    className='columns has-text-centered is-centered is-vcentered'
-                    style={{minHeight: '80vh', minWidth: '80vw'}}
-                >
-                    <ScaleLoader color='#8A6A94'/>
-                </div>
-            );
-        }
-
         //meetings
         if (props.meetings.length > 0) {
             return (
