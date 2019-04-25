@@ -375,6 +375,19 @@ export default class ChannelHeader extends React.Component {
                 this.props.channelStats.member_count > 7);
     }
 
+    videoChatClicked = (e) => {
+        if (this.webRtcDisabled()) {
+            e.preventDefault();
+        } else {
+            this.props.actions.sendWebRtcMessage(
+                this.props.channel.id,
+                this.props.currentUser.id,
+                this.props.webRtcLink.href,
+                this.props.currentTeam.name
+            );
+        }
+    }
+
     renderWebRtc = (circleClass) => {
         let tooltipContent = null;
         if (!this.props.channelStats) {
@@ -417,18 +430,8 @@ export default class ChannelHeader extends React.Component {
                 <Link
                     target='_blank'
                     id='videochat'
-                    disabled={this.webRtcDisabled()}
-                    to={this.props.webRtcLink.pathname}
-                    onClick={() => {
-                        if (!this.webRtcDisabled()) {
-                            this.props.actions.sendWebRtcMessage(
-                                this.props.channel.id,
-                                this.props.currentUser.id,
-                                this.props.webRtcLink.href,
-                                this.props.currentTeam.name
-                            );
-                        }
-                    }}
+                    to={this.webRtcDisabled() ? false : this.props.webRtcLink.pathname}
+                    onClick={(e) => this.videoChatClicked(e)}
                 >
                     <PopoverStickOnHover
                         component={webrtcTooltip}
