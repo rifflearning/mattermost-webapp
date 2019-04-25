@@ -98,10 +98,16 @@ const mapMergeProps = (stateProps, dispatchProps, ownProps) => {
             stateProps.meetings[0]
         ),
         maybeLoadNextMeeting: (meetingId) => {
+            if (!stateProps.meetings || stateProps.numLoadedMeetings < 1 || stateProps.numLoadedMeetings > stateProps.meetings.length) {
+                // I believe this is happening, the question is when and why -mjl
+                // What I've seen now is that the numLoadedMeetings is greater than the number of meetings
+                // in the meetings array.
+                logger.error(`Dashboard.maybeLoadNextMeeting: meetings is not an array or the # loaded meetings (${stateProps.numLoadedMeetings}) is a problem!`, stateProps.meetings);
+            }
             const lastLoadedMeeting = stateProps.meetings[stateProps.numLoadedMeetings - 1];
-            logger.debug('Maybe loading more meetings', lastLoadedMeeting);
+            logger.debug('Dashboard.maybeLoadNextMeeting: lastLoadedMeeting', lastLoadedMeeting);
             if (lastLoadedMeeting._id === meetingId) {
-                logger.debug('loading more meetings!');
+                logger.debug('Dashboard.maybeLoadNextMeeting: loading more meetings!');
                 dispatchProps.loadMoreMeetings();
             }
         },
