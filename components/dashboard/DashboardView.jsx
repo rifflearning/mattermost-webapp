@@ -33,8 +33,8 @@ const LoadingErrorMessage = styled.div.attrs({
 // All dispatches were ripped out re-copy back in once server is working
 
 const DashboardView = (props) => {
-    logger.debug('only loading:', props.numLoadedMeetings, 'Meetings');
-    const meetingVisualizations = props.meetings.slice(0, props.numLoadedMeetings).map((m) => {
+    logger.debug('only loading:', props.numMeetingsToDisplay, 'Meetings');
+    const meetingVisualizations = props.meetings.slice(0, props.numMeetingsToDisplay).map((m) => {
         return (
             <MeetingViz
                 key={m._id}

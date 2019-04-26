@@ -25,8 +25,8 @@ const initialState = {
     // 'loaded' at idx if utterances, influence, and timeline are all loaded
     statsStatus: [],
 
-    // initial number of meetings to load
-    numLoadedMeetings: 2,
+    // initial number of meetings to display (visualize)
+    numMeetingsToDisplay: 2,
 
     // array holding processed data for each meeting.
     processedUtterances: [],
@@ -77,7 +77,7 @@ const dashboard = (state = initialState, action) => {
     case DashboardActionTypes.DASHBOARD_LOAD_MORE_MEETINGS:
         return {
             ...state,
-            numLoadedMeetings: state.numLoadedMeetings + 1,
+            numMeetingsToDisplay: state.numMeetingsToDisplay + 1,
         };
     case DashboardActionTypes.DASHBOARD_FETCH_MEETINGS: {
         const timeDiff = ((((new Date()).getTime() - new Date(state.lastFetched).getTime()) / 1000) > 5);

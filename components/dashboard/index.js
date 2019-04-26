@@ -49,7 +49,7 @@ const mapStateToProps = (state) => {
         processedNetwork: riffState.networkData,
         processedTimeline: riffState.timelineData,
         loadingError: riffState.loadingError,
-        numLoadedMeetings: riffState.numLoadedMeetings,
+        numMeetingsToDisplay: riffState.numMeetingsToDisplay,
     };
 };
 
@@ -98,13 +98,13 @@ const mapMergeProps = (stateProps, dispatchProps, ownProps) => {
             stateProps.meetings[0]
         ),
         maybeLoadNextMeeting: (meetingId) => {
-            if (!stateProps.meetings || stateProps.numLoadedMeetings < 1 || stateProps.numLoadedMeetings > stateProps.meetings.length) {
+            if (!stateProps.meetings || stateProps.numMeetingsToDisplay < 1 || stateProps.numMeetingsToDisplay > stateProps.meetings.length) {
                 // I believe this is happening, the question is when and why -mjl
-                // What I've seen now is that the numLoadedMeetings is greater than the number of meetings
+                // What I've seen now is that the numMeetingsToDisplay is greater than the number of meetings
                 // in the meetings array.
-                logger.error(`Dashboard.maybeLoadNextMeeting: meetings is not an array or the # loaded meetings (${stateProps.numLoadedMeetings}) is a problem!`, stateProps.meetings);
+                logger.error(`Dashboard.maybeLoadNextMeeting: meetings is not an array or the # loaded meetings (${stateProps.numMeetingsToDisplay}) is a problem!`, stateProps.meetings);
             }
-            const lastLoadedMeeting = stateProps.meetings[stateProps.numLoadedMeetings - 1];
+            const lastLoadedMeeting = stateProps.meetings[stateProps.numMeetingsToDisplay - 1];
             logger.debug('Dashboard.maybeLoadNextMeeting: lastLoadedMeeting', lastLoadedMeeting);
             if (lastLoadedMeeting._id === meetingId) {
                 logger.debug('Dashboard.maybeLoadNextMeeting: loading more meetings!');
