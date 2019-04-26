@@ -30,7 +30,7 @@ import * as UserAgent from 'utils/user_agent.jsx';
 import DashboardView from './DashboardView';
 
 const mapStateToProps = (state) => {
-    logger.debug('dashboard state:', state);
+    logger.debug('Dashboard.mapStateToProps: state:', state);
     const {lti, dashboard, riff} = state.views;
     const riffState = {...lti, ...dashboard, ...riff};
     return {
@@ -71,7 +71,7 @@ const mapDispatchToProps = (dispatch) => ({
         dispatch(loadMeetingData(uid, meeting._id));
     },
     authenticateRiff: () => {
-        logger.debug('attempt data-server auth');
+        logger.debug('Dashboard.authenticateRiff: attempt data-server auth');
         dispatch(RiffServerActionCreators.attemptRiffAuthenticate());
     },
 });
@@ -89,7 +89,7 @@ const formatMeetingDuration = (meeting) => {
 };
 
 const mapMergeProps = (stateProps, dispatchProps, ownProps) => {
-    logger.debug('dashboard user:', stateProps.user);
+    logger.debug('Dashboard.mapMergeProps: user:', stateProps.user);
     return {
         ...stateProps,
         ...dispatchProps,
@@ -97,17 +97,20 @@ const mapMergeProps = (stateProps, dispatchProps, ownProps) => {
         selectedMeetingDuration: formatMeetingDuration(
             stateProps.meetings[0]
         ),
+
+        // TODO: Load is the wrong terminalogy here, and maybe also in more of these properties as well.
+        //       Consider renaming this to maybeDisplayNextMeeting -mjl 2019-04-26
         maybeLoadNextMeeting: (meetingId) => {
-            if (!stateProps.meetings || stateProps.numMeetingsToDisplay < 1 || stateProps.numMeetingsToDisplay > stateProps.meetings.length) {
-                // I believe this is happening, the question is when and why -mjl
-                // What I've seen now is that the numMeetingsToDisplay is greater than the number of meetings
-                // in the meetings array.
-                logger.error(`Dashboard.maybeLoadNextMeeting: meetings is not an array or the # loaded meetings (${stateProps.numMeetingsToDisplay}) is a problem!`, stateProps.meetings);
+            // if there are undisplayed meetings AND the last displayed meeting is the specified one
+            // then load (well display) more meetings (ie the next one).
+            if (stateProps.numMeetingsToDisplay >= stateProps.meetings.length) {
+                return;
             }
-            const lastLoadedMeeting = stateProps.meetings[stateProps.numMeetingsToDisplay - 1];
-            logger.debug('Dashboard.maybeLoadNextMeeting: lastLoadedMeeting', lastLoadedMeeting);
-            if (lastLoadedMeeting._id === meetingId) {
-                logger.debug('Dashboard.maybeLoadNextMeeting: loading more meetings!');
+
+            const lastDisplayedMeeting = stateProps.meetings[stateProps.numMeetingsToDisplay - 1];
+            logger.debug('Dashboard.maybeLoadNextMeeting: lastDisplayedMeeting', lastDisplayedMeeting);
+            if (lastDisplayedMeeting._id === meetingId) {
+                logger.debug(`Dashboard.maybeLoadNextMeeting: displaying more meetings (${stateProps.numMeetingsToDisplay})!`);
                 dispatchProps.loadMoreMeetings();
             }
         },
@@ -134,7 +137,7 @@ const componentDidMount = (props) => {
 };
 
 const componentWillMount = (props) => {
-    logger.debug('dashboard user:', props.user);
+    logger.debug('Dashboard.componentWillMount: user:', props.user);
     if (!props.riff.authToken) {
         props.authenticateRiff();
     }
