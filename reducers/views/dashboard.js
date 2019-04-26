@@ -3,7 +3,8 @@
 
 /* eslint
     header/header: "off",
-    indent: ["error", 4, { "CallExpression": { "arguments": "first" } }]
+    indent: ["error", 4, { "CallExpression": { "arguments": "first" } }],
+    brace-style: ["error", "stroustrup", { "allowSingleLine": true }],
  */
 
 import _ from 'underscore';
@@ -61,6 +62,7 @@ const updateLoadingStatus = (state) => {
     const meetingLoaded = unzipped.map((processedDatasets) => processedDatasets.every((dataset) => Boolean(dataset)));
     logger.debug('meetingLoaded', meetingLoaded);
 
+    // eslint-disable-next-line max-statements-per-line
     const isLoadedArray = meetingLoaded.map((isLoaded) => {return isLoaded ? 'loaded' : 'loading';});
     return {
         ...state,
