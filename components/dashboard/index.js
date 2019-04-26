@@ -1,26 +1,36 @@
-// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
+
+/* eslint
+    header/header: "off",
+    dot-location: ["error", "property"],
+    indent: ["error", 4, { "CallExpression": { "arguments": "first" } }],
+    "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
+    "no-underscore-dangle": ["error", { "allow": [ "_id" ] }],
+ */
+
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 
 import $ from 'jquery';
-import * as UserAgent from 'utils/user_agent.jsx';
 import moment from 'moment';
 import lifecycle from 'react-pure-lifecycle';
+import {getCurrentUser} from 'mattermost-redux/selectors/entities/users';
 
 import {
     loadMoreMeetings,
     loadRecentMeetings,
     selectMeeting,
     loadMeetingData,
-} from '../../actions/views/dashboard';
-import {getCurrentUser} from 'mattermost-redux/selectors/entities/users';
-import * as RiffServerActionCreators from '../../actions/views/riff';
+} from 'actions/views/dashboard';
+import * as RiffServerActionCreators from 'actions/views/riff';
+import {logger} from 'utils/riff';
+import * as UserAgent from 'utils/user_agent.jsx';
 
 import DashboardView from './DashboardView';
 
 const mapStateToProps = (state) => {
-    console.log("dashboard state:", state);
+    logger.debug('Dashboard.mapStateToProps: state:', state);
     const {lti, dashboard, riff} = state.views;
     const riffState = {...lti, ...dashboard, ...riff};
     return {
@@ -39,7 +49,7 @@ const mapStateToProps = (state) => {
         processedNetwork: riffState.networkData,
         processedTimeline: riffState.timelineData,
         loadingError: riffState.loadingError,
-        numLoadedMeetings: riffState.numLoadedMeetings
+        numMeetingsToDisplay: riffState.numMeetingsToDisplay,
     };
 };
 
@@ -61,29 +71,25 @@ const mapDispatchToProps = (dispatch) => ({
         dispatch(loadMeetingData(uid, meeting._id));
     },
     authenticateRiff: () => {
-        console.log("attempt data-server auth");
+        logger.debug('Dashboard.authenticateRiff: attempt data-server auth');
         dispatch(RiffServerActionCreators.attemptRiffAuthenticate());
     },
 });
 
 const formatMeetingDuration = (meeting) => {
-    if (!meeting || meeting === null) {
+    if (!meeting) {
         return '';
     }
 
     // support showing data on in progress meeting by giving them a fake end time of now
-    if (!meeting.endTime) {
-        meeting = {...meeting, endTime: new Date()};
-    }
-    const diff = moment(new Date(meeting.endTime)).diff(
-        moment(new Date(meeting.startTime)),
-        'minutes'
-    );
+    const startDate = new Date(meeting.startTime);
+    const endDate = meeting.endTime ? new Date(meeting.endTime) : new Date();
+    const diff = moment(endDate).diff(moment(startDate), 'minutes');
     return `${diff} minutes`;
 };
 
 const mapMergeProps = (stateProps, dispatchProps, ownProps) => {
-    console.log("dashboard user:", stateProps.user);
+    logger.debug('Dashboard.mapMergeProps: user:', stateProps.user);
     return {
         ...stateProps,
         ...dispatchProps,
@@ -91,14 +97,23 @@ const mapMergeProps = (stateProps, dispatchProps, ownProps) => {
         selectedMeetingDuration: formatMeetingDuration(
             stateProps.meetings[0]
         ),
+
+        // TODO: Load is the wrong terminalogy here, and maybe also in more of these properties as well.
+        //       Consider renaming this to maybeDisplayNextMeeting -mjl 2019-04-26
         maybeLoadNextMeeting: (meetingId) => {
-            let lastLoadedMeeting = stateProps.meetings[stateProps.numLoadedMeetings-1];
-            console.log("Maybe loading more meetings", lastLoadedMeeting);
-            if (lastLoadedMeeting._id === meetingId) {
-                console.log("loading more meetings!");
+            // if there are undisplayed meetings AND the last displayed meeting is the specified one
+            // then load (well display) more meetings (ie the next one).
+            if (stateProps.numMeetingsToDisplay >= stateProps.meetings.length) {
+                return;
+            }
+
+            const lastDisplayedMeeting = stateProps.meetings[stateProps.numMeetingsToDisplay - 1];
+            logger.debug('Dashboard.maybeLoadNextMeeting: lastDisplayedMeeting', lastDisplayedMeeting);
+            if (lastDisplayedMeeting._id === meetingId) {
+                logger.debug(`Dashboard.maybeLoadNextMeeting: displaying more meetings (${stateProps.numMeetingsToDisplay})!`);
                 dispatchProps.loadMoreMeetings();
             }
-        }
+        },
     };
 };
 
@@ -122,7 +137,7 @@ const componentDidMount = (props) => {
 };
 
 const componentWillMount = (props) => {
-    console.log("dashboard user:", props.user);
+    logger.debug('Dashboard.componentWillMount: user:', props.user);
     if (!props.riff.authToken) {
         props.authenticateRiff();
     }
@@ -135,7 +150,7 @@ const componentWillMount = (props) => {
 const methods = {
     componentDidUpdate,
     componentDidMount,
-    componentWillMount
+    componentWillMount,
 };
 
 const Dashboard = lifecycle(methods)(DashboardView);

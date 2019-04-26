@@ -3,7 +3,8 @@
 
 /* eslint
     header/header: "off",
-    indent: ["error", 4, { "CallExpression": { "arguments": "first" } }]
+    indent: ["error", 4, { "CallExpression": { "arguments": "first" } }],
+    brace-style: ["error", "stroustrup", { "allowSingleLine": true }],
  */
 
 import _ from 'underscore';
@@ -24,8 +25,8 @@ const initialState = {
     // 'loaded' at idx if utterances, influence, and timeline are all loaded
     statsStatus: [],
 
-    // initial number of meetings to load
-    numLoadedMeetings: 2,
+    // initial number of meetings to display (visualize)
+    numMeetingsToDisplay: 2,
 
     // array holding processed data for each meeting.
     processedUtterances: [],
@@ -61,6 +62,7 @@ const updateLoadingStatus = (state) => {
     const meetingLoaded = unzipped.map((processedDatasets) => processedDatasets.every((dataset) => Boolean(dataset)));
     logger.debug('meetingLoaded', meetingLoaded);
 
+    // eslint-disable-next-line max-statements-per-line
     const isLoadedArray = meetingLoaded.map((isLoaded) => {return isLoaded ? 'loaded' : 'loading';});
     return {
         ...state,
@@ -75,7 +77,7 @@ const dashboard = (state = initialState, action) => {
     case DashboardActionTypes.DASHBOARD_LOAD_MORE_MEETINGS:
         return {
             ...state,
-            numLoadedMeetings: state.numLoadedMeetings + 1,
+            numMeetingsToDisplay: state.numMeetingsToDisplay + 1,
         };
     case DashboardActionTypes.DASHBOARD_FETCH_MEETINGS: {
         const timeDiff = ((((new Date()).getTime() - new Date(state.lastFetched).getTime()) / 1000) > 5);
