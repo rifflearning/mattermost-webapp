@@ -116,7 +116,7 @@ export var app = feathers()
  */
 export function groupByPropertyValue(a, p) {
     return a.reduce((grouped, cur) => {
-        if (!(p in grouped)) {
+        if (!(cur[p] in grouped)) {
             grouped[cur[p]] = [];
         }
         grouped[cur[p]].push(cur);
