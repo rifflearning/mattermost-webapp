@@ -244,7 +244,7 @@ export const processInfluence = (uid, utterances, meetingId) => { // eslint-disa
     let recentUttCounts = sortedUtterances.map((ut, idx) => {
         // get list of utterances within 2 seconds that are not by the speaker.
         const recentUtterances = sortedUtterances.slice(0, idx).filter((recentUt) => {
-            const timeDiff = getDurationInSeconds(ut.startTime, recentUt.endTime);
+            const timeDiff = getDurationInSeconds(recentUt.endTime, ut.startTime);
             const recent = timeDiff < 3 && timeDiff > 0;
             const sameParticipant = ut.participant === recentUt.participant;
             return recent && !sameParticipant;
