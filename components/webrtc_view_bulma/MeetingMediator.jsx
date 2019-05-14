@@ -6,6 +6,7 @@ import styled from 'styled-components';
 import Mediator from './charts';
 import startRiffListener from './RiffListener';
 import { app, socket} from "../../utils/riff";
+import ChartTable from '../dashboard/components/ChartTable'
 
 const MMContainer = styled.div.attrs({
 })`
@@ -82,14 +83,23 @@ class MeetingMediator extends Component {
             mediatorProps.user.username,
             mediatorProps.peerColors,
             mediatorProps.webRtcRiffIds,
+            null,
             this.updateAccessibleTable,
         );
     }
 
     render() {
         return (
-            <MMContainer id = "meeting-mediator">
-            </MMContainer>
+            <React.Fragment>
+                <MMContainer id = "meeting-mediator">
+                </MMContainer>
+                {this.state.tableRows.length ? (
+                    <ChartTable
+                        cols={['Participant', 'Amount of Speaking']}
+                        rows={this.state.tableRows}
+                    />
+                ) : null }
+            </React.Fragment>
         );
     }
 }
