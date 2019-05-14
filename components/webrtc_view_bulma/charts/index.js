@@ -7,7 +7,7 @@ class Mediator
     // COPIED FROM ORIGINAL RHYTHM-RTC PROJECT
     // with some minor modifications
 
-    constructor(app, participants, user, roomName, userName, peerColors, riffIds, localId)
+    constructor(app, participants, user, roomName, userName, peerColors, riffIds, localId, updateAccessibleTable)
     {
         console.log("Mediator initial state:", participants, user, roomName, userName);
 
@@ -22,6 +22,7 @@ class Mediator
         this.peerColors = peerColors;
         this.riffIds = riffIds;
         this.localId = localId;
+        this.updateAccessibleTable = updateAccessibleTable;
 
         // if (!elementIsEmpty('#meeting-mediator')) {
         //   console.log("not starting a second MM...");
@@ -93,9 +94,13 @@ class Mediator
 
         if (data.room === this.roomName && this.mm.data.participants.length > 1)
         {
-            this.mm.updateData({ participants: this.roomUsers,
-                                 transitions: data.transitions,
-                                 turns: this.transform_turns(this.roomUsers, data.turns) });
+            const mmdata = {
+                participants: this.roomUsers,
+                transitions: data.transitions,
+                turns: this.transform_turns(this.roomUsers, data.turns)
+            };
+            this.updateAccessibleTable(mmdata);
+            this.mm.updateData(mmdata);
         }
         else
         {
