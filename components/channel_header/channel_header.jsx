@@ -47,6 +47,7 @@ const headerMarkdownOptions = {singleline: true, mentionHighlight: false, atMent
 const popoverMarkdownOptions = {singleline: false, mentionHighlight: false, atMentions: true};
 
 const SEARCH_BAR_MINIMUM_WINDOW_SIZE = 1140;
+const MAX_CHANNEL_MEMBERS_FOR_VIDEO = 7;
 
 export default class ChannelHeader extends React.Component {
     static propTypes = {
@@ -372,7 +373,7 @@ export default class ChannelHeader extends React.Component {
 
     webRtcDisabled = () => {
         return (!this.props.channelStats ||
-                this.props.channelStats.member_count > 7);
+                this.props.channelStats.member_count > MAX_CHANNEL_MEMBERS_FOR_VIDEO);
     }
 
     videoChatClicked = (e) => {
@@ -396,10 +397,10 @@ export default class ChannelHeader extends React.Component {
                     {'Riff chat is disabled until the page fully loads.'}
                 </span>
             );
-        } else if (this.props.channelStats.member_count > 7) {
+        } else if (this.props.channelStats.member_count > MAX_CHANNEL_MEMBERS_FOR_VIDEO) {
             tooltipContent = (
                 <span>
-                    {'Riff video chat only supports groups up to 7 people. Create a new DM group to start a call.'}
+                    {`Riff video chat only supports groups up to ${MAX_CHANNEL_MEMBERS_FOR_VIDEO} people. Create a new DM group to start a call.`}
                     <button
                         className='add-channel-btn cursor--pointer btn-primary btn'
                         style={{marginTop: '.5rem', marginBottom: '.5rem'}}
@@ -430,7 +431,7 @@ export default class ChannelHeader extends React.Component {
                 <Link
                     target='_blank'
                     id='videochat'
-                    to={this.webRtcDisabled() ? false : this.props.webRtcLink.pathname}
+                    to={this.webRtcDisabled() ? '' : this.props.webRtcLink.pathname}
                     onClick={(e) => this.videoChatClicked(e)}
                 >
                     <PopoverStickOnHover
