@@ -19,7 +19,7 @@ import {Client4} from 'mattermost-redux/client';
 import {getConfig} from 'mattermost-redux/selectors/entities/general';
 import {getCurrentTeamId} from 'mattermost-redux/selectors/entities/teams';
 import {getCurrentUserId} from 'mattermost-redux/selectors/entities/users';
-import {getCurrentChannel, getCurrentChannelStats} from 'mattermost-redux/selectors/entities/channels';
+import {getCurrentChannelStats} from 'mattermost-redux/selectors/entities/channels';
 
 import {browserHistory} from 'utils/browser_history';
 import {loadChannelsForCurrentUser} from 'actions/channel_actions.jsx';
@@ -52,11 +52,11 @@ const dispatch = store.dispatch;
 const getState = store.getState;
 
 export function getCurrentPage(match) {
-    if (match.params.path == 'pages') {
+    if (match.params.path === 'pages') {
         return match.params.identifier;
-    } else {
-        return null;
     }
+
+    return null;
 }
 
 export function emitChannelClickEvent(channel) {
