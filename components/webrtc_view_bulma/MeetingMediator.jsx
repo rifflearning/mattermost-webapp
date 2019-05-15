@@ -1,12 +1,23 @@
-import util from 'util';
-import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
-import { connect } from 'react-redux';
+// Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
+
+/* eslint
+    header/header: "off",
+    dot-location: ["error", "property"],
+    indent: ["error", 4, { "CallExpression": { "arguments": "first" } }],
+    "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
+    "no-underscore-dangle": ["error", { "allow": [ "_id" ] }],
+ */
+
+import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
+
+import {app, logger} from 'utils/riff';
+import ChartTable from 'components/dashboard/components/ChartTable';
+
 import Mediator from './charts';
 import startRiffListener from './RiffListener';
-import { app, socket} from "../../utils/riff";
-import ChartTable from '../dashboard/components/ChartTable'
 
 const MMContainer = styled.div.attrs({
 })`
@@ -18,12 +29,21 @@ const MMContainer = styled.div.attrs({
     overflow: hidden;
 `;
 
+class MeetingMediator extends React.Component {
+    static propTypes = {
+        user: PropTypes.shape({
+            id: PropTypes.string,
+            username: PropTypes.string,
+            nickname: PropTypes.string,
+        }).isRequired,
+        riff: PropTypes.object.isRequired,
+        webRtcPeers: PropTypes.arrayOf(PropTypes.object).isRequired,
+    };
 
-class MeetingMediator extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            tableRows: []
+            tableRows: [],
         };
         this.namesById = this.getNamesById();
         this.updateAccessibleTable = this.updateAccessibleTable.bind(this);
@@ -31,8 +51,8 @@ class MeetingMediator extends Component {
 
     componentDidUpdate(prevProps) {
         //TODO: props.riff here has getters and setters and not values....????
-        console.log("updating with participants:", this.props.riff.participants);
-        let riffCopy = Object.assign({}, this.props.riff);
+        logger.debug('MeetingMediator.componentDidUpdate: updating with participants:', this.props.riff.participants);
+        const riffCopy = Object.assign({}, this.props.riff);
 
         if (prevProps.webRtcPeers !== this.props.webRtcPeers ||
             prevProps.user.id !== this.props.user.id ||
@@ -47,13 +67,13 @@ class MeetingMediator extends Component {
     }
 
     componentDidMount() {
-        console.log("MM props:", this.props);
+        logger.debug('MeetingMediator.componentDidMount: MM props:', this.props);
         startRiffListener();
         this.startMM();
     }
 
     getNamesById() {
-        let namesById = this.props.webRtcPeers.reduce((memo, p) => {
+        const namesById = this.props.webRtcPeers.reduce((memo, p) => {
             const data = p.nick.split('|');
             memo[data[0]] = data[1];
             return memo;
@@ -64,17 +84,17 @@ class MeetingMediator extends Component {
 
     updateAccessibleTable(data) {
         this.setState({
-            tableRows: data.turns.map(turn => [
+            tableRows: data.turns.map((turn) => [
                 this.namesById[turn.participant],
-                [`${Math.round(turn.turns * 100)}%`]
-            ])
+                [`${Math.round(turn.turns * 100)}%`],
+            ]),
         });
     }
 
     startMM() {
         // use ... spread syntax to try to copy instead of
         // passing our state/props by reference.
-        let mediatorProps = Object.assign({}, this.props);
+        const mediatorProps = Object.assign({}, this.props);
         this.mm = new Mediator(
             app,
             (mediatorProps.riff.participants || []),
@@ -91,8 +111,7 @@ class MeetingMediator extends Component {
     render() {
         return (
             <React.Fragment>
-                <MMContainer id = "meeting-mediator">
-                </MMContainer>
+                <MMContainer id='meeting-mediator'/>
                 {this.state.tableRows.length ? (
                     <ChartTable
                         cols={['Participant', 'Amount of Speaking']}
