@@ -365,7 +365,7 @@ export default class ChannelHeader extends React.Component {
         const post = {
             message: `I started a Riff meeting! Join here: ${webRtcLink.href}`,
             channel_id: channelId,
-            pending_post_id: `${this.props.userId}:${time}`,
+            pending_post_id: `${this.props.currentUser.id}:${time}`,
             create_at: time,
         };
         return post;
