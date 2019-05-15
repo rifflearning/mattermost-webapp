@@ -1,14 +1,6 @@
 // Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-/* eslint
-    header/header: "off",
-    dot-location: ["error", "property"],
-    indent: ["error", 4, { "CallExpression": { "arguments": "first" } }],
-    "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
-    "no-underscore-dangle": ["error", { "allow": [ "_id" ] }],
- */
-
 import {withRouter} from 'react-router-dom';
 import {connect} from 'react-redux';
 

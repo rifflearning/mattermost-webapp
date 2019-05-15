@@ -1,13 +1,6 @@
 // Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-/* eslint
-    header/header: "off",
-    dot-location: ["error", "property"],
-    indent: ["error", 4, { "CallExpression": { "arguments": "first" } }],
-    "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
- */
-
 import React from 'react';
 import {ScaleLoader} from 'react-spinners';
 import {HorizontalBar} from 'react-chartjs-2';
@@ -33,7 +26,8 @@ function formatLabel(str, maxwidth) {
             if (concat.length > maxwidth) {
                 sections.push(temp);
                 temp = '';
-            } else {
+            }
+            else {
                 if (index === (words.length - 1)) {
                     sections.push(concat);
                     return;
@@ -50,7 +44,8 @@ function formatLabel(str, maxwidth) {
 
         if (item.length < maxwidth) {
             temp = item;
-        } else {
+        }
+        else {
             sections.push(item);
         }
     });
