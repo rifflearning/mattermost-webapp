@@ -52,9 +52,7 @@ const dispatch = store.dispatch;
 const getState = store.getState;
 
 export function getCurrentPage(match) {
-    console.log("using match:",  match);
     if (match.params.path == 'pages') {
-        console.log("match returning", match.params.identifier)
         return match.params.identifier;
     } else {
         return null;
