@@ -9,14 +9,14 @@
     "no-underscore-dangle": ["error", { "allow": [ "_id" ] }],
  */
 
-import React, {Component} from 'react';
+import React from 'react';
 import ReactDOM from 'react-dom';
-
-import {sendSurvey} from 'actions/survey_actions.jsx';
+import PropTypes from 'prop-types';
 
 import {addA11yBrowserAlert, readablePeers, logger} from 'utils/riff';
 import webrtc from 'utils/webrtc/webrtc';
 import store from 'stores/redux_store';
+import {sendSurvey} from 'actions/survey_actions.jsx';
 
 import RenderVideos from './RenderVideos';
 import WebRtcSidebar from './WebrtcSidebar';
@@ -24,10 +24,31 @@ import TextChat from './TextChat';
 
 // needs to be a regular component because we need to use
 // refs in order to request a local stream with SimpleWebRTC.
-class WebRtc extends Component {
+class WebRtc extends React.Component {
+    static propTypes = {
+        roomName: PropTypes.string.isRequired,
+        joinRoomStatus: PropTypes.string.isRequired,
+        joinRoomMessage: PropTypes.string.isRequired,
+        inRoom: PropTypes.bool.isRequired,
+        user: PropTypes.shape({
+            id: PropTypes.string,
+            username: PropTypes.string,
+            nickname: PropTypes.string,
+        }).isRequired,
+        riff: PropTypes.object.isRequired,
+        webRtcRemoteSharedScreen: PropTypes.object,
+        webRtcPeers: PropTypes.arrayOf(PropTypes.object).isRequired,
+        shouldFocusJoinRoomError: PropTypes.bool.isRequired,
+        focusJoinRoomErrorComplete: PropTypes.func.isRequired,
+        handleKeyPress: PropTypes.func,
+        handleReadyClick: PropTypes.func.isRequired,
+        clearJoinRoomError: PropTypes.func.isRequired,
+        dispatch: PropTypes.func.isRequired,
+    };
+
     constructor(props) {
         super(props);
-        logger.debug('webrt has these props:', props);
+        logger.debug('webrtc has these props:', props);
         this.onUnload = this.onUnload.bind(this);
         this.render = this.render.bind(this);
         this.reattachVideo = this.reattachVideo.bind(this);
