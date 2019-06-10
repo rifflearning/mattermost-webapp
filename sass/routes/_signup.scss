@@ -380,7 +380,7 @@
         .control-label {
             @include border-radius(3px);
             background: #f2f2f2;
-            color: #999999;
+            color: #6B6B6B;
             font-size: 14px;
             font-weight: normal;
             margin: 1em 0 0;
@@ -451,7 +451,7 @@
     }
 
     .color--light {
-        color: #777777;
+        color: #757575;
     }
 
     .margin--extra {
@@ -568,4 +568,21 @@
 .verify_panel {
     margin: 60px auto auto;
     max-width: 380px;
+}
+p.h5 {
+    font-size: 1.125em;
+    margin-bottom: 0.8888em;
+    color: #363636;
+    font-weight: 600;
+    line-height: 1.125;
+    margin: 0;
+    padding: 0;
+}
+p.h4 {
+    font-weight: 300;
+    font-size: 1.25em;
+    margin-bottom: 0.8em;
+    line-height: 1.125;
+    margin: 0;
+    padding: 0;
 }

@@ -2526,6 +2526,7 @@
   "signup_user_completed.usernameLength": "Username must begin with a letter, and contain between {min} to {max} lowercase characters made up of numbers, letters, and the symbols '.', '-' and '_'.",
   "signup_user_completed.validEmail": "Please enter a valid email address",
   "signup_user_completed.whatis": "What's your email address?",
+  "signup_user_completed.textInputDisabled": "Your {value} in Riff will be the same as the {value} you provided for the course.",
   "signup.email": "Email and Password",
   "signup.email.icon": "Email Icon",
   "signup.gitlab": "GitLab Single Sign-On",
