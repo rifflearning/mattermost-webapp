@@ -571,6 +571,12 @@ class LoginController extends React.Component {
                             margin={true}
                         />
                         <div className={'form-group' + errorClass}>
+                            <label htmlFor='loginId'><strong>
+                                <FormattedMessage
+                                    id='user.settings.security.email'
+                                    defaultMessage='Email address'
+                                />
+                            </strong></label>
                             <input
                                 id='loginId'
                                 className='form-control'
@@ -585,6 +591,12 @@ class LoginController extends React.Component {
                             />
                         </div>
                         <div className={'form-group' + errorClass}>
+                            <label htmlFor='loginPassword'><strong>
+                                <FormattedMessage
+                                    id='user.settings.security.password'
+                                    defaultMessage='Password'
+                                />
+                            </strong></label>
                             <input
                                 id='loginPassword'
                                 type='password'
