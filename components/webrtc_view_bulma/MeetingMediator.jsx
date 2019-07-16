@@ -1,5 +1,20 @@
-// Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
-// See LICENSE.txt for license information.
+/* ******************************************************************************
+ * MeetingMediator.jsx                                                                *
+ * *************************************************************************/ /**
+ *
+ * @fileoverview Meeting mediator react component
+ *
+ * [More detail about the file's contents]
+ *
+ * Created on       Jan 30, 2019
+ * @author          Brec Hanson
+ * @author          Mike Lippert
+ * @author          Jordan Reedie
+ *
+ * @copyright (c) 2019-present Riff Learning, Inc.,
+ *            MIT License (see https://opensource.org/licenses/MIT)
+ *
+ * ******************************************************************************/
 
 /* eslint
     header/header: "off",
@@ -7,7 +22,7 @@
     indent: ["error", 4, { "CallExpression": { "arguments": "first" } }],
     "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
     "no-underscore-dangle": ["error", { "allow": [ "_id" ] }],
- */
+*/
 
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -62,7 +77,7 @@ class MeetingMediator extends React.Component {
         }
 
         if (this.mm) {
-            this.mm.update_users(riffCopy.participants);
+            this.mm.update_users(riffCopy.participants, this.namesById);
         }
     }
 
@@ -105,6 +120,7 @@ class MeetingMediator extends React.Component {
             mediatorProps.webRtcRiffIds,
             null,
             this.updateAccessibleTable,
+            this.namesById
         );
     }
 

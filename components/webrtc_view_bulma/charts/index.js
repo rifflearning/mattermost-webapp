@@ -8,7 +8,7 @@
     indent: ["error", 4, { "CallExpression": { "arguments": "first" }, "ObjectExpression": "first" }],
     "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
     "no-underscore-dangle": ["error", { "allow": [ "_id" ] }],
- */
+*/
 
 // This file only
 /* eslint-disable camelcase */
@@ -23,7 +23,7 @@ class Mediator {
     // COPIED FROM ORIGINAL RHYTHM-RTC PROJECT
     // with some minor modifications
 
-    constructor(app, participants, user, roomName, userName, peerColors, riffIds, localId, updateAccessibleTable) {
+    constructor(app, participants, user, roomName, userName, peerColors, riffIds, localId, updateAccessibleTable, namesById) {
         logger.debug('Mediator initial state:', participants, user, roomName, userName);
 
         this.mm = null;
@@ -38,6 +38,7 @@ class Mediator {
         this.riffIds = riffIds;
         this.localId = localId;
         this.updateAccessibleTable = updateAccessibleTable;
+        this.namesById = namesById;
 
         // if (!elementIsEmpty('#meeting-mediator')) {
         //   logger.debug('not starting a second MM...');
@@ -51,7 +52,7 @@ class Mediator {
         this.mm = new MM({participants: this.roomUsers,
                           transitions: 0,
                           turns: [],
-                          names: []},
+                          names: this.namesById},
                          [this.user],
                          this.mm_width,
                          this.mm_height,
@@ -111,6 +112,7 @@ class Mediator {
                 participants: this.roomUsers,
                 transitions: data.transitions,
                 turns: this.transform_turns(this.roomUsers, data.turns),
+                names: this.namesById,
             };
             this.updateAccessibleTable(mmdata);
             this.mm.updateData(mmdata);
@@ -132,12 +134,15 @@ class Mediator {
         const newTurns = this.roomUsers.length > 1 ? this.mm.data.turns : [];
         this.mm.updateData({participants: this.roomUsers.slice(),
                             transitions: this.mm.data.transitions,
-                            turns: newTurns.slice()});
+                            turns: newTurns.slice(),
+                            names: this.namesById,
+        });
     }
 
-    update_users(users) {
+    update_users(users, namesById) {
         logger.debug('charts.update_users:', {oldUsers: this.roomUsers, newUsers: users});
         this.roomUsers = users.slice();
+        this.namesById = namesById;
         this.maybe_update_mm_participants();
     }
 
@@ -147,7 +152,9 @@ class Mediator {
         if (obj.room === this.roomName) {
             this.mm.updateData({participants: obj.participants,
                                 transitions: this.mm.data.transitions,
-                                turns: this.mm.data.turns});
+                                turns: this.mm.data.turns,
+                                names: this.namesById,
+            });
         }
     }
 
@@ -163,6 +170,7 @@ class Mediator {
                     participants: this.roomUsers,
                     transitions: this.mm.data.transitions,
                     turns: this.mm.data.turns,
+                    names: this.namesById,
                 });
             }
         });

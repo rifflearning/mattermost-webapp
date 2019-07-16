@@ -1,10 +1,25 @@
-// Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
-// See LICENSE.txt for license information.
-
+/* ******************************************************************************
+ * RemoteVideoContainer.jsx                                                                *
+ * *************************************************************************/ /**
+ *
+ * @fileoverview Remote video container react component
+ *
+ * [More detail about the file's contents]
+ *
+ * Created on       Nov 21, 2018
+ * @author          Mike Lippert
+ * @author          Dan Calacci
+ * @author          Brec Hanson
+ * @author          Jordan Reedie
+ *
+ * @copyright (c) 2019-present Riff Learning, Inc.,
+ *            MIT License (see https://opensource.org/licenses/MIT)
+ *
+ * ******************************************************************************/
 /* eslint
     header/header: "off",
     "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
- */
+*/
 
 import React from 'react';
 
@@ -33,6 +48,7 @@ class RemoteVideoContainer extends React.Component {
                 <PeerVideo
                     key={peer.id}
                     id={peer.id}
+                    displayName={displayName}
                     videoEl={peer.videoEl}
                     type='peer'
                     peerColor={peerColor}
