@@ -59,6 +59,7 @@ class MeetingMediator extends React.Component {
         super(props);
         this.state = {
             tableRows: [],
+            caption: null,
         };
         this.namesById = this.getNamesById();
         this.updateAccessibleTable = this.updateAccessibleTable.bind(this);
@@ -103,6 +104,7 @@ class MeetingMediator extends React.Component {
                 this.namesById[turn.participant],
                 [`${Math.round(turn.turns * 100)}%`],
             ]),
+            caption: `Turns taken: The group has taken ${data.transitions} turns between participants in the last five minutes.`,
         });
     }
 
@@ -132,6 +134,7 @@ class MeetingMediator extends React.Component {
                     <ChartTable
                         cols={['Participant', 'Amount of Speaking']}
                         rows={this.state.tableRows}
+                        caption={this.state.caption}
                     />
                 ) : null }
             </React.Fragment>

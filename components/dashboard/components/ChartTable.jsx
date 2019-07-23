@@ -6,7 +6,6 @@ import styled from 'styled-components';
 
 const SROnly = styled.div`
 position:absolute;
-left:-10000px;
 top:auto;
 width:1px;
 height:1px;
@@ -17,6 +16,9 @@ const ChartTable = ({cols, rows}) => {
     return (rows.length) ? (
         <SROnly>
             <table>
+                {this.props.caption ?
+                    <caption>{this.props.caption}</caption> :
+                    null}
                 <thead>
                     <tr>
                         {cols.map((col) => (
