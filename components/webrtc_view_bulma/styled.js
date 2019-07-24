@@ -48,7 +48,7 @@ letter-spacing: 0em;
 export const Menu = styled.aside.attrs({
   className: 'menu'
 })`
-max-width: 13rem;
+max-width: 14rem;
 padding-right: 10px;
 border-right: 1px solid rgba(171,69,171,1);
 `;

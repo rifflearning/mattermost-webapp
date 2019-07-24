@@ -12,13 +12,11 @@ height:1px;
 overflow:hidden;
 `;
 
-const ChartTable = ({cols, rows}) => {
+const ChartTable = ({cols, rows, caption}) => {
     return (rows.length) ? (
         <SROnly>
             <table>
-                {this.props.caption ?
-                    <caption>{this.props.caption}</caption> :
-                    null}
+                {caption ? <caption>{caption}</caption> : null}
                 <thead>
                     <tr>
                         {cols.map((col) => (
