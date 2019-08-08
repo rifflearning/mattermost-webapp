@@ -24,7 +24,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {logger} from '../../utils/riff';
+import { calculateBitrate, logger } from '../../utils/riff';
 
 import SharedScreen from './SharedScreen';
 import PeerVideo from './PeerVideo';
@@ -54,6 +54,11 @@ class RemoteVideoContainer extends React.Component {
     constructor(props) {
         super(props);
         logger.debug('remote video props:', props);
+    }
+
+    componentDidUpdate() {
+        const updatedBitrate = calculateBitrate(this.props.peers.length);
+        this.props.setVideoBitrateLimit(updatedBitrate);
     }
 
     peerVideo(peerLength) {

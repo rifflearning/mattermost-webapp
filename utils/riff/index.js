@@ -301,3 +301,29 @@ export function readablePeers(peers) {
     // multiple peers
     return `${readablePeerList} are ${readableSuffix}`;
 }
+
+
+/** The minimum acceptable bitrate for a single stream */
+const MIN_BITRATE = 300; // kbps
+
+/** The maximum allowable total bandwidth consumed by all streams
+ *  given that our requirements state a minimum bandwidth
+ *  of 3 megabits per second, we come in just a bit below that
+ */
+const MAX_BANDWIDTH = 2700; // kbps
+
+/**
+ * Returns the appropriate bitrate (kbps) for the video streams
+ * based on the number of other peers in the meeting
+ * (e.g. if 2 total people are in a meeting, peerCount is 1)
+ */
+export function calculateBitrate(peerCount) {
+  // if we have four or more peers,
+  // we just want to use the lowest possible bitrate
+  // to avoid any cpu limitations
+  if (peerCount >= 4) {
+    return MIN_BITRATE;
+  }
+
+  return MAX_BANDWIDTH / peerCount;
+}

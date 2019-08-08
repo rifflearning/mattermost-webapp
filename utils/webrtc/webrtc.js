@@ -35,7 +35,6 @@ export function isScreenShareSourceAvailable() {
 }
 
 export default function (localVideoNode, dispatch, getState) {
-    //TODO: make dynamic
     const webRtcConfig = {
         localVideoEl: localVideoNode,
         remoteVideosEl: '',
@@ -47,10 +46,17 @@ export default function (localVideoNode, dispatch, getState) {
         },
         media: {
             audio: true,
+            // TODO - the resolution here is rather low
+            // this is good for cpu limited users,
+            // but in the future we would like to implement variable resolution
+            // to improve visual quality for those who can afford it
             video: {
-                width: {ideal: 640},
-                height: {ideal: 480},
-                frameRate: {max: 30},
+                width: {ideal: 320},
+                height: {ideal: 240},
+                // firefox doesn't support requesting a framerate other than
+                // that which the user's webcam can natively provide
+                // chrome does not have this limitation
+                frameRate: {ideal: 12, max: 30},
             },
         },
         debug: true,
