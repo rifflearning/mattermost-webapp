@@ -56,9 +56,20 @@ class RemoteVideoContainer extends React.Component {
         logger.debug('remote video props:', props);
     }
 
-    componentDidUpdate() {
+    componentDidMount() {
+        // we have to do this here to make sure we set the bitrate
+        // in the case we join a meeting with peers already in it
         const updatedBitrate = calculateBitrate(this.props.peers.length);
         this.props.setVideoBitrateLimit(updatedBitrate);
+    }
+
+    componentDidUpdate(prevProps) {
+        // we check to make sure the peers array length has changed
+        // because we get a LOT of unnecessary re-renders in this codebase
+        if (prevProps.peers.length !== this.props.peers.length) {
+            const updatedBitrate = calculateBitrate(this.props.peers.length);
+            this.props.setVideoBitrateLimit(updatedBitrate);
+        }
     }
 
     peerVideo(peerLength) {

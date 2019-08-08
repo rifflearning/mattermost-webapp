@@ -318,12 +318,12 @@ const MAX_BANDWIDTH = 2700; // kbps
  * (e.g. if 2 total people are in a meeting, peerCount is 1)
  */
 export function calculateBitrate(peerCount) {
-  // if we have four or more peers,
-  // we just want to use the lowest possible bitrate
-  // to avoid any cpu limitations
-  if (peerCount >= 4) {
-    return MIN_BITRATE;
-  }
+    // if we have four or more peers,
+    // we just want to use the lowest possible bitrate
+    // to avoid any cpu limitations
+    if (peerCount >= 4) {
+        return MIN_BITRATE;
+    }
 
-  return MAX_BANDWIDTH / peerCount;
+    return MAX_BANDWIDTH / peerCount;
 }
