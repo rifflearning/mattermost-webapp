@@ -302,7 +302,6 @@ export function readablePeers(peers) {
     return `${readablePeerList} are ${readableSuffix}`;
 }
 
-
 /** The minimum acceptable bitrate for a single stream */
 const MIN_BITRATE = 300; // kbps
 

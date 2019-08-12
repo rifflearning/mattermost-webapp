@@ -35,7 +35,9 @@ class RenderVideos extends React.Component {
                             peers={this.props.webRtcPeers}
                             chat={this.props.chat}
                             remoteSharedScreen={this.props.webRtcRemoteSharedScreen}
-                            setVideoBitrateLimit={bitrateLimit => this.props.webrtc.setVideoBitrateLimit(bitrateLimit)}
+                            setVideoBitrateLimit={(bitrateLimit) => (
+                                this.props.webrtc.setVideoBitrateLimit(bitrateLimit)
+                            )}
                         />
                     </div>
                 </div>

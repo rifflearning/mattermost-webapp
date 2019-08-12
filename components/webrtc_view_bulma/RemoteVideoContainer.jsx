@@ -16,6 +16,7 @@
  *            MIT License (see https://opensource.org/licenses/MIT)
  *
  * ******************************************************************************/
+
 /* eslint
     header/header: "off",
     "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
@@ -24,7 +25,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { calculateBitrate, logger } from '../../utils/riff';
+import {calculateBitrate, logger} from 'utils/riff';
 
 import SharedScreen from './SharedScreen';
 import PeerVideo from './PeerVideo';
@@ -49,6 +50,9 @@ class RemoteVideoContainer extends React.Component {
 
         /** List of the IDs of all of the webrtc peers */
         riffIds: PropTypes.arrayOf(PropTypes.string),
+	
+	/** sets the outgoing bitrate limit for video streams */
+	setVideoBitrateLimit: PropTypes.func,
     };
 
     constructor(props) {
