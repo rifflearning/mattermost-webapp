@@ -560,6 +560,11 @@ class LoginController extends React.Component {
                 </span>);
             }
 
+            // The placeholder describes what should be entered in the field and as
+            // such is also a good a11y label value for the field.
+            const loginIdPlaceholder = this.createLoginPlaceholder();
+            const passwordPlaceholder = Utils.localizeMessage('login.password', 'Password');
+
             loginControls.push(
                 <form
                     key='loginBoxes'
@@ -578,10 +583,11 @@ class LoginController extends React.Component {
                                 name='loginId'
                                 value={this.state.loginId}
                                 onChange={this.handleLoginIdChange}
-                                placeholder={this.createLoginPlaceholder()}
+                                placeholder={loginIdPlaceholder}
                                 spellCheck='false'
                                 autoCapitalize='off'
                                 autoFocus='true'
+                                aria-label={loginIdPlaceholder}
                             />
                         </div>
                         <div className={'form-group' + errorClass}>
@@ -593,8 +599,9 @@ class LoginController extends React.Component {
                                 name='password'
                                 value={this.state.password}
                                 onChange={this.handlePasswordChange}
-                                placeholder={Utils.localizeMessage('login.password', 'Password')}
+                                placeholder={passwordPlaceholder}
                                 spellCheck='false'
+                                aria-label={passwordPlaceholder}
                             />
                         </div>
                         <div className='form-group'>

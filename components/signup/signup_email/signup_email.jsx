@@ -412,7 +412,7 @@ export default class SignupEmail extends React.Component {
                                 autoFocus={true}
                                 spellCheck='false'
                                 autoCapitalize='off'
-                                aria-describedby='email-error'
+                                aria-describedby={`${this.state.emailError ? 'email-error' : ''}`}
                             />
                             {emailError}
                             {emailHelpText}
@@ -436,7 +436,7 @@ export default class SignupEmail extends React.Component {
                                 maxLength={Constants.MAX_USERNAME_LENGTH}
                                 spellCheck='false'
                                 autoCapitalize='off'
-                                aria-describedby='name-error'
+                                aria-describedby={`${this.state.nameError ? 'name-error' : ''}`}
                             />
                             {nameError}
                             {nameHelpText}
@@ -458,7 +458,7 @@ export default class SignupEmail extends React.Component {
                                 placeholder=''
                                 maxLength='128'
                                 spellCheck='false'
-                                aria-describedby='password-error'
+                                aria-describedby={`${this.state.passwordError ? 'password-error' : ''}`}
                             />
                             {passwordError}
                         </div>
