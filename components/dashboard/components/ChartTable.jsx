@@ -2,6 +2,7 @@
 // See LICENSE.txt for license information.
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
 const SROnly = styled.div`
@@ -37,6 +38,18 @@ const ChartTable = ({cols, rows, caption}) => {
             </table>
         </SROnly>
     ) : null;
+};
+
+ChartTable.propTypes = {
+
+    /** Array of data for the rows of the table, the 1st element is the header for the row */
+    rows: PropTypes.array.isRequired,
+
+    /** Array of headers for the columns of the table */
+    cols: PropTypes.array.isRequired,
+
+    /** Optional caption for the table */
+    caption: PropTypes.string,
 };
 
 export default ChartTable;

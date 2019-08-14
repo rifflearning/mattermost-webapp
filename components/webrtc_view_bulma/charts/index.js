@@ -1,7 +1,7 @@
 // Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-// Riff Learning list overrides
+// Riff Learning lint overrides
 /* eslint
     header/header: "off",
     dot-location: ["error", "property"],

@@ -17,6 +17,15 @@
  *
  * ******************************************************************************/
 
+// Riff Learning lint overrides
+/* eslint
+    header/header: "off",
+    dot-location: ["error", "property"],
+    indent: ["error", 4, { "CallExpression": { "arguments": "first" }, "ObjectExpression": "first" }],
+    "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
+    "no-underscore-dangle": ["error", { "allow": [ "_id" ] }],
+*/
+
 import * as d3Selection from 'd3-selection';
 import * as d3Scale from 'd3-scale';
 import * as d3Transition from 'd3-transition';
@@ -31,6 +40,6 @@ export const d3 = Object.assign({},
                                 d3Time,
                                 d3TimeFormat,
                                 d3Axis,
-                               );
+);
 
 export default d3;

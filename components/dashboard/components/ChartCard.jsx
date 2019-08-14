@@ -156,6 +156,9 @@ class ChartInfoDiv extends React.Component {
 
         /** Description of what the chart shows */
         chartInfo: PropTypes.string.isRequired,
+
+        /** flag for an especially long description that requires smaller text. */
+        longDescription: PropTypes.bool,
     }
 
     componentDidMount() {

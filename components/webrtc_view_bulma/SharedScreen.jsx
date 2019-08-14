@@ -7,11 +7,21 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import PeerVideo from './PeerVideo';
 import PeerAudio from './PeerAudio';
 
 class SharedScreen extends React.Component {
+    static propTypes = {
+
+        /** the list of all other peers in the meeting */
+        peers: PropTypes.arrayOf(PropTypes.object).isRequired,
+
+        /** the video element (of the shared screen) we are adding to the DOM */
+        videoEl: PropTypes.object.isRequired,
+    };
+
     isolateAudioFromPeer(peer) {
         const audioTrack = peer.videoEl.srcObject.getAudioTracks()[0];
         const stream = new MediaStream();

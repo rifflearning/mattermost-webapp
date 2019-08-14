@@ -22,6 +22,7 @@
 */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import {logger} from '../../utils/riff';
 
@@ -29,6 +30,27 @@ import SharedScreen from './SharedScreen';
 import PeerVideo from './PeerVideo';
 
 class RemoteVideoContainer extends React.Component {
+    static propTypes = {
+
+        chat: PropTypes.shape({
+            peerColors: PropTypes.array,
+            webRtcRiffIds: PropTypes.array,
+            webRtcPeerDisplayNames: PropTypes.array,
+        }).isRequired,
+
+        /** list of all peers to display */
+        peers: PropTypes.arrayOf(PropTypes.object).isRequired,
+
+        /** If a Peer is sharing their screen, this will
+         *   have the remote shared screen element
+         *  Otherwise, this will be null
+         */
+        remoteSharedScreen: PropTypes.object,
+
+        /** List of the IDs of all of the webrtc peers */
+        riffIds: PropTypes.arrayOf(PropTypes.string),
+    };
+
     constructor(props) {
         super(props);
         logger.debug('remote video props:', props);

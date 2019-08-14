@@ -15,15 +15,38 @@
  *            MIT License (see https://opensource.org/licenses/MIT)
  *
  * ******************************************************************************/
+
 /* eslint
     header/header: "off",
 */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
-import {logger} from '../../utils/riff';
+import {logger} from 'utils/riff';
 
 class PeerVideo extends React.Component {
+    static propTypes = {
+
+        /** the id of the peer whose video stream we are rendering */
+        id: PropTypes.string,
+
+        /** the color associated with this peer in the meeting mediator */
+        peerColor: PropTypes.string.isRequired,
+
+        /** the type of video we are rendering (peer or screen) */
+        type: PropTypes.oneOf(['peer', 'screen']).isRequired,
+
+        /** the number of other users in the meeting */
+        peerLength: PropTypes.number,
+
+        /** the user's display name */
+        displayName: PropTypes.string,
+
+        /** the video element we are displaying */
+        videoEl: PropTypes.object,
+    };
+
     constructor(props) {
         super(props);
         this.appendVideo = this.appendVideo.bind(this);
