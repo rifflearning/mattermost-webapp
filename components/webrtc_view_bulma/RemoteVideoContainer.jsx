@@ -16,6 +16,7 @@
  *            MIT License (see https://opensource.org/licenses/MIT)
  *
  * ******************************************************************************/
+
 /* eslint
     header/header: "off",
     "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
@@ -24,7 +25,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {logger} from '../../utils/riff';
+import {calculateBitrate, logger} from 'utils/riff';
 
 import SharedScreen from './SharedScreen';
 import PeerVideo from './PeerVideo';
@@ -49,11 +50,30 @@ class RemoteVideoContainer extends React.Component {
 
         /** List of the IDs of all of the webrtc peers */
         riffIds: PropTypes.arrayOf(PropTypes.string),
+
+        /** sets the outgoing bitrate limit for video streams */
+        setVideoBitrateLimit: PropTypes.func,
     };
 
     constructor(props) {
         super(props);
         logger.debug('remote video props:', props);
+    }
+
+    componentDidMount() {
+        // we have to do this here to make sure we set the bitrate
+        // in the case we join a meeting with peers already in it
+        const updatedBitrate = calculateBitrate(this.props.peers.length);
+        this.props.setVideoBitrateLimit(updatedBitrate);
+    }
+
+    componentDidUpdate(prevProps) {
+        // we check to make sure the peers array length has changed
+        // because we get a LOT of unnecessary re-renders in this codebase
+        if (prevProps.peers.length !== this.props.peers.length) {
+            const updatedBitrate = calculateBitrate(this.props.peers.length);
+            this.props.setVideoBitrateLimit(updatedBitrate);
+        }
     }
 
     peerVideo(peerLength) {

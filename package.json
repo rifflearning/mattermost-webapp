@@ -83,7 +83,7 @@
     "redux-persist-transform-filter": "0.0.18",
     "reselect": "3.0.1",
     "sibilant-webaudio": "github:rifflearning/sibilant#f62e2192ab2ab00f3a3dc4392af9c101329069d7",
-    "simplewebrtc": "github:rifflearning/SimpleWebRTC#25616eb081cbcca50ae2166fad9caf2c58fd0fa2",
+    "simplewebrtc": "github:rifflearning/SimpleWebRTC#783d8e763ff4a9d0d18c5be19c662bf09240d328",
     "smoothscroll-polyfill": "0.4.3",
     "socket.io-client": "^2.1.1",
     "styled-components": "^4.0.3",
