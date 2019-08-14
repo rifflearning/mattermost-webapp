@@ -1,7 +1,17 @@
 // Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+// Riff Learning lint overrides
+/* eslint
+    header/header: "off",
+    dot-location: ["error", "property"],
+    indent: ["error", 4, { "CallExpression": { "arguments": "first" }, "ObjectExpression": "first" }],
+    "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
+    "no-underscore-dangle": ["error", { "allow": [ "_id" ] }],
+*/
+
 import React from 'react';
+import PropTypes from 'prop-types';
 import {ScaleLoader} from 'react-spinners';
 
 import {readablePeers, Colors} from 'utils/riff';
@@ -10,6 +20,53 @@ import RemoteVideoContainer from './RemoteVideoContainer';
 import * as sc from './styled';
 
 class RenderVideos extends React.Component {
+    static propTypes = {
+
+        chat: PropTypes.shape({
+            peerColors: PropTypes.array,
+            webRtcRiffIds: PropTypes.array,
+            webRtcPeerDisplayNames: PropTypes.array,
+        }).isRequired,
+
+        riff: PropTypes.shape({
+            meetingId: PropTypes.string,
+        }).isRequired,
+
+        webrtc: PropTypes.shape({
+            setVideoBitrateLimit: PropTypes.func,
+        }),
+
+        /** list of all peers to display */
+        webRtcPeers: PropTypes.arrayOf(PropTypes.object).isRequired,
+
+        /** If a Peer is sharing their screen, this will
+         *   have the remote shared screen element
+         *  Otherwise, this will be null
+         */
+        webRtcRemoteSharedScreen: PropTypes.object,
+
+        /** List of the IDs of all of the webrtc peers */
+        riffIds: PropTypes.arrayOf(PropTypes.string),
+
+        shouldFocusJoinRoomError: PropTypes.bool,
+        inRoom: PropTypes.bool.isRequired,
+        displayRoomName: PropTypes.bool,
+        roomName: PropTypes.string,
+        roRoomName: PropTypes.bool,
+        displayName: PropTypes.string,
+        roDisplayName: PropTypes.bool,
+        joinRoomStatus: PropTypes.string,
+        joinRoomMessage: PropTypes.string,
+        joinButtonDisabled: PropTypes.bool,
+
+        focusJoinRoomErrorComplete: PropTypes.func.isRequired,
+        handleDisplayNameChange: PropTypes.func,
+        clearJoinRoomError: PropTypes.func.isRequired,
+        handleRoomNameChange: PropTypes.func,
+        handleReadyClick: PropTypes.func.isRequired,
+        handleKeyPress: PropTypes.func,
+    };
+
     componentDidUpdate(prevProps /*, prevState*/) {
         //just updated DOM, which has an error message...focus on error
         if (!prevProps.shouldFocusJoinRoomError && this.props.shouldFocusJoinRoomError && this.JoinRoomErrorRef) {

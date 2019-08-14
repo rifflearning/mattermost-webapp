@@ -50,9 +50,9 @@ class RemoteVideoContainer extends React.Component {
 
         /** List of the IDs of all of the webrtc peers */
         riffIds: PropTypes.arrayOf(PropTypes.string),
-	
-	/** sets the outgoing bitrate limit for video streams */
-	setVideoBitrateLimit: PropTypes.func,
+
+        /** sets the outgoing bitrate limit for video streams */
+        setVideoBitrateLimit: PropTypes.func,
     };
 
     constructor(props) {

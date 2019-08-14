@@ -1,6 +1,15 @@
 // Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
+// Riff Learning lint overrides
+/* eslint
+    header/header: "off",
+    dot-location: ["error", "property"],
+    indent: ["error", 4, { "CallExpression": { "arguments": "first" }, "ObjectExpression": "first" }],
+    "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
+    "no-underscore-dangle": ["error", { "allow": [ "_id" ] }],
+*/
+
 import SimpleWebRtc from 'simplewebrtc';
 import Sibilant from 'sibilant-webaudio';
 import parse from 'url-parse';
@@ -34,7 +43,7 @@ export function isScreenShareSourceAvailable() {
         Boolean(navigator.mediaDevices.getSupportedConstraints().mediaSource));
 }
 
-export default function (localVideoNode, dispatch, getState) {
+export default function createAndInitializeWebRTC(localVideoNode, dispatch, getState) {
     const webRtcConfig = {
         localVideoEl: localVideoNode,
         remoteVideosEl: '',
@@ -167,7 +176,7 @@ export default function (localVideoNode, dispatch, getState) {
         dispatch(WebRtcActions.readyToCall());
     });
 
-    webrtc.changeNick = function (nick) {
+    webrtc.changeNick = function changeNick(nick) {
         this.config.nick = nick;
         this.webrtc.config.nick = nick;
     };
