@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * RemoteVideoContainer.jsx                                                                *
+ * RemoteVideoContainer.jsx                                                     *
  * *************************************************************************/ /**
  *
  * @fileoverview Remote video container react component

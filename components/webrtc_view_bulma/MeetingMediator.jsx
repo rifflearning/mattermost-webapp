@@ -1,5 +1,5 @@
 /* ******************************************************************************
- * MeetingMediator.jsx                                                                *
+ * MeetingMediator.jsx                                                          *
  * *************************************************************************/ /**
  *
  * @fileoverview Meeting mediator react component
@@ -134,8 +134,6 @@ class MeetingMediator extends React.Component {
             mediatorProps.roomName,
             mediatorProps.user.username,
             mediatorProps.peerColors,
-            mediatorProps.webRtcRiffIds,
-            null,
             this.updateAccessibleTable,
             this.namesById
         );

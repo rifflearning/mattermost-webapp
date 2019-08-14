@@ -23,7 +23,7 @@ class Mediator {
     // COPIED FROM ORIGINAL RHYTHM-RTC PROJECT
     // with some minor modifications
 
-    constructor(app, participants, user, roomName, userName, peerColors, riffIds, localId, updateAccessibleTable, namesById) {
+    constructor(app, participants, user, roomName, userName, peerColors, updateAccessibleTable, namesById) {
         logger.debug('Mediator initial state:', participants, user, roomName, userName);
 
         this.mm = null;
@@ -35,8 +35,6 @@ class Mediator {
         this.roomUsers = participants;
         this.userName = userName;
         this.peerColors = peerColors;
-        this.riffIds = riffIds;
-        this.localId = localId;
         this.updateAccessibleTable = updateAccessibleTable;
         this.namesById = namesById;
 
@@ -56,9 +54,7 @@ class Mediator {
                          [this.user],
                          this.mm_width,
                          this.mm_height,
-                         this.peerColors,
-                         this.riffIds,
-                         this.localId);
+                         this.peerColors);
         this.mm.render('#meeting-mediator');
 
         this.maybe_update_mm_turns = this.maybe_update_mm_turns.bind(this);
@@ -83,7 +79,7 @@ class Mediator {
         logger.debug('participants: ', participants);
 
         // filter out turns not by present participants
-        var filtered_turns = turns.filter((turn) => participants.includes(turn.participant));
+        const filtered_turns = turns.filter((turn) => participants.includes(turn.participant));
         return filtered_turns;
     }
 
@@ -160,7 +156,7 @@ class Mediator {
 
     start_meeting_listener() {
         logger.debug('starting to listen for meeting changes');
-        var meetings = this.app.service('meetings');
+        const meetings = this.app.service('meetings');
         meetings.on('patched', (obj) => {
             logger.debug('meeting got updated:', obj);
             logger.debug(`roomname: ${this.roomName}`);

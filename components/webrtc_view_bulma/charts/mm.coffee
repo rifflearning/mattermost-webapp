@@ -18,14 +18,11 @@
 
   # get array of participant nodes from data
   nodesFromData = (data) ->
-    nodes = ({'participant': p, 'name': (data.names?[i] ? p)[0]} for p, i in data.participants)
-    console.log("nodes:", nodes);
-
     nodes = ({
       'participant': p,
       'name': (data.names?[p] ? 'Participant ' + i),
       'p': p
-      } for p, i in data.participants)
+    } for p, i in data.participants)
 
     nodes.push({'participant': 'energy'}) # keep the energy ball in the list of nodes
     return nodes
@@ -38,7 +35,7 @@
 
   # exported MeetingMediator class
   module.exports.MeetingMediator = class MM
-    constructor: (@data, @localParticipants, width, height, peerColors, riffIds, localId) ->
+    constructor: (@data, @localParticipants, width, height, peerColors) ->
 
       console.log "constructing MM with data:", @data
       @fontFamily = "Futura,Helvetica Neue,Helvetica,Arial,sans-serif"
@@ -46,7 +43,6 @@
       @width = width - @margin.right - @margin.left
       @height = height - @margin.bottom - @margin.top
       @peerColors = peerColors
-      @riffIds = riffIds
       @namesById = @data.names
 
       @remoteParticipants = [...@data.participants.slice(0, @data.participants.indexOf(@localParticipants[0])),
