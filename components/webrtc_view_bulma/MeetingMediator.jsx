@@ -1,5 +1,20 @@
-// Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
-// See LICENSE.txt for license information.
+/* ******************************************************************************
+ * MeetingMediator.jsx                                                          *
+ * *************************************************************************/ /**
+ *
+ * @fileoverview Meeting mediator react component
+ *
+ * [More detail about the file's contents]
+ *
+ * Created on       Jan 30, 2019
+ * @author          Brec Hanson
+ * @author          Mike Lippert
+ * @author          Jordan Reedie
+ *
+ * @copyright (c) 2019-present Riff Learning, Inc.,
+ *            MIT License (see https://opensource.org/licenses/MIT)
+ *
+ * ******************************************************************************/
 
 /* eslint
     header/header: "off",
@@ -7,11 +22,13 @@
     indent: ["error", 4, { "CallExpression": { "arguments": "first" } }],
     "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
     "no-underscore-dangle": ["error", { "allow": [ "_id" ] }],
- */
+*/
 
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
+
+import ChartCard from 'components/dashboard/components/ChartCard';
 
 import {app, logger} from 'utils/riff';
 import ChartTable from 'components/dashboard/components/ChartTable';
@@ -29,6 +46,18 @@ const MMContainer = styled.div.attrs({
     overflow: hidden;
 `;
 
+/**
+ *  Chart configuration properties
+ */
+const chartConfig = {
+    cardTitle: 'Meeting Mediator',
+    info: 'The Meeting Mediator provides real-time feedback about the last five minutes ' +
+          'of your conversation. Thick lines and proximity to the central node indicate ' +
+          'conversational dominance. Click a node to see the how much a person has spoken. ' +
+          'The center node displays the number of exchanges between participants. A higher ' +
+          'number represents a more energetic conversation.',
+};
+
 class MeetingMediator extends React.Component {
     static propTypes = {
         user: PropTypes.shape({
@@ -44,6 +73,7 @@ class MeetingMediator extends React.Component {
         super(props);
         this.state = {
             tableRows: [],
+            caption: null,
         };
         this.namesById = this.getNamesById();
         this.updateAccessibleTable = this.updateAccessibleTable.bind(this);
@@ -62,7 +92,7 @@ class MeetingMediator extends React.Component {
         }
 
         if (this.mm) {
-            this.mm.update_users(riffCopy.participants);
+            this.mm.update_users(riffCopy.participants, this.namesById);
         }
     }
 
@@ -88,6 +118,8 @@ class MeetingMediator extends React.Component {
                 this.namesById[turn.participant],
                 [`${Math.round(turn.turns * 100)}%`],
             ]),
+            caption: `Turns taken: The group has taken ${data.transitions} turns ` +
+                     'between participants in the last five minutes.',
         });
     }
 
@@ -102,23 +134,42 @@ class MeetingMediator extends React.Component {
             mediatorProps.roomName,
             mediatorProps.user.username,
             mediatorProps.peerColors,
-            mediatorProps.webRtcRiffIds,
-            null,
             this.updateAccessibleTable,
+            this.namesById
         );
     }
 
     render() {
+        const chartTable = this.state.tableRows.length ? (
+            <ChartTable
+                cols={['Participant', 'Amount of Speaking']}
+                rows={this.state.tableRows}
+                caption={this.state.caption}
+            />
+        ) : null;
+
+        const chartDiv = <MMContainer id='meeting-mediator'/>;
+
         return (
-            <React.Fragment>
-                <MMContainer id='meeting-mediator'/>
-                {this.state.tableRows.length ? (
-                    <ChartTable
-                        cols={['Participant', 'Amount of Speaking']}
-                        rows={this.state.tableRows}
-                    />
-                ) : null }
-            </React.Fragment>
+            <div style={{marginTop: '10px'}}>
+                <ChartCard
+                    title={chartConfig.cardTitle}
+                    chartInfo={chartConfig.info}
+                    chartDiv={chartDiv}
+                    chartTable={chartTable}
+                    chartCardId='meeting-mediator-card'
+                    longDescription={true}
+
+                    /*isMediatorCard is a temporary prop until the dashboard is
+                    redesigned. The new meeting mediator card in riff-rtc has a
+                    purple border and no box-shadow. Since the ChartCard
+                    component is also used in the dashboard, and doesn't require
+                    these styles, we must distinguish the meeting mediator chart
+                    card (for now).
+                    .*/
+                    isMediatorCard={true}
+                />
+            </div>
         );
     }
 }

@@ -16,6 +16,8 @@ const CardTitle = styled.div.attrs({
     margin-left: 1rem;
     margin-right: 1rem;
     color: rgb(138, 106, 148);
+    display: flex;
+    justify-content: space-between;
 
     button {
         background: none;
@@ -32,25 +34,40 @@ const ChartDiv = styled.div.attrs({
     }
 `;
 
-const widthCard = (maxWidth) => {
-    logger.debug('setting max width to:', maxWidth + 'vw');
-    const Card = styled.div.attrs({
-        className: 'card has-text-centered is-centered',
-    })`
-        display: flex;
-        flex-direction: column;
-        padding: 1rem;
-        max-width: ${(/*props*/) => maxWidth + 'vw'};
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
-    `;
-    return Card;
-};
+const Card = styled.div.attrs({
+    className: 'card has-text-centered is-centered',
+})`
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    max-width: ${(props) => `${props.maxWidth}vw`};
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
+    border: none;
 
-const ChartInfo = styled.p.attrs({
+    ${(props) => props.isMediatorCard === true && `
+      box-shadow: none;
+      border: 2px solid #8a6a94;
+      padding: 0;
+      padding-top: 0.75rem;
+      border-radius: 5px;
+      margin-left: auto;
+      margin-right: auto;
+      margin-bottom: 2rem;
+    `}
+`;
+
+const StyledInfo = styled.p.attrs({
     className: 'has-text-weight-bold is-size-6',
 })`
     padding: 2rem;
     color: #fff;
+`;
+
+const StyledInfoSmall = styled.p.attrs({
+    className: 'is-size-7',
+})`
+padding: 2rem 0.5rem 0.5rem 0.5rem;
+color: #fff;
 `;
 
 const INFO_CLICKED = 'INFO_CLICKED';
@@ -89,11 +106,13 @@ const ChartCard = enhance((props) => {
         }, 100);
     };
 
-    const mw = props.maxWidth ? props.maxWidth : 25;
-    const Card = widthCard(mw + 2);
+    const maxWidth = (props.maxWidth ? props.maxWidth : 25) + 2;
     logger.debug('chart div:', props.chartDiv);
     return (
-        <Card>
+        <Card
+            maxWidth={maxWidth}
+            isMediatorCard={props.isMediatorCard}
+        >
             <CardTitle>
                 {props.title}
                 <span
@@ -115,6 +134,7 @@ const ChartCard = enhance((props) => {
                     id={`chart-info-${props.chartCardId}`}
                     close={chartInfoClosed}
                     chartInfo={props.chartInfo}
+                    longDescription={props.longDescription}
                 />
             )}
             <ChartDiv>
@@ -136,12 +156,21 @@ class ChartInfoDiv extends React.Component {
 
         /** Description of what the chart shows */
         chartInfo: PropTypes.string.isRequired,
+
+        /** flag for an especially long description that requires smaller text. */
+        longDescription: PropTypes.bool,
     }
 
     componentDidMount() {
         this.ChartInfoDiv.focus();
     }
     render() {
+        let chartInfo = <StyledInfo>{this.props.chartInfo}</StyledInfo>;
+
+        if (this.props.longDescription) {
+            chartInfo = <StyledInfoSmall>{this.props.chartInfo}</StyledInfoSmall>;
+        }
+
         return (
             <div
                 id={this.props.id}
@@ -161,7 +190,7 @@ class ChartInfoDiv extends React.Component {
                         <MaterialIcon icon='close'/>
                     </button>
                 </span>
-                <ChartInfo>{this.props.chartInfo}</ChartInfo>
+                {chartInfo}
             </div>
         );
     }

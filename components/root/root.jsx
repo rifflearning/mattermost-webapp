@@ -254,16 +254,6 @@ export default class Root extends React.Component {
 
     componentDidMount() {
         loadMeAndConfig(this.onConfigLoaded);
-        /* NOTE: merge of riff code back not added because it was a change to functionality
-         * not in this 5.5 release -mjl 2018-11-21
-         *
-        this.props.actions.loadMeAndConfig().then((response) => {
-            let routingToVideo = this.props.location.pathname.indexOf('/video');
-            if (response[2] && response[2].data && !routingToVideo) {
-                console.log("root redirecting user to default team");
-                GlobalActions.redirectUserToDefaultTeam();
-            }
-         */
         trackLoadTime();
     }
 

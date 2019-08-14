@@ -1,12 +1,28 @@
-// Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
-// See LICENSE.txt for license information.
-
+/* ******************************************************************************
+ * RemoteVideoContainer.jsx                                                     *
+ * *************************************************************************/ /**
+ *
+ * @fileoverview Remote video container react component
+ *
+ * [More detail about the file's contents]
+ *
+ * Created on       Nov 21, 2018
+ * @author          Mike Lippert
+ * @author          Dan Calacci
+ * @author          Brec Hanson
+ * @author          Jordan Reedie
+ *
+ * @copyright (c) 2019-present Riff Learning, Inc.,
+ *            MIT License (see https://opensource.org/licenses/MIT)
+ *
+ * ******************************************************************************/
 /* eslint
     header/header: "off",
     "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
- */
+*/
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import {logger} from '../../utils/riff';
 
@@ -14,6 +30,27 @@ import SharedScreen from './SharedScreen';
 import PeerVideo from './PeerVideo';
 
 class RemoteVideoContainer extends React.Component {
+    static propTypes = {
+
+        chat: PropTypes.shape({
+            peerColors: PropTypes.array,
+            webRtcRiffIds: PropTypes.array,
+            webRtcPeerDisplayNames: PropTypes.array,
+        }).isRequired,
+
+        /** list of all peers to display */
+        peers: PropTypes.arrayOf(PropTypes.object).isRequired,
+
+        /** If a Peer is sharing their screen, this will
+         *   have the remote shared screen element
+         *  Otherwise, this will be null
+         */
+        remoteSharedScreen: PropTypes.object,
+
+        /** List of the IDs of all of the webrtc peers */
+        riffIds: PropTypes.arrayOf(PropTypes.string),
+    };
+
     constructor(props) {
         super(props);
         logger.debug('remote video props:', props);
@@ -33,6 +70,7 @@ class RemoteVideoContainer extends React.Component {
                 <PeerVideo
                     key={peer.id}
                     id={peer.id}
+                    displayName={displayName}
                     videoEl={peer.videoEl}
                     type='peer'
                     peerColor={peerColor}

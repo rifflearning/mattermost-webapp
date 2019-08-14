@@ -4,7 +4,7 @@
 #  'transitions': <Number Of transitions in interval>,
 #  'turns': [{'participant': <participantId>,
 #             'turns': <Percent of turns in interval by this participant>}, ...]
-  d3 = require('./d3').default
+  d3 = require('utils/libs/d3').default
 
   NETWORK_RADIUS = 115 * 2/3
   PARTICIPANT_NODE_RADIUS = 20 * 2/3
@@ -13,10 +13,17 @@
   PARTICIPANT_NODE_COLOR_LOCAL = '#4a4a4a'
   PARTICIPANT_NODE_COLOR_OTHER = '#3AC4C5'
 
+  TOOLTIP_WIDTH = 125
+  TOOLTIP_HEIGHT = 45
+
   # get array of participant nodes from data
   nodesFromData = (data) ->
-    nodes = ({'participant': p, 'name': (data.names?[i] ? p)[0]} for p, i in data.participants)
-    console.log("nodes:", nodes);
+    nodes = ({
+      'participant': p,
+      'name': (data.names?[p] ? 'Participant ' + i),
+      'p': p
+    } for p, i in data.participants)
+
     nodes.push({'participant': 'energy'}) # keep the energy ball in the list of nodes
     return nodes
 
@@ -28,7 +35,7 @@
 
   # exported MeetingMediator class
   module.exports.MeetingMediator = class MM
-    constructor: (@data, @localParticipants, width, height, peerColors, riffIds, localId) ->
+    constructor: (@data, @localParticipants, width, height, peerColors) ->
 
       console.log "constructing MM with data:", @data
       @fontFamily = "Futura,Helvetica Neue,Helvetica,Arial,sans-serif"
@@ -36,7 +43,7 @@
       @width = width - @margin.right - @margin.left
       @height = height - @margin.bottom - @margin.top
       @peerColors = peerColors
-      @riffIds = riffIds
+      @namesById = @data.names
 
       @remoteParticipants = [...@data.participants.slice(0, @data.participants.indexOf(@localParticipants[0])),
                              ...@data.participants.slice(@data.participants.indexOf(@localParticipants[0]) + 1)]
@@ -123,6 +130,25 @@
       @nodesG = @graphG.append "g"
         .attr "id", "nodes"
 
+      # get existing tooltip div if it exists, otherwise create it
+      @tooltip = d3.select "body > div.tooltip"
+      if @tooltip.empty()
+        @tooltip = d3.select "body"
+          .append "div"
+          .attr "class", "tooltip"
+          .style "position", "absolute"
+          .style "width", "#{ TOOLTIP_WIDTH }px"
+          .style "height", "#{ TOOLTIP_HEIGHT }px"
+          .style "padding", "5px"
+          .style "background", "white"
+          .style "border", "1px solid #dbdbdb"
+          .style "color", "#4a4a4a"
+          .style "pointer-events", "none"
+          .style "border-radius", "4px"
+          .style "font-size", "10px"
+          .style "align-items", "center"
+          .style "display", "none"
+
       @renderNodes()
       @renderLinks()
 
@@ -143,6 +169,7 @@
 
       nodeGsEnter.append "circle"
         .attr "class", "nodeCircle"
+        .attr "id", (d) => "circle-" + d.participant
         .attr "fill", @nodeColor
         .attr "r", @nodeRadius
 
@@ -155,27 +182,60 @@
           else
             @nodeRadius(d) - 3
 
+      # add labels to the nodes
       nodeGsEnter.append "text"
+        .attr "class", "node-label"
+        .style "cursor", "default"
         .attr "text-anchor", "middle"
-        .attr "font-size", "24px"
-        .attr "dy", ".35em"
-        .attr "transform", (d) =>
-          if (d.participant == 'energy')
-            ""
-          else
-            "rotate(#{ (-1 * (@constantRotationAngle() + @angle(d.participant))) })"
+        .attr "font-size", "15px"
+        .attr "dy", ".38em"
         .attr "fill", (d) =>
           if (@localParticipants.includes(d.participant))
             "#FFFFFF"
           else
             "#000000"
-        #.text (d) -> d.name
+
+      # show tooltip on hover
+      nodeGsEnter.on "mouseover", (d) =>
+        tooltipText = ""
+        position = document.getElementById('circle-' + d.participant).getBoundingClientRect()
+        leftPosition = (position.x + (position.width / 2)) - (TOOLTIP_WIDTH / 2) + window.scrollX
+        topPosition = position.y + window.scrollY - TOOLTIP_HEIGHT
+        if leftPosition < 0
+          leftPosition = 0
+        if topPosition < 0
+          topPosition = 0
+        if d.participant == 'energy'
+          tooltipText = "Turn Count: " + @data.transitions
+        else
+          speakingTime = @getSpeakingTime(d.participant)
+          tooltipText = "Name: " + d.name + "<br/>Speaking Time: " + speakingTime
+        @tooltip.html(tooltipText)
+          .style "left", leftPosition + "px"
+          .style "top", topPosition + "px"
+          .style "display", "flex"
+
+      # hide tooltip
+      nodeGsEnter.on "mouseout", (d) =>
+        @tooltip.html("")
+        @tooltip.style "display", "none"
 
       # all node groups
       @nodesG.selectAll(".node").transition().duration(500)
         .attr "transform", @nodeTransform
         .select('circle') # change circle color
         .attr "fill", @nodeColor
+
+      # the name isn't always supplied when the participant is added and its node created
+      # so update the label on all nodes now,
+      # and unrotate the node labels so they remain upright
+      @nodesG.selectAll(".node-label")
+        .text @nodeName
+        .attr "transform", (d) =>
+          if (d.participant == 'energy')
+            ""
+          else
+            "rotate(#{ (-1 * (@constantRotationAngle() + @angle(d.participant))) })"
 
     # d3func - different colors for different types of nodes...
     nodeColor: (d) =>
@@ -185,6 +245,7 @@
         PARTICIPANT_NODE_COLOR_LOCAL
       else
         @nodeColorScale(d.participant)
+
 #        PARTICIPANT_NODE_COLOR_OTHER
 
     # d3func - we have different kinds of nodes, so this just abstracts
@@ -195,6 +256,13 @@
       else
         "rotate(#{ @angle(d.participant) })translate(#{ @radius },0)"
 
+    # get name if it exists
+    nodeName: (d) =>
+      if (@namesById[d.participant])
+        @namesById[d.participant][0]
+      else
+        ""
+
     # d3func - a translation between the angle rotation for nodes
     # and the raw x/y positions. Used for computing link endpoints.
     getNodeCoords: (id) =>
@@ -202,6 +270,13 @@
       t = MM.getTransformation(transformText)
       return {'x': t.translate.x, 'y': t.translate.y}
 
+    # convert participant speaking time to a percentage
+    getSpeakingTime: (participant) =>
+      pct = 0
+      myTurn = @data.turns.find((t) => t.participant == participant)
+      if (myTurn)
+        pct = Math.round(myTurn.turns * 100)
+      return pct + "%"
 
     renderLinks: () ->
       linkGs = @linksG.selectAll "line.link"
@@ -281,6 +356,7 @@
 
     updateData: (data) ->
       console.log "updating MM viz with data:", data
+      @namesById = data.names
       data.participants = data.participants.slice() # in case its frozen
       data.participants = data.participants.sort()
       @remoteParticipants = [...data.participants.slice(0, data.participants.indexOf(@localParticipants[0])),
@@ -291,7 +367,7 @@
       console.log("beginning:", data.participants.slice(0, data.participants.indexOf(@localParticipants[0])))
       console.log("end", data.participants.slice(data.participants.indexOf(@localParticipants[0]) + 1))
       console.log("color:", @remoteParticipants.map((p) => @nodeColorScale(p)))
-      if data.participants.length == @data.participants.length
+      if (data.participants.length == @data.participants.length && Object.keys(data.names).length == Object.keys(@data.names).length)
         @data = data
         @updateLinkWeight()
 

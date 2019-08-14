@@ -1,14 +1,14 @@
 // Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-// Riff Learning list overrides
+// Riff Learning lint overrides
 /* eslint
     header/header: "off",
     dot-location: ["error", "property"],
     indent: ["error", 4, { "CallExpression": { "arguments": "first" }, "ObjectExpression": "first" }],
     "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
     "no-underscore-dangle": ["error", { "allow": [ "_id" ] }],
- */
+*/
 
 // This file only
 /* eslint-disable camelcase */
@@ -23,7 +23,7 @@ class Mediator {
     // COPIED FROM ORIGINAL RHYTHM-RTC PROJECT
     // with some minor modifications
 
-    constructor(app, participants, user, roomName, userName, peerColors, riffIds, localId, updateAccessibleTable) {
+    constructor(app, participants, user, roomName, userName, peerColors, updateAccessibleTable, namesById) {
         logger.debug('Mediator initial state:', participants, user, roomName, userName);
 
         this.mm = null;
@@ -35,9 +35,8 @@ class Mediator {
         this.roomUsers = participants;
         this.userName = userName;
         this.peerColors = peerColors;
-        this.riffIds = riffIds;
-        this.localId = localId;
         this.updateAccessibleTable = updateAccessibleTable;
+        this.namesById = namesById;
 
         // if (!elementIsEmpty('#meeting-mediator')) {
         //   logger.debug('not starting a second MM...');
@@ -51,13 +50,11 @@ class Mediator {
         this.mm = new MM({participants: this.roomUsers,
                           transitions: 0,
                           turns: [],
-                          names: []},
+                          names: this.namesById},
                          [this.user],
                          this.mm_width,
                          this.mm_height,
-                         this.peerColors,
-                         this.riffIds,
-                         this.localId);
+                         this.peerColors);
         this.mm.render('#meeting-mediator');
 
         this.maybe_update_mm_turns = this.maybe_update_mm_turns.bind(this);
@@ -82,7 +79,7 @@ class Mediator {
         logger.debug('participants: ', participants);
 
         // filter out turns not by present participants
-        var filtered_turns = turns.filter((turn) => participants.includes(turn.participant));
+        const filtered_turns = turns.filter((turn) => participants.includes(turn.participant));
         return filtered_turns;
     }
 
@@ -111,6 +108,7 @@ class Mediator {
                 participants: this.roomUsers,
                 transitions: data.transitions,
                 turns: this.transform_turns(this.roomUsers, data.turns),
+                names: this.namesById,
             };
             this.updateAccessibleTable(mmdata);
             this.mm.updateData(mmdata);
@@ -132,12 +130,15 @@ class Mediator {
         const newTurns = this.roomUsers.length > 1 ? this.mm.data.turns : [];
         this.mm.updateData({participants: this.roomUsers.slice(),
                             transitions: this.mm.data.transitions,
-                            turns: newTurns.slice()});
+                            turns: newTurns.slice(),
+                            names: this.namesById,
+        });
     }
 
-    update_users(users) {
+    update_users(users, namesById) {
         logger.debug('charts.update_users:', {oldUsers: this.roomUsers, newUsers: users});
         this.roomUsers = users.slice();
+        this.namesById = namesById;
         this.maybe_update_mm_participants();
     }
 
@@ -147,13 +148,15 @@ class Mediator {
         if (obj.room === this.roomName) {
             this.mm.updateData({participants: obj.participants,
                                 transitions: this.mm.data.transitions,
-                                turns: this.mm.data.turns});
+                                turns: this.mm.data.turns,
+                                names: this.namesById,
+            });
         }
     }
 
     start_meeting_listener() {
         logger.debug('starting to listen for meeting changes');
-        var meetings = this.app.service('meetings');
+        const meetings = this.app.service('meetings');
         meetings.on('patched', (obj) => {
             logger.debug('meeting got updated:', obj);
             logger.debug(`roomname: ${this.roomName}`);
@@ -163,6 +166,7 @@ class Mediator {
                     participants: this.roomUsers,
                     transitions: this.mm.data.transitions,
                     turns: this.mm.data.turns,
+                    names: this.namesById,
                 });
             }
         });

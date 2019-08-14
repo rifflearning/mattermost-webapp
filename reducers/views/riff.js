@@ -1,4 +1,11 @@
-import {RiffServerActionTypes} from '../../utils/constants';
+// Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
+
+/* eslint
+    header/header: "off",
+*/
+
+import {RiffServerActionTypes} from 'utils/constants';
 
 const initialState = {
     meetingId: null,
