@@ -4,7 +4,7 @@
 #  'transitions': <Number Of transitions in interval>,
 #  'turns': [{'participant': <participantId>,
 #             'turns': <Percent of turns in interval by this participant>}, ...]
-  d3 = require('./d3').default
+  d3 = require('utils/libs/d3').default
 
   NETWORK_RADIUS = 115 * 2/3
   PARTICIPANT_NODE_RADIUS = 20 * 2/3
