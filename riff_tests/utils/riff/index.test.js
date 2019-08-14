@@ -1,3 +1,5 @@
+// Copyright (c) 2019-present Riff Learning, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
 import assert from 'assert';
 
 import {readablePeers} from 'utils/riff';
