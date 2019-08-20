@@ -586,7 +586,7 @@ class LoginController extends React.Component {
                                 placeholder={loginIdPlaceholder}
                                 spellCheck='false'
                                 autoCapitalize='off'
-                                autoFocus='true'
+                                autoFocus={true}
                                 aria-label={loginIdPlaceholder}
                             />
                         </div>
