@@ -172,7 +172,7 @@ var config = {
             },
             {
                 test: /\.coffee$/,
-                use: ['coffee-loader']
+                use: ['coffee-loader'],
             },
             {
                 type: 'javascript/auto',

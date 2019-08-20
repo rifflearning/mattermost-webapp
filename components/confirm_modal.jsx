@@ -1,8 +1,8 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import PropTypes from 'prop-types';
 import React from 'react';
+import PropTypes from 'prop-types';
 import {Modal} from 'react-bootstrap';
 import {FormattedMessage} from 'react-intl';
 
@@ -175,7 +175,7 @@ export default class ConfirmModal extends React.Component {
                 <Modal.Footer>
                     {cancelButton}
                     <button
-                        autoFocus='true'
+                        autoFocus={true}
                         type='button'
                         className={this.props.confirmButtonClass}
                         onClick={this.handleConfirm}

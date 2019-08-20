@@ -1,3 +1,14 @@
+// Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
+
+/* eslint
+    header/header: "off",
+    dot-location: ["error", "property"],
+    indent: ["error", 4, { "CallExpression": { "arguments": "first" } }],
+    "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
+    "no-underscore-dangle": ["error", { "allow": [ "_id" ] }],
+ */
+
 import React from 'react';
 import PropTypes from 'prop-types';
 import {Route} from 'react-router-dom';
@@ -22,45 +33,44 @@ import UserSettingsModal from 'components/user_settings/modal';
 import ModalController from 'components/modal_controller';
 import TeamSidebar from 'components/team_sidebar';
 import Sidebar from 'components/sidebar';
-import * as Utils from 'utils/utils';
-import CenterChannel from 'components/channel_layout/center_channel';
 
-import Page from 'components/page_layout/Page';
+import {isMac} from 'utils/utils';
 
+import Page from './Page';
 
-export default class WebrtcController extends React.Component {
+export default class PageController extends React.Component {
     static propTypes = {
         pathName: PropTypes.string.isRequired,
-        teamType: PropTypes.string.isRequired
+        teamType: PropTypes.string.isRequired,
     };
 
     render() {
         return (
             <div className='channel-view'>
-              <AnnouncementBar/>
-              <SystemNotice/>
+                <AnnouncementBar/>
+                <SystemNotice/>
 
-              <div className='container-fluid'>
-                <SidebarRight/>
-                <SidebarRightMenu teamType={this.props.teamType}/>
-                <Route component={TeamSidebar}/>
-                <Route component={Sidebar}/>
-                <Route component={Page}/>
-                <Pluggable pluggableName='Root'/>
-                <UserSettingsModal/>
-                <GetPostLinkModal/>
-                <GetPublicLinkModal/>
-                <GetTeamInviteLinkModal/>
-                <InviteMemberModal/>
-                <ImportThemeModal/>
-                <TeamSettingsModal/>
-                <EditPostModal/>
-                <RemovedFromChannelModal/>
-                <ResetStatusModal/>
-                <LeavePrivateChannelModal/>
-                <ShortcutsModal isMac={Utils.isMac()}/>
-                <ModalController/>
-              </div>
+                <div className='container-fluid'>
+                    <SidebarRight/>
+                    <SidebarRightMenu teamType={this.props.teamType}/>
+                    <Route component={TeamSidebar}/>
+                    <Route component={Sidebar}/>
+                    <Route component={Page}/>
+                    <Pluggable pluggableName='Root'/>
+                    <UserSettingsModal/>
+                    <GetPostLinkModal/>
+                    <GetPublicLinkModal/>
+                    <GetTeamInviteLinkModal/>
+                    <InviteMemberModal/>
+                    <ImportThemeModal/>
+                    <TeamSettingsModal/>
+                    <EditPostModal/>
+                    <RemovedFromChannelModal/>
+                    <ResetStatusModal/>
+                    <LeavePrivateChannelModal/>
+                    <ShortcutsModal isMac={isMac()}/>
+                    <ModalController/>
+                </div>
             </div>
         );
     }

@@ -1,15 +1,26 @@
-import {joinChannel, markGroupChannelOpen, getChannelByNameAndTeamName} from 'mattermost-redux/actions/channels';
+// Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
+// See LICENSE.txt for license information.
 
-import {getUser, getUserByUsername, getUserByEmail} from 'mattermost-redux/actions/users';
+/* eslint
+    header/header: "off",
+    dot-location: ["error", "property"],
+    indent: ["error", 4, { "CallExpression": { "arguments": "first" } }],
+    "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
+    "no-underscore-dangle": ["error", { "allow": [ "_id" ] }],
+ */
+
+// TODO: These are action creators, so this file defining them doesn't belong in components
+//       and should be moved. -mjl 2019-08-20
+
 import {getTeamByName} from 'mattermost-redux/selectors/entities/teams';
-import {getCurrentUserId, getUserByUsername as selectUserByUsername, getUser as selectUser} from 'mattermost-redux/selectors/entities/users';
-import {getCurrentChannelId, getChannelByName, getOtherChannels, getChannel, getChannelsNameMapInCurrentTeam} from 'mattermost-redux/selectors/entities/channels';
-import * as WebRtcActions from '../../../actions/webrtc_actions';
+import {
+    getChannelByName,
+    getChannel,
+    getChannelsNameMapInCurrentTeam,
+} from 'mattermost-redux/selectors/entities/channels';
 
-import {Constants} from 'utils/constants.jsx';
-import {openDirectChannelToUser} from 'actions/channel_actions.jsx';
-import * as GlobalActions from 'actions/global_actions.jsx';
-import * as Utils from 'utils/utils.jsx';
+import * as WebRtcActions from 'actions/webrtc_actions';
+import {logger} from 'utils/riff';
 
 const LENGTH_OF_ID = 26;
 const LENGTH_OF_GROUP_ID = 40;
@@ -18,17 +29,18 @@ const LENGTH_OF_USER_ID_PAIR = 54;
 export function onWebRtcByIdentifierEnter({match, history}) {
     return (dispatch, getState) => {
         const state = getState();
-        const {path, identifier, team, videoId} = match.params;
+        const {identifier, team} = match.params;
 
         if (!getTeamByName(state, team)) {
             return;
         }
 
         // always first check if its an ID or a name.
-        if (identifier.length == LENGTH_OF_ID || identifier.length == LENGTH_OF_USER_ID_PAIR || identifier.length == LENGTH_OF_GROUP_ID) {
+        if (identifier.length === LENGTH_OF_ID ||
+            identifier.length === LENGTH_OF_USER_ID_PAIR ||
+            identifier.length === LENGTH_OF_GROUP_ID) {
             dispatch(goToVideoByChannelIdentifier(match, history));
         } else {
-            const channelsByName = getChannelByName(state, identifier);
             dispatch(goToVideoByChannelName(match, history));
         }
 
@@ -48,22 +60,22 @@ export function onWebRtcByIdentifierEnter({match, history}) {
         // } else if (identifier.length === LENGTH_OF_USER_ID_PAIR) {
         //     dispatch(goToDirectChannelByUserIds(match, history));
         // }
-    }
-};
+    };
+}
 
-export function goToVideoByChannelIdentifier(match, history) {
+export function goToVideoByChannelIdentifier(match, /*history*/) {
     return async (dispatch, getState) => {
         const state = getState();
         const {team, identifier, videoId} = match.params;
         const channelId = identifier.toLowerCase();
 
-        console.log("channelId:", channelId);
-        console.log("match:", match.params);
+        logger.debug('channelId:', channelId);
+        logger.debug('match:', match.params);
 
-        let channel = getChannel(state, channelId) || getChannelByName(state, channelId);
+        const channel = getChannel(state, channelId) || getChannelByName(state, channelId);
         const teamObj = getTeamByName(state, team);
 
-        console.log("got channel object", channel);
+        logger.debug('got channel object', channel);
 
         if (!teamObj) {
             //TODO: not a team???
@@ -72,17 +84,14 @@ export function goToVideoByChannelIdentifier(match, history) {
 
         if (!channel) {
             //TODO: error, cant join a video for a channel that doesnt exist.
-            console.log("cant join video for channel that doesnt exist.");
+            logger.error('cant join video for channel that doesnt exist.');
         }
 
-        let channelName = channel ? channel.name : channelId;
         dispatch(WebRtcActions.joinWebRtcRoom(channelId, team, videoId));
     };
-};
+}
 
-
-
-export function goToVideoByChannelName(match, history) {
+export function goToVideoByChannelName(match, /*history*/) {
     return async (dispatch, getState) => {
         const state = getState();
         const {team, identifier, videoId} = match.params;
@@ -93,15 +102,15 @@ export function goToVideoByChannelName(match, history) {
             return;
         }
 
-        let channel = getChannelsNameMapInCurrentTeam(state)[channelName];
+        const channel = getChannelsNameMapInCurrentTeam(state)[channelName];
 
         if (!channel) {
             //TODO: error, cant join a video for a channel that doesnt exist.
-            console.log("cant join video for channel that doesnt exist.");
+            logger.error('cant join video for channel that doesnt exist.');
         }
 
-        let channelIdentifier = channel ? channel.name : channelName;
+        const channelIdentifier = channel ? channel.name : channelName;
 
         dispatch(WebRtcActions.joinWebRtcRoom(channelIdentifier, team, videoId));
     };
-};
+}
