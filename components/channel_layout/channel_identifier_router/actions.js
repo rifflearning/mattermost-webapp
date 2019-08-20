@@ -1,5 +1,16 @@
-// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
+
+/* eslint
+    header/header: "off",
+    dot-location: ["error", "property"],
+    indent: ["error", 4, { "CallExpression": { "arguments": "first" } }],
+    "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
+    "no-underscore-dangle": ["error", { "allow": [ "_id" ] }],
+ */
+
+// TODO: These are action creators, so this file defining them doesn't belong in components
+//       and should be moved. -mjl 2019-08-20
 
 import {joinChannel, getChannelByNameAndTeamName, markGroupChannelOpen} from 'mattermost-redux/actions/channels';
 import {getUser, getUserByUsername, getUserByEmail} from 'mattermost-redux/actions/users';
@@ -43,6 +54,7 @@ export function onChannelByIdentifierEnter({match, history}) {
             } else {
                 dispatch(goToChannelByChannelName(match, history));
             }
+
             // messages is how we know to go to a direct channel.
         } else if (path === 'messages') {
             if (identifier.indexOf('@') === 0) {

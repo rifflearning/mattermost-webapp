@@ -1,27 +1,28 @@
-// Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
+// Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
+
+/* eslint
+    header/header: "off",
+    dot-location: ["error", "property"],
+    indent: ["error", 4, { "CallExpression": { "arguments": "first" } }],
+    "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
+    "no-underscore-dangle": ["error", { "allow": [ "_id" ] }],
+ */
 
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Route, Switch, Redirect} from 'react-router-dom';
+import {Route, Switch} from 'react-router-dom';
 import classNames from 'classnames';
 
-import PermalinkView from 'components/permalink_view';
 import Navbar from 'components/navbar';
 import WebRtcIdentifierRouter from 'components/webrtc_layout/webrtc_identifier_router';
-//import WebRtc from 'components/webrtc/index';
 
 export default class WebRtc extends React.PureComponent {
     static propTypes = {
-        match: PropTypes.object.isRequired,
-        location: PropTypes.object.isRequired,
-        // TODO: possible this should be last video path instead
-        // to redirect to the right videochat they were last at.
+        lhsOpen: PropTypes.bool,
+        rhsOpen: PropTypes.bool.isRequired,
+        rhsMenuOpen: PropTypes.bool.isRequired,
     };
-
-    constructor(props) {
-        super(props);
-    }
 
     render() {
         return (
@@ -41,12 +42,12 @@ export default class WebRtc extends React.PureComponent {
                 <div className='row main'>
                     <Switch>
                         <Route
-                        path={'/:team/:identifier/video/:videoId'}
-                        component={WebRtcIdentifierRouter}
+                            path={'/:team/:identifier/video/:videoId'}
+                            component={WebRtcIdentifierRouter}
                         />
                     </Switch>
                 </div>
             </div>
         );
     }
-} 
+}

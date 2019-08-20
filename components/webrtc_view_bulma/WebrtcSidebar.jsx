@@ -10,6 +10,7 @@
  */
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import MaterialIcon from 'material-icons-react';
 import {detect} from 'detect-browser';
 
@@ -110,101 +111,125 @@ const AudioStatus = (props) => {
     );
 };
 
-const AudioStatusBar = (props) => {
-    const screenShareWarning = () => {
-        // inform the user screen sharing is not available on their device
-        let text = <p/>;
-        let alertText = 'Copy and paste "chrome://flags/#enable-experimental-web-platform-features" into your ';
-        alertText +=    'address bar, toggle the button to "Enabled", and relaunch Chrome.'; // eslint-disable-line no-multi-spaces
+class AudioStatusBar extends React.PureComponent {
+    static propTypes = {
 
-        const howToEnableAlert = (e) => {
-            e.preventDefault();
-            alert(alertText); // eslint-disable-line no-alert
-        };
+        audioMuted: PropTypes.bool,
+        volume: PropTypes.number,
+        webrtc: PropTypes.object,
+        handleMuteAudioClick: PropTypes.func,
+    };
 
-        switch (browser && browser.name) {
-        case 'chrome': {
-            const version = parseInt(browser.version.split('.')[0], 10);
-            if (version >= 70) {
-                text = (
-                    <p>
-                        {'Screen Sharing is Disabled.'}
-                        {'To enable screen sharing, please&nbsp;'}
-                        <a href='#' onClick={howToEnableAlert}>{'turn on experimental features'}</a>
-                        {'&nbsp;in Chrome.'}
-                    </p>
-                );
-            } else {
+    render() {
+        const screenShareWarning = () => {
+            // inform the user screen sharing is not available on their device
+            let text = <p/>;
+            let alertText = 'Copy and paste "chrome://flags/#enable-experimental-web-platform-features" into your ';
+            alertText +=    'address bar, toggle the button to "Enabled", and relaunch Chrome.'; // eslint-disable-line no-multi-spaces
+
+            const howToEnableAlert = (e) => {
+                e.preventDefault();
+                alert(alertText); // eslint-disable-line no-alert
+            };
+
+            switch (browser && browser.name) {
+            case 'chrome': {
+                const version = parseInt(browser.version.split('.')[0], 10);
+                if (version >= 70) {
+                    text = (
+                        <p>
+                            {'Screen Sharing is Disabled.'}
+                            {'To enable screen sharing, please&nbsp;'}
+                            <a href='#' onClick={howToEnableAlert}>{'turn on experimental features'}</a>
+                            {'&nbsp;in Chrome.'}
+                        </p>
+                    );
+                } else {
+                    text = (
+                        <p>
+                            {`Screen Sharing is Disabled.
+                            Please update Chrome to the latest version to use screen sharing.`}
+                        </p>
+                    );
+                }
+                break;
+            }
+            case 'firefox':
                 text = (
                     <p>
                         {`Screen Sharing is Disabled.
-                        Please update Chrome to the latest version to use screen sharing.`}
+                        Please make sure you have the latest version of Firefox to use screen sharing.`}
+                    </p>
+                );
+                break;
+            default:
+                text = (
+                    <p>
+                        {`Screen sharing is not supported in this browser.
+                         Please use the latest version of Chrome or Firefox to enable screen sharing.`}
                     </p>
                 );
             }
-            break;
-        }
-        case 'firefox':
-            text = (
-                <p>
-                    {`Screen Sharing is Disabled.
-                    Please make sure you have the latest version of Firefox to use screen sharing.`}
-                </p>
+
+            return (
+                <div style={{paddingBottom: '20px'}}>
+                    <MaterialIcon icon='warning' color={Colors.brightred}/>
+                    <div>
+                        {text}
+                    </div>
+                </div>
             );
-            break;
-        default:
-            text = (
-                <p>
-                    {`Screen sharing is not supported in this browser.
-                     Please use the latest version of Chrome or Firefox to enable screen sharing.`}
-                </p>
-            );
-        }
+        };
 
         return (
-            <div style={{paddingBottom: '20px'}}>
-                <MaterialIcon icon='warning' color={Colors.brightred}/>
-                <div>
-                    {text}
+            <div
+                className='has-text-centered'
+                style={{marginTop: '1rem'}}
+            >
+                <div
+                    className='level'
+                    style={{marginBottom: '5px', cursor: 'pointer'}}
+                    aria-label={`Your microphone is ${this.props.audioMuted ? 'off' : 'on'}.`}
+                    onClick={(event) => this.props.handleMuteAudioClick(event, this.props.audioMuted, this.props.webrtc)}
+                >
+                    <div className='level-item' style={{maxWidth: '20%'}}>
+                        {this.props.audioMuted ? <MicDisabledIcon/> : <MicEnabledIcon/>}
+                    </div>
+                    <div className='level-item'>
+                        <progress
+                            style={{maxWidth: '100%', margin: 0}}
+                            className='progress is-success'
+                            value={this.props.volume}
+                            max='100'
+                        />
+                    </div>
                 </div>
+                {!isScreenShareSourceAvailable() && screenShareWarning()}
+                <MenuLabelCentered>
+                    <p>
+                        {'Having trouble? '}<a href='/room'>{'Refresh the page'}</a>{' and allow access to your camera and mic.'}
+                    </p>
+                </MenuLabelCentered>
             </div>
         );
-    };
-
-    return (
-        <div
-            className='has-text-centered'
-            style={{marginTop: '1rem'}}
-        >
-            <div
-                className='level'
-                style={{marginBottom: '5px', cursor: 'pointer'}}
-                aria-label={`Your microphone is ${props.audioMuted ? 'off' : 'on'}.`}
-                onClick={(event) => props.handleMuteAudioClick(event, props.audioMuted, props.webrtc)}
-            >
-                <div className='level-item' style={{maxWidth: '20%'}}>
-                    {props.audioMuted ? <MicDisabledIcon/> : <MicEnabledIcon/>}
-                </div>
-                <div className='level-item'>
-                    <progress
-                        style={{maxWidth: '100%', margin: 0}}
-                        className='progress is-success'
-                        value={props.volume}
-                        max='100'
-                    />
-                </div>
-            </div>
-            {!isScreenShareSourceAvailable() && screenShareWarning()}
-            <MenuLabelCentered>
-                <p>
-                    {'Having trouble? '}<a href='/room'>{'Refresh the page'}</a>{' and allow access to your camera and mic.'}
-                </p>
-            </MenuLabelCentered>
-        </div>
-    );
-};
+    }
+}
 
 class WebRtcSidebar extends React.PureComponent {
+    static propTypes = {
+
+        user: PropTypes.shape({
+            email: PropTypes.string,
+        }),
+        inRoom: PropTypes.bool,
+        mediaError: PropTypes.bool,
+        webrtc: PropTypes.object,
+        webRtcLocalSharedScreen: PropTypes.element,
+        reattachVideo: PropTypes.func,
+        leaveRoom: PropTypes.func,
+        riffParticipantLeaveRoom: PropTypes.func,
+    };
+
     constructor(props) {
         super(props);
         this.appendLocalScreen = this.appendLocalScreen.bind(this);

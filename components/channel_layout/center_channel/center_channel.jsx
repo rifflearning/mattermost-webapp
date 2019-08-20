@@ -9,7 +9,6 @@ import classNames from 'classnames';
 import PermalinkView from 'components/permalink_view';
 import Navbar from 'components/navbar';
 import ChannelIdentifierRouter from 'components/channel_layout/channel_identifier_router';
-import Dashboard from 'components/dashboard/index';
 
 export default class CenterChannel extends React.PureComponent {
     static propTypes = {
@@ -28,12 +27,8 @@ export default class CenterChannel extends React.PureComponent {
         };
     }
 
-    UNSAFE_componentWillReceiveProps(nextProps) {
-        // eslint-disable-line camelcase
-        if (
-            this.props.location.pathname !== nextProps.location.pathname &&
-            nextProps.location.pathname.includes('/pl/')
-        ) {
+    UNSAFE_componentWillReceiveProps(nextProps) { // eslint-disable-line camelcase
+        if (this.props.location.pathname !== nextProps.location.pathname && nextProps.location.pathname.includes('/pl/')) {
             this.setState({returnTo: this.props.location.pathname});
         }
     }
@@ -70,6 +65,7 @@ export default class CenterChannel extends React.PureComponent {
                             path={'/:team/:path(channels|messages)/:identifier'}
                             component={ChannelIdentifierRouter}
                         />
+                        <Redirect to={lastChannelPath}/>
                     </Switch>
                 </div>
             </div>

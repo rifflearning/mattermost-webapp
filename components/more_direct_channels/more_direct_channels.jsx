@@ -1,21 +1,21 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import PropTypes from 'prop-types';
 import React from 'react';
+import PropTypes from 'prop-types';
 import {Modal} from 'react-bootstrap';
 import {FormattedMessage} from 'react-intl';
 import {Client4} from 'mattermost-redux/client';
-import {emitUserPostedEvent, postListScrollChangeToBottom} from 'actions/global_actions';
-import {createPost} from 'actions/post_actions';
 
-import {browserHistory} from 'utils/browser_history';
-import {openDirectChannelToUser, openGroupChannelToUsers} from 'actions/channel_actions.jsx';
-import {loadStatusesForProfilesList} from 'actions/status_actions.jsx';
-import Constants from 'utils/constants.jsx';
-import {displayEntireNameForUser, localizeMessage} from 'utils/utils.jsx';
 import MultiSelect from 'components/multiselect/multiselect.jsx';
 import ProfilePicture from 'components/profile_picture.jsx';
+import {emitUserPostedEvent, postListScrollChangeToBottom} from 'actions/global_actions';
+import {createPost} from 'actions/post_actions';
+import {openDirectChannelToUser, openGroupChannelToUsers} from 'actions/channel_actions.jsx';
+import {loadStatusesForProfilesList} from 'actions/status_actions.jsx';
+import {browserHistory} from 'utils/browser_history';
+import Constants from 'utils/constants.jsx';
+import {displayEntireNameForUser, localizeMessage} from 'utils/utils.jsx';
 
 const USERS_PER_PAGE = 50;
 const MAX_SELECTABLE_VALUES = Constants.MAX_USERS_IN_GM - 1;
@@ -58,7 +58,7 @@ export default class MoreDirectChannels extends React.Component {
             setModalSearchTerm: PropTypes.func.isRequired,
             getTotalUsersStats: PropTypes.func.isRequired,
         }).isRequired,
-    }
+    };
 
     constructor(props) {
         super(props);
@@ -142,7 +142,6 @@ export default class MoreDirectChannels extends React.Component {
         this.setState({show: false});
     }
 
-
     setUsersLoadingState = (loadingState) => {
         this.setState({
             loadingUsers: loadingState,
@@ -183,9 +182,9 @@ export default class MoreDirectChannels extends React.Component {
             this.setState({saving: false});
             this.handleHide();
             if (this.props.makePostToSend) {
-                let post = this.props.makePostToSend(channel.id);
+                const post = this.props.makePostToSend(channel.id);
                 emitUserPostedEvent(post);
-                createPost(post,[]);
+                createPost(post, []);
                 postListScrollChangeToBottom();
             }
         };
