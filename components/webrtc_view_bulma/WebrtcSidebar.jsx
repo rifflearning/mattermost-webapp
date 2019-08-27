@@ -173,7 +173,7 @@ class AudioStatusBar extends React.PureComponent {
 
             return (
                 <div style={{paddingBottom: '20px'}}>
-                    <MaterialIcon icon='warning' color={Colors.brightred}/>
+                    <MaterialIcon icon='warning' color={Colors.brightRed}/>
                     <div>
                         {text}
                     </div>

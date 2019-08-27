@@ -207,7 +207,7 @@ class RenderVideos extends React.Component {
                         >
                             <div className='column is-vcentered has-text-centered'>
                                 <h1>{'Nobody else here...'}</h1>
-                                <ScaleLoader color={Colors.lightroyal}/>
+                                <ScaleLoader color={Colors.lightRoyal}/>
                             </div>
                         </div>
 

@@ -20,7 +20,7 @@ const initialState = {
         Colors.sage,
         Colors.apricot,
         Colors.eggplant,
-        Colors.darkfern,
+        Colors.darkFern,
         Colors.aquamarine,
     ],
     getMediaStatus: 'error',
