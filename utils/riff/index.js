@@ -26,9 +26,11 @@ import {
 import {
     Colors,
     PeerColors,
+    getColorForLearningGroup,
     getColorForOther,
     getColorForSelf,
     getCountOtherColors,
+    networkGraphNodeColors,
     rgbaColor,
 } from './colors';
 import {
@@ -169,9 +171,11 @@ export {
     reverseCmp,
     Colors,
     PeerColors,
+    getColorForLearningGroup,
     getColorForOther,
     getColorForSelf,
     getCountOtherColors,
+    networkGraphNodeColors,
     rgbaColor,
     WebRtcNick,
     calculateBitrate,

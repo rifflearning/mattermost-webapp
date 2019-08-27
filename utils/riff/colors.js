@@ -77,6 +77,38 @@ const PeerColors = [
 ];
 
 /**
+ * List of color objects to use for nodes in the interaction network graph
+ * Each color object has a background and font color property in order to
+ * comply with accessbility requirements
+ *
+ * TODO: Give these raw colors names in the Colors enum above.
+ */
+const networkGraphNodeColors = {
+    you: {
+        backgroundColor: '#8e7cc3', // purple
+        fontColor: Colors.white,
+    },
+    course: {
+        backgroundColor: '#6aa84f', // green
+        fontColor: Colors.black,
+    },
+    learningGroupColors: [
+        {
+            backgroundColor: '#2b78e4', // blue
+            fontColor: Colors.black,
+        },
+        {
+            backgroundColor: '#f6b26b', // orange
+            fontColor: Colors.black,
+        },
+        {
+            backgroundColor: '#db4c40', // red
+            fontColor: Colors.black,
+        },
+    ],
+};
+
+/**
  * Append a hex opacity value to a hex color string
  * Currently only supports 6 digit color string of the form
  * '#rrggbb' e.g. '#4c338a'
@@ -156,6 +188,22 @@ function getCountOtherColors(cnt) {
     return cntOtherColors;
 }
 
+/**
+ * Get the color to use for the nth course connections learning group type.
+ * Returns a value from networkGraphNodeColors.learningGroupColors
+ * Colors will be "reused" for values of n > the number of learningGroupColors.
+ *
+ * @param {number} n
+ *      The number (0 based index) of a learning group type to get a color string for.
+ *
+ * @returns {{ backgroundColor: ColorString, fontColor: ColorString }} an object
+ *      containing the background and font colors for the nth learning group.
+ */
+function getColorForLearningGroup(n) {
+    const i = (n % (networkGraphNodeColors.learningGroupColors.length - 1)) + 1;
+    return networkGraphNodeColors.learningGroupColors[i];
+}
+
 /* **************************************************************************** *
  * Module exports                                                               *
  * **************************************************************************** */
@@ -165,5 +213,7 @@ export {
     getColorForSelf,
     getColorForOther,
     getCountOtherColors,
+    getColorForLearningGroup,
+    networkGraphNodeColors,
     rgbaColor,
 };
