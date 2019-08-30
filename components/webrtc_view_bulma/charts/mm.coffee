@@ -165,6 +165,7 @@
       # new node groups - add attributes and child elements
       nodeGsEnter = nodeGs.enter().append "g"
         .attr "class", "node"
+        .attr "tabindex", "0"
         .attr "id", (d) -> d.participant
 
       nodeGsEnter.append "circle"
@@ -196,7 +197,7 @@
             "#000000"
 
       # show tooltip on hover
-      nodeGsEnter.on "mouseover", (d) =>
+      nodeGsEnter.on "mouseover, focus", (d) =>
         tooltipText = ""
         position = document.getElementById('circle-' + d.participant).getBoundingClientRect()
         leftPosition = (position.x + (position.width / 2)) - (TOOLTIP_WIDTH / 2) + window.scrollX
@@ -211,12 +212,13 @@
           speakingTime = @getSpeakingTime(d.participant)
           tooltipText = "Name: " + d.name + "<br/>Speaking Time: " + speakingTime
         @tooltip.html(tooltipText)
+          .attr "role", "alert"
           .style "left", leftPosition + "px"
           .style "top", topPosition + "px"
           .style "display", "flex"
 
       # hide tooltip
-      nodeGsEnter.on "mouseout", (d) =>
+      nodeGsEnter.on "mouseout, focusout", (d) =>
         @tooltip.html("")
         @tooltip.style "display", "none"
 
