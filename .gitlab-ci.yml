@@ -45,7 +45,7 @@ check-style:
     <<: *std_job
     stage: test
     script:
-        - make check-style-ci THRESHOLD=64
+        - make check-style-ci THRESHOLD=54
     artifacts:
         when: always
         paths:
