@@ -14,7 +14,7 @@ import PropTypes from 'prop-types';
 import {Route, Switch} from 'react-router-dom';
 import classNames from 'classnames';
 
-import Dashboard from 'components/dashboard';
+import {Dashboard} from 'components/dashboard';
 import Navbar from 'components/navbar';
 
 export default class Page extends React.PureComponent {

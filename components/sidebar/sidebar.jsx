@@ -568,7 +568,7 @@ export default class Sidebar extends React.PureComponent {
                     </span>
                     <FormattedMessage
                         id='sidebar.dashboard'
-                        defaultMessage='Riff Stats'
+                        defaultMessage='Riff Metrics'
                     />
                 </button>
             </li>

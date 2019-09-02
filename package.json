@@ -17,6 +17,7 @@
     "./client/web_client.jsx": "./client/browser_web_client.jsx"
   },
   "dependencies": {
+    "@amcharts/amcharts4": "^4.5.14",
     "@feathersjs/authentication-client": "^1.0.11",
     "@feathersjs/feathers": "^3.2.3",
     "@feathersjs/socketio-client": "^1.1.5",
@@ -49,7 +50,7 @@
     "localforage-observable": "1.4.0",
     "marked": "github:mattermost/marked#ed33baecd7d7fa97d479ba22dde9d226b083d67d",
     "material-icons-react": "^1.0.4",
-    "mattermost-redux": "github:rifflearning/mattermost-redux#b74dc2585c5332811e207785ea2208e16624adb3",
+    "mattermost-redux": "github:rifflearning/mattermost-redux#929f602b6d2e08a98ceef9c904177d113179d153",
     "moment-timezone": "0.5.21",
     "pdfjs-dist": "2.0.489",
     "perfect-scrollbar": "0.8.1",
