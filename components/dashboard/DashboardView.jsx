@@ -10,6 +10,8 @@ import * as UserAgent from 'utils/user_agent.jsx';
 import {logger} from 'utils/riff';
 
 import MeetingViz from './components/MeetingViz';
+import {CourseConnections} from './components/CourseConnections';
+import {SectionHeader} from './components/SectionHeader';
 
 const LoadingErrorMessage = styled.div.attrs({
     className: 'loading-error-message',
@@ -21,6 +23,27 @@ const LoadingErrorMessage = styled.div.attrs({
     text-align: center;
     color: #4a4a4a;
     font-size: 28px;
+`;
+
+const DashboardOuterContainer = styled.div.attrs({
+    className: 'dashboard-outer-container',
+})`
+    overflow-y: scroll;
+`;
+
+const DashboardInnerContainer = styled.div.attrs({
+    className: 'dashboard-inner-container',
+})`
+    width: 96%;
+    margin: 0 auto;
+`;
+
+const CourseConnectionsContainer = styled.div.attrs({
+    className: 'course-connections-container',
+})`
+    position: relative;
+    height: 60vh;
+    margin: 2rem 0;
 `;
 
 // TODO Add dispatch and click
@@ -131,25 +154,63 @@ class DashboardView extends React.Component {
             );
         });
 
+        const dashboardHeader = (
+            <SectionHeader
+                title={'Riff Dashboard'}
+                desc={'Your dashboard shows you metrics about how you interact with your coursemates in Riff video and chat. Use these metrics to track and understand how you engage with your peers.'}
+                mainHeader={true}
+            />
+        );
+
+        const courseConnectionsHeader = (
+            <SectionHeader
+                title={'Your Course Connections'}
+                desc={'Learners with lots of peer engagement do better in the course. Use this network graph to track and monitor your progress.'}
+            />);
+
+        const meetingsSectionHeader = (
+            <SectionHeader
+                title={'Your Conversations'}
+                desc={'High-functioning groups allow everyone to contribute. Use Riff video metrics to see how your group interacts, and change conversational behaviors that aren\'t working.'}
+            />
+        );
+
         const component = () => {
             //errored (catch all static message is shown, these errors are all related to having no meetings)
             if (this.props.loadingError.status) {
                 return (
-                    <LoadingErrorMessage>
-                        <div>{'Welcome to your Riff Dashboard!'}</div>
-                        <br/>
-                        <div>{'Once you have a Riff video meeting,'}</div>
-                        <div>{'your Riff stats will display here.'}</div>
-                    </LoadingErrorMessage>
+                    <DashboardOuterContainer>
+                        <DashboardInnerContainer>
+                            {dashboardHeader}
+                            {courseConnectionsHeader}
+                            <CourseConnectionsContainer>
+                                <CourseConnections/>
+                            </CourseConnectionsContainer>
+                            {meetingsSectionHeader}
+                            <div style={{position: 'relative', height: '50vh'}}>
+                                <LoadingErrorMessage>
+                                    <div>{'Once you have a Riff video meeting, your metrics will display here.'}</div>
+                                </LoadingErrorMessage>
+                            </div>
+                        </DashboardInnerContainer>
+                    </DashboardOuterContainer>
                 );
             }
 
             //meetings
             if (this.props.meetings.length > 0) {
                 return (
-                    <div style={{overflowY: 'scroll'}}>
-                        {meetingVisualizations}
-                    </div>
+                    <DashboardOuterContainer>
+                        <DashboardInnerContainer>
+                            {dashboardHeader}
+                            {courseConnectionsHeader}
+                            <CourseConnectionsContainer>
+                                <CourseConnections/>
+                            </CourseConnectionsContainer>
+                            {meetingsSectionHeader}
+                            {meetingVisualizations}
+                        </DashboardInnerContainer>
+                    </DashboardOuterContainer>
                 );
             }
 

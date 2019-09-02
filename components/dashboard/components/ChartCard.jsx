@@ -32,6 +32,11 @@ const ChartDiv = styled.div.attrs({
     .sigma-scene: {
         left: 0px;
     }
+
+    ${(props) => props.isNetworkGraphCard === true && `
+        padding-bottom: 0;
+        height: 100%;
+    `}
 `;
 
 const Card = styled.div.attrs({
@@ -43,6 +48,11 @@ const Card = styled.div.attrs({
     max-width: ${(props) => `${props.maxWidth}vw`};
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
     border: none;
+
+    ${(props) => props.isNetworkGraphCard === true && `
+        height: 100%;
+        max-width: 100%;
+    `}
 
     ${(props) => props.isMediatorCard === true && `
       box-shadow: none;
@@ -112,6 +122,7 @@ const ChartCard = enhance((props) => {
         <Card
             maxWidth={maxWidth}
             isMediatorCard={props.isMediatorCard}
+            isNetworkGraphCard={props.isNetworkGraphCard}
         >
             <CardTitle>
                 {props.title}
@@ -137,7 +148,7 @@ const ChartCard = enhance((props) => {
                     longDescription={props.longDescription}
                 />
             )}
-            <ChartDiv>
+            <ChartDiv isNetworkGraphCard={props.isNetworkGraphCard}>
                 {props.chartTable}
                 {props.chartDiv}
             </ChartDiv>

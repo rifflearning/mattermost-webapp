@@ -2,31 +2,31 @@
 // See LICENSE.txt for license information.
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import sizeMe from 'react-sizeme';
 import styled from 'styled-components';
 import Waypoint from 'react-waypoint';
 import moment from 'moment';
 import _ from 'underscore';
-import PropTypes from 'prop-types';
 
 import {
     loadMeetingData,
-} from '../../../actions/views/dashboard';
+} from 'actions/views/dashboard';
 
-import {logger} from '../../../utils/riff';
+import {logger} from 'utils/riff';
 
 import {getIsRhsOpen} from 'selectors/rhs';
 
 import TurnChart from './TurnChart';
 import InfluenceChart from './InfluenceChart';
 import TimelineChart from './TimelineChart';
-const SpaceBetweeen = styled.div.attrs({
-    className: 'space-between',
+
+const MeetingHeader = styled.h3.attrs({
+    className: 'meeting-header',
 })`
-    display: flex;
-    justify-content: space-between;
-    width: 320px;
+    font-weight: bold;
+    padding-bottom: .5rem;
 `;
 
 const getMeetingIndex = (meetings, meetingId) => {
@@ -73,23 +73,19 @@ const mapDispatchToProps = (dispatch) => ({
 
 const Header = (props) => {
     logger.debug('HEADER props:', props);
-    const meetingDate = moment(props.meeting.startTime).format('ha MMM Do');
+    const meetingDate = moment(props.meeting.startTime).format('M/D/Y, h:mm A');
     return (
         <div
             className=''
             style={{
                 paddingBottom: '2rem',
-                paddingTop: '1rem',
-                paddingLeft: '1rem',
+                paddingTop: '2rem',
             }}
         >
-            <h3>{`Meeting at: ${meetingDate}`} </h3>
-            <SpaceBetweeen>
-                <span>{`Attendees: ${props.processedUtterances.length}`}</span>
-            </SpaceBetweeen>
-            <SpaceBetweeen>
-                <span>{`Duration: ${props.selectedMeetingDuration}`}</span>
-            </SpaceBetweeen>
+            <MeetingHeader>{'Meeting Metrics'}</MeetingHeader>
+            <span>{meetingDate}</span>
+            <span>{`, Attendees: ${props.processedUtterances.length}, `}</span>
+            <span>{`Duration: ${props.selectedMeetingDuration}`}</span>
             <div className='column is-half has-text-left'/>
         </div>
     );
