@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4plugins_forceDirected from '@amcharts/amcharts4/plugins/forceDirected'; // eslint-disable-line camelcase
 
-import {InteractionContext, UserInContext} from 'utils/riff/user_analytic_utils';
+import {InteractionContext, UserInContext, getInteractionCountPhrase} from 'utils/riff/user_analytic_utils';
 
 import {
     cmpObjectProp,
@@ -281,6 +281,9 @@ class CourseConnectionsView extends React.Component {
         // update the tooltip for the You node
         youNode.config.tooltipHTML = this.getUserTooltip(currentUserOverallContext);
 
+        // update the aria label for the You node
+        youNode.config.readerLabelledBy = this.getAriaLabel(currentUserOverallContext);
+
         logger.debug('NetworkGraphview.drawGraph: interaction contexts', courseContext, learningGroupContexts);
 
         // Force the chart to reload the data we just updated
@@ -349,6 +352,9 @@ class CourseConnectionsView extends React.Component {
         // Add a tooltip for the course node
         courseContext.chartNodeData.config.tooltipHTML = this.getContextTooltip(courseContext);
 
+        // Add an aria label for the course node
+        courseContext.chartNodeData.config.readerLabelledBy = this.getAriaLabel(courseContext);
+
         return courseContext;
     }
 
@@ -406,6 +412,9 @@ class CourseConnectionsView extends React.Component {
 
         // Add a tooltip for this interaction context's node
         lgInteractionContext.chartNodeData.config.tooltipHTML = this.getContextTooltip(lgInteractionContext);
+
+        // Add an aria label for this interaction context's node
+        lgInteractionContext.chartNodeData.config.readerLabelledBy = this.getAriaLabel(lgInteractionContext);
 
         return lgInteractionContext;
     }
@@ -468,6 +477,120 @@ class CourseConnectionsView extends React.Component {
                 },
             },
         };
+    }
+
+    /**
+     * Prepares the aria description for a node
+     * If the data object passed is an instance of:
+     *     - InteractionContext, then interaction counts are retrieved using getTypeAggregateTotals()
+     *     - UserInContext, then interaction counts are retrieved using getInteractionCount()
+     *
+     * Use data.username to check if the data parameter is an instance of UserInContext
+     *
+     * @param {InteractionContext | UserInContext} data - containing interaction counts for the node
+     *
+     * @returns {string} containing the aria label for the node
+     */
+    getAriaLabel(data) {
+        const ariaDescription = ['You\'ve'];
+
+        // All user nodes but the 'you' node
+        if (data.username && data.contextType !== 'you') {
+            ariaDescription.push('had');
+        }
+        else {
+            ariaDescription.push('made');
+        }
+
+        // Add aggregate interaction count to aria description
+        if (data.username) {
+            ariaDescription.push(getInteractionCountPhrase('aggregate', data.getInteractionAggregate()));
+        }
+        else {
+            ariaDescription.push(getInteractionCountPhrase('aggregate', data.getTypeAggregateTotals().getTotal()));
+        }
+
+        // course node
+        if (data.type === 'course') {
+            ariaDescription.push('with people outside of your peer learning group and capstone channels. They include:');
+        }
+
+        // plg node
+        else if (data.type === 'plg') {
+            ariaDescription.push('in your peer learning group, including:');
+        }
+
+        // capstone node
+        else if (data.type === 'capstone') {
+            ariaDescription.push('in your capstone team, including:');
+        }
+
+        // user in course node
+        else if (data.contextType === 'course') {
+            ariaDescription.push(`in the course with ${data.username}, including:`);
+        }
+
+        // user in plg team node
+        else if (data.contextType === 'plg') {
+            ariaDescription.push(`in your peer learning group with ${data.username}, including:`);
+        }
+
+        // user in capstone team node
+        else if (data.contextType === 'capstone') {
+            ariaDescription.push(`in your capstone team with ${data.username}, including:`);
+        }
+
+        // 'you' node
+        else if (data.contextType === 'you') {
+            ariaDescription.push('for the entire course, including:');
+        }
+
+        const counts = [];
+
+        // Add reaction count for all nodes
+        if (data.username) {
+            counts.push(getInteractionCountPhrase('reaction', data.getInteractionCount('Reaction')));
+        }
+        else {
+            counts.push(getInteractionCountPhrase('reaction', data.getTypeAggregateTotals().getCount('Reaction')));
+        }
+
+        // Add reply count for all nodes
+        if (data.username) {
+            counts.push(getInteractionCountPhrase('reply', data.getInteractionCount('Reply')));
+        }
+        else {
+            counts.push(getInteractionCountPhrase('reply', data.getTypeAggregateTotals().getCount('Reply')));
+        }
+
+        // Add mention count for all nodes
+        if (data.username) {
+            counts.push(getInteractionCountPhrase('mention', data.getInteractionCount('Mention')));
+        }
+        else {
+            counts.push(getInteractionCountPhrase('mention', data.getTypeAggregateTotals().getCount('Mention')));
+        }
+
+        // Add post count for all interaction context nodes and the 'you' node
+        if (data.type) {
+            counts.push(getInteractionCountPhrase('post', data.getTypeAggregateTotals().getCount('Post')));
+        }
+        else if (data.contextType === 'you') {
+            counts.push(getInteractionCountPhrase('post', data.getInteractionCount('Post')));
+        }
+
+        // Add direct message count for all course nodes and the 'you' node
+        if (data.type === 'course') {
+            counts.push(getInteractionCountPhrase('directMessage', data.getTypeAggregateTotals().getCount('DirectMessage')));
+        }
+        else if (['course', 'you'].includes(data.contextType)) {
+            counts.push(getInteractionCountPhrase('directMessage', data.getInteractionCount('DirectMessage')));
+        }
+
+        // Add counts to aria description
+        ariaDescription.push(counts.join(', '));
+
+        return ariaDescription.join(' ') + '.';
     }
 
     /**
@@ -566,6 +689,7 @@ class CourseConnectionsView extends React.Component {
             nodeWidth: graphConfigurationValues.userNodes.nodeWidth,
             config: {
                 tooltipHTML: this.getUserTooltip(userInContext),
+                readerLabelledBy: this.getAriaLabel(userInContext),
             },
             configLink: {
                 strokeOpacity,

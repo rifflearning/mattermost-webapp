@@ -324,6 +324,42 @@ class InteractionCounts {
     }
 }
 
+/* ******************************************************************************
+ * getInteractionCountPhrase                                                     */ /**
+ *
+ * get either the singular or plural summary phrase for
+ * a given interaction type and count
+ *
+ * @param {string} type - the type of interaction
+ * @param {number} count - the number of interactions of this type
+ *
+ *
+ * @returns {string} a summary phrase for an interaction type and count.
+ */
+function getInteractionCountPhrase(type, count) {
+    switch (type) {
+    case 'reply': {
+        return `${count} ${count === 1 ? 'reply' : 'replies'}`;
+    }
+    case 'mention': {
+        return `${count} ${count === 1 ? 'mention' : 'mentions'}`;
+    }
+    case 'directMessage': {
+        return `${count} ${count === 1 ? 'direct message' : 'direct messages'}`;
+    }
+    case 'reaction': {
+        return `${count} ${count === 1 ? 'reaction' : 'reactions'}`;
+    }
+    case 'post': {
+        return `${count} ${count === 1 ? 'post' : 'posts'}`;
+    }
+    case 'aggregate': {
+        return `${count} ${count === 1 ? 'contact' : 'contacts'}`;
+    }
+    }
+    return false;
+}
+
 /* **************************************************************************** *
  * Module exports                                                               *
  * **************************************************************************** */
@@ -332,4 +368,5 @@ export {
     InteractionCounts,
     InteractionContext,
     UserInContext,
+    getInteractionCountPhrase,
 };
