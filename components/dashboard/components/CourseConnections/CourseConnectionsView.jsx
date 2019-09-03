@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4plugins_forceDirected from '@amcharts/amcharts4/plugins/forceDirected'; // eslint-disable-line camelcase
 
-import {InteractionContext} from 'utils/riff/user_analytic_utils';
+import {InteractionContext, UserInContext} from 'utils/riff/user_analytic_utils';
 
 import {
     cmpObjectProp,
@@ -202,6 +202,12 @@ class CourseConnectionsView extends React.Component {
         const {userInteractions, userLearningGroups} = this.props;
         const learningGroupTypes = this.sortedLearningGroupTypes;
 
+        // this will summarize the current user's overall context interactions for the 'you' node
+        const currentUserOverallContext = new UserInContext({
+            username: this.props.currentUser.username,
+            contextType: 'you',
+        });
+
         // Get a reference to the 'You' node
         const youNode = this.series.data[0];
 
@@ -228,10 +234,9 @@ class CourseConnectionsView extends React.Component {
 
         // If the user has interactions in the course context then
         // add its node as a child of the 'you' node, otherwise we don't want to see it.
-        // (we determine this by seeing if it's node has any child nodes since we
-        // have only added a child node if it had interactions)
-        if (courseContext.chartNodeData.children.length > 0) {
+        if (courseContext) {
             youNode.children.push(courseContext.chartNodeData);
+            currentUserOverallContext.addInteractionCounts(courseContext.getTypeAggregateTotals());
         }
 
         // This is a sanity check (assert) error log message
@@ -250,8 +255,12 @@ class CourseConnectionsView extends React.Component {
             // Add all the learningGroupContext's nodes as children of the 'you' node
             for (const lgContext of Object.values(learningGroupContexts)) {
                 youNode.children.push(lgContext.chartNodeData);
+                currentUserOverallContext.addInteractionCounts(lgContext.getTypeAggregateTotals());
             }
         }
+
+        // update the tooltip for the You node
+        youNode.config.tooltipHTML = this.getUserTooltip(currentUserOverallContext);
 
         logger.debug('NetworkGraphview.drawGraph: interaction contexts', courseContext, learningGroupContexts);
 
@@ -268,16 +277,22 @@ class CourseConnectionsView extends React.Component {
      * Loop over all interactions that occurred in the course context and group them into
      * UserInContext objects for each user, counting the interaction types respectively
      *
-     * @returns {InteractionContext} containing the chart node data for the course node
+     * @returns {?InteractionContext} containing the chart node data for the course node or
+     *      null if there are no interactions and the node should not be displayed.
      */
     getCourseContext() {
         const contextType = 'course';
-        const contextName = 'course';
+        const contextSlugName = 'course';
+        const contextDisplayName = 'The Course';
 
         // Get user's interactions in the course context
         const courseInteractions = this.props.userInteractions.filter((interaction) => {
             return interaction.context === contextType;
         });
+
+        if (courseInteractions.length === 0) {
+            return null;
+        }
 
         const interactionCount = courseInteractions.length;
 
@@ -294,27 +309,26 @@ class CourseConnectionsView extends React.Component {
             nodeInfo: {
                 contextType,
             },
-            config: {
-                tooltipHTML: this.getContextTooltip({
-                    contextName,
-                    interactionCount,
-                }),
-            },
         };
 
         const courseContext = new InteractionContext({
-            name: contextName,
+            slugName: contextSlugName,
+            displayName: contextDisplayName,
             type: contextType,
             chartNodeData: this.prepareNode(nodeConfig),
         });
 
         // Add each interaction to the appropriate user's interaction type count
-        courseContext.addUserInteractions(courseInteractions);
+        // or if it's a post to the current user post count for the course context
+        courseContext.addInteractions(courseInteractions);
 
         // Add a node for every user in the course interaction context
         for (const userInContext of courseContext) {
             courseContext.chartNodeData.children.push(this.prepareUserNode(userInContext));
         }
+
+        // Add a tooltip for the course node
+        courseContext.chartNodeData.config.tooltipHTML = this.getContextTooltip(courseContext);
 
         return courseContext;
     }
@@ -324,11 +338,12 @@ class CourseConnectionsView extends React.Component {
      */
     getLearningGroupContext(learningGroup) {
         const contextType = learningGroup.learning_group_prefix;
-        const contextName = learningGroup.channel_name;
+        const contextSlugName = learningGroup.channel_slug_name;
+        const contextDisplayName = learningGroup.channel_display_name;
 
         // Get user's interactions in this learning group's context
         const lgInteractions = this.props.userInteractions.filter((interaction) => {
-            return interaction.channel_name === contextName;
+            return interaction.channel_slug_name === contextSlugName;
         });
 
         const interactionCount = lgInteractions.length;
@@ -341,20 +356,15 @@ class CourseConnectionsView extends React.Component {
             }),
             color: this.getNodeColor({nodeContext: contextType}),
             nodeWidth: graphConfigurationValues.interactionContextNodes.nodeWidth,
-            config: {
-                tooltipHTML: this.getContextTooltip({
-                    contextName,
-                    interactionCount,
-                }),
-            },
             nodeInfo: {
                 contextType,
-                contextName,
+                contextSlugName,
             },
         };
 
         const lgInteractionContext = new InteractionContext({
-            name: contextName,
+            slugName: contextSlugName,
+            displayName: contextDisplayName,
             type: contextType,
             chartNodeData: this.prepareNode(nodeConfig),
         });
@@ -368,12 +378,16 @@ class CourseConnectionsView extends React.Component {
         }
 
         // Add each interaction to the appropriate user's interaction type count
-        lgInteractionContext.addUserInteractions(lgInteractions);
+        // or if it's a post to the current user post count for the learning group context
+        lgInteractionContext.addInteractions(lgInteractions);
 
-        // Add a node for every user in the course interaction context
+        // Add a node for every user in this learning group context
         for (const userInContext of lgInteractionContext) {
             lgInteractionContext.chartNodeData.children.push(this.prepareUserNode(userInContext));
         }
+
+        // Add a tooltip for this interaction context's node
+        lgInteractionContext.chartNodeData.config.tooltipHTML = this.getContextTooltip(lgInteractionContext);
 
         return lgInteractionContext;
     }
@@ -396,7 +410,7 @@ class CourseConnectionsView extends React.Component {
             const lgInteractionContext = this.getLearningGroupContext(learningGroup);
 
             // Add the interaction context to the map of learning group contexts indexed by channel name
-            learningGroupContexts[learningGroup.channel_name] = lgInteractionContext;
+            learningGroupContexts[learningGroup.channel_slug_name] = lgInteractionContext;
         }
 
         return learningGroupContexts;
@@ -426,41 +440,89 @@ class CourseConnectionsView extends React.Component {
             nodeInfo: {
                 contextType: 'you',
             },
+            configTooltip: {
+                background: {
+                    fill: nodeColors.you.backgroundColor,
+                },
+                label: {
+                    fontSize: '16',
+                    fill: nodeColors.you.fontColor,
+                },
+            },
         };
     }
 
     /**
      * Prepares the tooltip for an interaction context's node
      *
-     * @param {string} contextName - the channel slug name for a learning group, or 'course'
-     * @param {number} interactionCount - the total interactions in this context that the current user took part in
+     * @param {InteractionContext} context - containing interaction counts for this context
      *
-     * @returns {string} containing html for the tooltip
+     * @returns {string} containing html for the context node tooltip
      */
-    getContextTooltip({contextName, interactionCount}) {
-        return `<div style='font-weight:bold;'>${contextName}: ${interactionCount}</div>`;
+    getContextTooltip(context) {
+        /* eslint-disable no-multi-spaces */
+        const interactionCounts = context.getTypeAggregateTotals();
+        const counts = [
+            {label: 'Reactions', value: interactionCounts.getCount('Reaction')},
+            {label: 'Replies',   value: interactionCounts.getCount('Reply')},
+            {label: 'Mentions',  value: interactionCounts.getCount('Mention')},
+            {label: 'Posts',     value: interactionCounts.getCount('Post')},
+        ];
+
+        if (context.type === 'course') {
+            counts.push({label: 'Direct Messages', value: interactionCounts.getCount('DirectMessage')});
+        }
+
+        return  CourseConnectionsView.getTooltip(context.displayName, counts);
+        /* eslint-enable no-multi-spaces */
     }
 
     /**
      * Prepares the tooltip for a user's node
      *
-     * @param {UserInContext} user - containing interaction counts for this user's node in this context
+     * @param {UserInContext} user - containing interaction counts for a user's node
      *
-     * @returns {string} containing html for the tooltip
+     * @returns {string} containing html for the user node tooltip
      */
     getUserTooltip(user) {
-        const usernameDiv = `<div style='font-weight:bold;'>@${user.username}</div>`;
-        const reactionsDiv = `<div>Reactions: ${user.getInteractionCount('Reaction')}</div>`;
-        const repliesDiv = `<div>Replies: ${user.getInteractionCount('Reply')}</div>`;
-        const mentionsDiv = `<div>Mentions: ${user.getInteractionCount('Mention')}</div>`;
-        let dmsDiv = '';
-        if (user.contextType === 'course') {
-            dmsDiv = `<div>Direct Messages: ${user.getInteractionCount('DirectMessage')}</div>`;
+        /* eslint-disable no-multi-spaces */
+        const counts = [
+            {label: 'Reactions', value: user.getInteractionCount('Reaction')},
+            {label: 'Replies',   value: user.getInteractionCount('Reply')},
+            {label: 'Mentions',  value: user.getInteractionCount('Mention')},
+        ];
+
+        if (user.contextType === 'you') {
+            counts.push({label: 'Posts', value: user.getInteractionCount('Post')});
         }
+
+        if (['course', 'you'].includes(user.contextType)) {
+            counts.push({label: 'Direct Messages', value: user.getInteractionCount('DirectMessage')});
+        }
+
+        return CourseConnectionsView.getTooltip(`@${user.username}`, counts);
+        /* eslint-enable no-multi-spaces */
+    }
+
+    /**
+     * Get the html for a tooltip w/ a name followed by a set of labeled
+     * interaction counts.
+     *
+     * @param {string} name
+     * @param {Array<{label: string, value: number}> counts
+     *
+     * @returns {string} tooltip html
+     */
+    static getTooltip(name, counts) {
+        const getCountDiv = (count) => {
+            return `<div>${count.label}: ${count.value}</div>`;
+        };
+
+        const nameDiv = `<div style='font-weight:bold;'>${name}</div>`;
 
         const html =
             '<div style=\'text-align: center;\'>' +
-                `${usernameDiv}${reactionsDiv}${repliesDiv}${mentionsDiv}${dmsDiv}` +
+                `${nameDiv}${counts.map(getCountDiv).join('')}` +
             '</div>';
 
         return html;
