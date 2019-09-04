@@ -4,6 +4,7 @@
 // Riff Learning lint overrides
 /* eslint
     header/header: "off",
+    "brace-style": [ "error", "stroustrup", { "allowSingleLine": false } ],
     dot-location: ["error", "property"],
     indent: ["error", 4, { "CallExpression": { "arguments": "first" }, "ObjectExpression": "first" }],
     "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
@@ -11,12 +12,15 @@
     "generator-star-spacing": ["error", { "before": false, "after": true, "method": "neither" } ],
 */
 
+import {logger} from 'utils/riff';
+
 /** Enumeration of all possible user interaction types */
 const InteractionTypes = [
     'Reaction',
     'Mention',
     'DirectMessage',
     'Reply',
+    'Post',
 ];
 
 /* ******************************************************************************
@@ -38,9 +42,13 @@ class InteractionContext {
      */
     constructor(config) {
         // instance properties
-        this.name = config.name;
+        this.slugName = config.slugName;
+        this.displayName = config.displayName;
         this.type = config.type;
         this.chartNodeData = config.chartNodeData;
+
+        /** count of the posts by the current user in this context */
+        this.currentUserPostCount = 0;
 
         /**
          * map by username of interactions that user had with the current user
@@ -51,18 +59,56 @@ class InteractionContext {
     }
 
     /**
+     * Get total interaction counts by type in this context, which is the sum
+     * of all the user interaction counts and the current user's posts in
+     * this context.
+     *
+     * DevNote: This calculates the totals every time it is called. That seems
+     *      fine now, it isn't very expensive and it's currently called about
+     *      twice per context created in the CourseConnectionsView.
+     *
+     * @return {InteractionCounts} object whose counts are the sum of all
+     * the counts by type in this context.
+     */
+    getTypeAggregateTotals() {
+        const totals = new InteractionCounts();
+        totals.setCount('Post', this.currentUserPostCount);
+
+        for (const userInContext of this) {
+            totals.addCounts(userInContext.interactionCounts);
+        }
+
+        return totals;
+    }
+
+    /**
      * Count all the interaction records by incrementing the appropriate
      * UserInContext record (creating one if it doesn't exist) in the
-     * users map.
+     * users map for interactions w/ other users, and increment
+     * this InteractionContext's current user post count for 'Post' interactions.
      *
      * @param {Array} interactions
      *      Array of interaction records in the specified context
      *      to be added to the current counts.
      */
-    addUserInteractions(interactions) {
+    addInteractions(interactions) {
         // Add each interaction to the appropriate UserInContext instance
         for (const interaction of interactions) {
             const username = interaction.username;
+
+            // If username is null, then this is a context-related interaction (ex. Post)
+            if (!username) {
+                // The only valid interaction type here is 'Post'
+                if (interaction.interaction_type === 'Post') {
+                    this.currentUserPostCount++;
+                }
+                else {
+                    logger.error('InteractionContext: current user interaction_type is NOT "Post"', this, interaction);
+                }
+
+                continue;
+            }
+
             let userInContext = this.users[username];
             if (!userInContext) {
                 // first occurance of this user in this context, create a new UserInContext for them
@@ -118,8 +164,11 @@ class InteractionContext {
  *
  * @typedef {!Object} InteractionContext.Config
  *
- * @property {string} name
+ * @property {string} slugName
  *      a name for this context (is the channel slug name or 'course')
+ *
+ * @property {string} displayName
+ *      a display name for this context (is the channel display name or 'The Course')
  *
  * @property {string} type
  *      the type of context (learning group type's prefix or 'course')
@@ -146,33 +195,46 @@ class UserInContext {
      */
     constructor(config) {
         // instance properties
+
         this.username = config.username;
         this.contextType = config.contextType;
-
-        // initialize the interaction map
-        /* eslint-disable-next-line brace-style, max-statements-per-line */
-        this.interactionMap = InteractionTypes.reduce((map, type) => { map[type] = 0; return map; }, {});
+        this.interactionCounts = new InteractionCounts();
     }
+
+    // I'm keeping these methods to provide an abstraction layer instead of
+    // having to access the interactionCounts property directly.
 
     /**
      * Get the interaction count of the specified type of interaction.
      */
     getInteractionCount(type) {
-        return this.interactionMap[type];
+        return this.interactionCounts.getCount(type);
     }
 
     /**
      * Get the aggregate count of all interactions.
      */
     getInteractionAggregate() {
-        return Object.values(this.interactionMap).reduce((a, b) => a + b);
+        return this.interactionCounts.getTotal();
     }
 
     /**
      * Increment the interaction count of the specified type of interaction.
      */
     incInteractionCount(type) {
-        this.interactionMap[type]++;
+        this.interactionCounts.inc(type);
+    }
+
+    /**
+     * add the count of each type of interaction in the given interaction
+     * counts object to the counts for this UserInContext.
+     *
+     * @param {InteractionCounts} otherInteractionCounts
+     *      other counts by interaction type to be added to the counts in
+     *      this UserInContext
+     */
+    addInteractionCounts(otherInteractionCounts) {
+        this.interactionCounts.addCounts(otherInteractionCounts);
     }
 }
 
@@ -192,11 +254,82 @@ class UserInContext {
  *      type prefix)
  */
 
+/* ******************************************************************************
+ * InteractionCounts                                                       */ /**
+ *
+ * The InteractionCounts class keeps track of the counts of some set of
+ * interactions by type.
+ * On creation the count of every type of interaction is 0.
+ *
+ ********************************************************************************/
+class InteractionCounts {
+    /**
+     * InteractionCounts class constructor.
+     */
+    constructor() {
+        // instance properties
+
+        // initialize the interaction count map to 0 for all interaction types
+        /* eslint-disable-next-line brace-style, max-statements-per-line */
+        this.interactionMap = InteractionTypes.reduce((map, type) => { map[type] = 0; return map; }, {});
+    }
+
+    /**
+     * Get the sum of the count of all interaction types.
+     *
+     * @returns {number} sum of counts of all interaction types
+     */
+    getTotal() {
+        return Object.values(this.interactionMap).reduce((a, b) => a + b);
+    }
+
+    /**
+     * Get the current count of the given interaction type.
+     *
+     * @param {string} type - interaction type to get the count of
+     *
+     * @returns {number} count of interaction type
+     */
+    getCount(type) {
+        return this.interactionMap[type];
+    }
+
+    /**
+     * Get the current count of the given interaction type.
+     *
+     * @param {string} type - interaction type to get the count of
+     * @param {number} count - new value for the count of the interaction type
+     */
+    setCount(type, count) {
+        this.interactionMap[type] = count;
+    }
+
+    /**
+     * Increment the count of the specified type of interaction.
+     */
+    inc(type) {
+        this.interactionMap[type]++;
+    }
+
+    /**
+     * Add the counts of another InteractionCounts object to the counts
+     * in this one.
+     *
+     * @param {InteractionCounts} - the other InteractionsCounts to add
+     */
+    addCounts(otherInteractionCounts) {
+        for (const type of InteractionTypes) {
+            this.interactionMap[type] += otherInteractionCounts.interactionMap[type];
+        }
+    }
+}
+
 /* **************************************************************************** *
  * Module exports                                                               *
  * **************************************************************************** */
 export {
     InteractionTypes,
+    InteractionCounts,
     InteractionContext,
     UserInContext,
 };
