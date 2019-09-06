@@ -67,6 +67,7 @@
     "react-custom-scrollbars": "4.2.1",
     "react-day-picker": "7.2.1",
     "react-dom": "^16.9.0",
+    "react-fontawesome": "^1.6.1",
     "react-intl": "2.4.0",
     "react-pure-lifecycle": "^3.0.0",
     "react-redux": "5.0.7",
