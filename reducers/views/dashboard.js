@@ -21,6 +21,7 @@ const initialState = {
         status: false,
         message: '',
     },
+    courseStartTime: 0,
 
     // 'loaded' at idx if utterances, influence, and timeline are all loaded
     statsStatus: [],
@@ -147,6 +148,11 @@ const dashboard = (state = initialState, action) => {
                                     action.meetingId,
                                     action.timelineData),
         });
+    case DashboardActionTypes.DASHBOARD_SET_COURSE_START_TIME:
+        return {
+            ...state,
+            courseStartTime: action.courseStartTime,
+        };
     default:
         return state;
     }

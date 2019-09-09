@@ -41,6 +41,13 @@ export const selectMeeting = (meeting) => {
     };
 };
 
+export const setCourseStartTime = (courseStartTime) => {
+    return {
+        type: DashboardActionTypes.DASHBOARD_SET_COURSE_START_TIME,
+        courseStartTime,
+    };
+};
+
 export const loadRecentMeetings = (uid) => (dispatch) => {
     dispatch({
         type: DashboardActionTypes.DASHBOARD_LOADING_ALL_MEETINGS,
@@ -146,7 +153,7 @@ export const loadRecentMeetings = (uid) => (dispatch) => {
                     message:
                         'No meetings found. Meetings that last for over two minutes will show up here.',
                 });
-            } else if (err.message === 'no meetings after filter') {
+            } else if (err.message === 'no useful meetings after filter') {
                 dispatch({
                     type: DashboardActionTypes.DASHBOARD_LOADING_ERROR,
                     status: true,
