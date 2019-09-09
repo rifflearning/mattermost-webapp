@@ -16,7 +16,7 @@ describe('Meeting Utils', () => {
         });
 
         // for use with mocking return vals from API
-        const wrapInPromise = (toWrap) => new Promise((resolve) => resolve(toWrap));
+        const wrapInPromise = (toWrap) => new Promise((resolve) => resolve({data: toWrap}));
 
         const userId = 'A';
         const teamIds = ['B', 'C', 'D'];

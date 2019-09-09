@@ -12,6 +12,12 @@ describe('Recommendations Class', () => {
         1,
         () => true,
         'This is a rec!',
+
+        // courseStartTime gets mocked out anyway
+        0,
+
+        // a name for the recommendation
+        'test',
     ];
 
     const paramNameToIndex = {
@@ -21,6 +27,8 @@ describe('Recommendations Class', () => {
         priority: 3,
         isCompleteFunc: 4,
         displayText: 5,
+        startTime: 6,
+        name: 7,
     };
 
     const defaultRec = new Recommendation(...defaultRecParams);
@@ -37,7 +45,7 @@ describe('Recommendations Class', () => {
     };
 
     // we need to be able to mock the week number for testing shouldDisplay
-    _test.getWeekNumber = jest.fn();
+    _test.getCurrentWeekNumber = jest.fn();
 
     it('should calculate if meeting is complete based on provided function', () => {
         expect(defaultRec.isComplete()).toBe(true);
@@ -46,25 +54,25 @@ describe('Recommendations Class', () => {
     });
 
     it('should calculate whether or not to display properly', () => {
-        _test.getWeekNumber.mockReturnValueOnce(1);
+        _test.getCurrentWeekNumber.mockReturnValueOnce(1);
         expect(defaultRec.shouldDisplay()).toBe(true);
-        _test.getWeekNumber.mockReturnValueOnce(2);
+        _test.getCurrentWeekNumber.mockReturnValueOnce(2);
         expect(defaultRec.shouldDisplay()).toBe(false);
 
         const threeWeekRec = generateRec('numWeeksToDisplay', 3);
-        _test.getWeekNumber.mockReturnValueOnce(1);
+        _test.getCurrentWeekNumber.mockReturnValueOnce(1);
         expect(threeWeekRec.shouldDisplay()).toBe(true);
-        _test.getWeekNumber.mockReturnValueOnce(2);
+        _test.getCurrentWeekNumber.mockReturnValueOnce(2);
         expect(threeWeekRec.shouldDisplay()).toBe(true);
-        _test.getWeekNumber.mockReturnValueOnce(3);
+        _test.getCurrentWeekNumber.mockReturnValueOnce(3);
         expect(threeWeekRec.shouldDisplay()).toBe(true);
-        _test.getWeekNumber.mockReturnValueOnce(4);
+        _test.getCurrentWeekNumber.mockReturnValueOnce(4);
         expect(threeWeekRec.shouldDisplay()).toBe(false);
     });
 
     it('should calculate priority correctly', () => {
         // displayPriority is calculated as (startWeek * max_display_num) + priority
-        _test.getWeekNumber.mockReturnValueOnce(1);
+        _test.getCurrentWeekNumber.mockReturnValueOnce(1);
         expect(defaultRec.displayPriority()).toBe(4);
 
         const weekFourRec = generateRec('startWeek', 4);
