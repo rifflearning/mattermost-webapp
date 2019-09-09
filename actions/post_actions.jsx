@@ -258,26 +258,29 @@ export function increasePostVisibility(channelId, focusedPostId) {
 /**
  * Fetches all the posts that were made in the provided channel.
  *
- * @channelID: The unique ID for the chanel we should fetch posts from.
- * @returns: An array of Mattermost Post objects. See: https://api.mattermost.com/#tag/posts
- *    The returned list represents all the posts made in the specified channel.
- *    The array will be empty if the channel contains no posts, _or_ if the channel
- *    does not exist.
+ * @param {string} channelId - The unique ID for the chanel we should fetch posts from.
+ *
+ * @returns {Array} An array of Mattermost Post objects.
+ *      See {@link https://api.mattermost.com/#tag/posts}
+ *      The returned array represents all the posts made in the specified channel.
+ *      The array will be empty if the channel contains no posts, _or_ if the channel
+ *      does not exist.
  */
 export async function getAllPostsFromChannel(channelId) {
     const currentPosts = await PostActions.getPosts(channelId)(dispatch, getState);
-    if (currentPosts.err) {
+    if (currentPosts.error) {
         return [];
     }
     const somePost = Object.values(currentPosts.data.posts)[0];
     const earlyPosts = await PostActions.getPostsBefore(channelId, somePost.id)(dispatch, getState);
     const latePosts = await PostActions.getPostsAfter(channelId, somePost.id)(dispatch, getState);
-    const extractPostsFromQuerry = (querry) => {
-        return Object.values(querry.data.posts);
+
+    const extractPostsFromQuery = (query) => {
+        return query.error ? [] : Object.values(query.data.posts);
     };
-    return [extractPostsFromQuerry(earlyPosts),
-            somePost, // eslint-disable-line indent
-            extractPostsFromQuerry(latePosts)].flat(); // eslint-disable-line indent
+    return [...extractPostsFromQuery(earlyPosts),
+            ...somePost, // eslint-disable-line indent
+            ...extractPostsFromQuery(latePosts)]; // eslint-disable-line indent
 }
 
 export function searchForTerm(term) {
