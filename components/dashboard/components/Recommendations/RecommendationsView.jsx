@@ -8,7 +8,7 @@ import styled from 'styled-components';
 import {getRecommendations} from 'utils/riff/recommendations';
 import {getCourseStartTime} from 'utils/riff/recommendations/time';
 import {MAX_REC_DISPLAY_NUMBER} from 'utils/riff/recommendations/recs';
-import {logger} from 'utils/riff';
+import {app, logger} from 'utils/riff';
 
 import {Recommendation} from './Recommendation';
 
@@ -82,6 +82,31 @@ class RecommendationsView extends React.Component {
         );
     }
 
+    /**
+     * Logs the generated recommendations in riff-server
+     */
+    logRecommendations(recs, userId) {
+        // NOTE this is a little gnarly
+        // we did this because we don't have the results of isComplete here
+        // it's computed in a child component normally
+        // we need all recommendations at once for logging, though,
+        // so for now we're doing this here
+        // - jr 8.29.2019
+        const promisedRecs = recs
+            .map((rec) => rec.isComplete().then((isComplete) => ({ //eslint-disable-line max-nested-callbacks
+                name: rec.name,
+                isComplete,
+            })));
+
+        Promise.all(promisedRecs).then((recommendations) => {
+            const recLog = {
+                participantId: userId,
+                recommendations,
+            };
+            app.service('recommendationLogs').create(recLog);
+        });
+    }
+
     async updateRecommendations() {
         try {
             const startTime = await getCourseStartTime();
@@ -102,6 +127,9 @@ class RecommendationsView extends React.Component {
 
             logger.debug('RecommendationsView.updateRecommendations: recommendations to display', {recsToDisplayInOrder});
 
+            // FIXME this can log a single dashboard view multiple times
+            // if componentDidUpdate is called multiple times with different props
+            this.logRecommendations(recsToDisplayInOrder, this.props.currentUserId);
             this.setState({recommendations: recsToDisplayInOrder});
         }
         catch (e) {
