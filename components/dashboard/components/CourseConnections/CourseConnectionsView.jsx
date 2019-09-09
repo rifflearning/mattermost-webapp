@@ -2,6 +2,7 @@
 // See LICENSE.txt for license information.
 
 import React from 'react';
+import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4plugins_forceDirected from '@amcharts/amcharts4/plugins/forceDirected'; // eslint-disable-line camelcase
@@ -132,15 +133,17 @@ class CourseConnectionsView extends React.Component {
         const networkGraph = <div id='network-graph-div' style={{width: '100%', height: '100%'}}/>;
 
         return (
+            <CourseConnectionWrapper>
+                <ChartCard
+                    title={'Course Interactions'}
+                    chartDiv={networkGraph}
+                    chartInfo={chartInfo}
+                    chartTable={false}
+                    chartCardId={'cc-network-graph'}
+                    isNetworkGraphCard={true}
+                />
+            </CourseConnectionWrapper>
 
-            <ChartCard
-                title={'Course Interactions'}
-                chartDiv={networkGraph}
-                chartInfo={chartInfo}
-                chartTable={false}
-                chartCardId={'cc-network-graph'}
-                isNetworkGraphCard={true}
-            />
         );
     }
 
@@ -373,8 +376,7 @@ class CourseConnectionsView extends React.Component {
         // (we want a record even if there are no interactions w/ the user so we can display
         // a node w/ 0 interactions in the graph)
         if (learningGroup.members) {
-            // members is a comma delimited list of usernames
-            lgInteractionContext.addUsers(learningGroup.members.split(','));
+            lgInteractionContext.addUsers(learningGroup.members.map((m) => m.username));
         }
 
         // Add each interaction to the appropriate user's interaction type count
@@ -699,6 +701,23 @@ class CourseConnectionsView extends React.Component {
         return am4core.color(this.getNodeColor(colorConfig));
     }
 }
+
+const CourseConnectionWrapper = styled.div.attrs({
+    id: 'course-connections-wrapper',
+})`
+    width: 55%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    @media(max-width: 1020px) {
+      position: relative;
+      height: 70vh;
+      width: 100%;
+      margin-bottom: 2rem;
+    }
+`;
 
 /* **************************************************************************** *
  * Module exports                                                               *
