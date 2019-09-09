@@ -11,6 +11,7 @@ import {logger} from 'utils/riff';
 
 import MeetingViz from './components/MeetingViz';
 import {CourseConnections} from './components/CourseConnections';
+import {Recommendations} from './components/Recommendations';
 import {SectionHeader} from './components/SectionHeader';
 
 const LoadingErrorMessage = styled.div.attrs({
@@ -185,6 +186,7 @@ class DashboardView extends React.Component {
                             {courseConnectionsHeader}
                             <CourseConnectionsContainer>
                                 <CourseConnections/>
+                                <Recommendations/>
                             </CourseConnectionsContainer>
                             {meetingsSectionHeader}
                             <div style={{position: 'relative', height: '50vh'}}>
@@ -206,6 +208,7 @@ class DashboardView extends React.Component {
                             {courseConnectionsHeader}
                             <CourseConnectionsContainer>
                                 <CourseConnections/>
+                                <Recommendations/>
                             </CourseConnectionsContainer>
                             {meetingsSectionHeader}
                             {meetingVisualizations}

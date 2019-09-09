@@ -58,32 +58,60 @@ const Text = styled.div.attrs({
 class Recommendation extends React.Component {
     static propTypes = {
 
-        /** A Recommendation object containing a course connection recommendation*/
+        /** A Recommendation object containing a course connection recommendation */
         recommendation: PropTypes.object,
     };
+
+    constructor(props) {
+        super(props);
+
+        // TODO we may want to have a 'loading' state
+        this.state = {
+            isComplete: false,
+            isCompleteLoaded: false,
+        };
+    }
+
+    componentDidMount() {
+        // since isComplete is async, we need to call it after mounting and re-render
+        this.props.recommendation.isComplete().then((res) => this.setState({isCompleteLoaded: true, isComplete: res}));
+    }
+
+    renderIcon() {
+        if (!this.state.isCompleteLoaded) {
+            return false;
+        }
+
+        if (this.state.isComplete) {
+            return (
+                <IconWrapper
+                    color='#009e0f'
+                >
+                    <FontAwesome
+                        name='check'
+                        style={{color: '#009e0f'}}
+                    />
+                </IconWrapper>
+            );
+        }
+
+        return (
+            <IconWrapper
+                color='#4a4a4a'
+                background='#cccccc'
+            >
+                <FontAwesome
+                    name='plus'
+                    style={{color: '#4a4a4a'}}
+                />
+            </IconWrapper>
+        );
+    }
 
     render() {
         return (
             <Container>
-                {this.props.recommendation.isCompleted() ?
-                    <IconWrapper
-                        color='#009e0f'
-                    >
-                        <FontAwesome
-                            name='check'
-                            style={{color: '#009e0f'}}
-                        />
-                    </IconWrapper> :
-                    <IconWrapper
-                        color='#4a4a4a'
-                        background='#cccccc'
-                    >
-                        <FontAwesome
-                            name='plus'
-                            style={{color: '#4a4a4a'}}
-                        />
-                    </IconWrapper>
-                }
+                {this.renderIcon()}
                 <Text>{this.props.recommendation.displayText}</Text>
             </Container>
         );

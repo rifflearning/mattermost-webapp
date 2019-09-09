@@ -2,18 +2,20 @@
 // See LICENSE.txt for license information.
 
 import {connect} from 'react-redux';
+import {Datasets} from 'mattermost-redux/constants/user_analytics';
+import {getCurrentTeamId} from 'mattermost-redux/selectors/entities/teams';
 import {getCurrentUserId} from 'mattermost-redux/selectors/entities/users';
-
-import {getRecommendations} from 'utils/riff/recommendations';
 
 import {RecommendationsView} from './RecommendationsView';
 
 const mapStateToProps = (state) => ({
-    recommendations: getRecommendations(getCurrentUserId(state)),
+    userLearningGroups: state.entities.users.analytics[Datasets.USER_LEARNING_GROUPS] || [],
+    currentUserId: getCurrentUserId(state),
+    currentTeamId: getCurrentTeamId(state),
 });
 
 const Recommendations = connect(
-    mapStateToProps
+    mapStateToProps,
 )(RecommendationsView);
 
 /* **************************************************************************** *
