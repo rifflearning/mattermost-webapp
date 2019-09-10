@@ -697,3 +697,19 @@ export async function sendPasswordResetEmail(email, success, error) {
         error({id: err.server_error_id, ...err});
     }
 }
+
+/**
+ * Fetch the Mattermost User Object for the given username.
+ *
+ * @username: A string containing the user's username. Note that this may not match
+ *         the user's displayname. (all lc, hypens instead of whitespace).
+ * @returns The Mattermost User Object corresponding to the given username, or null if no
+ *     such user exists. See https://api.mattermost.com/#tag/users
+ */
+export async function getUserByName(username) {
+    const {data, error: err} = await UserActions.getUserByUsername(username)(dispatch, getState);
+    if (err) {
+        return null;
+    }
+    return data;
+}

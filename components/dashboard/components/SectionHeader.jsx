@@ -9,7 +9,6 @@ const Title = styled.div`
 font-size: ${(props) => {
         return props.mainHeader ? '40px' : '32px';
     }};
-font-weight: bold;
 `;
 
 const Desc = styled.div`

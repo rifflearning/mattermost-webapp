@@ -130,6 +130,7 @@ export const DashboardActionTypes = keyMirror({
     DASHBOARD_FETCH_MEETING_STATS: null,
     DASHBOARD_FETCH_MEETING_INFLUENCE: null,
     DASHBOARD_FETCH_MEETING_TIMELINE: null,
+    DASHBOARD_SET_COURSE_START_TIME: null,
     LOG_OUT: null,
 });
 

@@ -52,6 +52,7 @@ const Card = styled.div.attrs({
     ${(props) => props.isNetworkGraphCard === true && `
         height: 100%;
         max-width: 100%;
+        width: 100%;
     `}
 
     ${(props) => props.isMediatorCard === true && `
