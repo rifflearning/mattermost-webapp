@@ -55,7 +55,7 @@ export const participantLeaveRoom = (meetingId, participantId) => {
             return true;
         }).
         catch((err) => {
-            logger.error('shit, caught an error:', err);
+            logger.error('caught an error:', err);
             return false;
         });
 };

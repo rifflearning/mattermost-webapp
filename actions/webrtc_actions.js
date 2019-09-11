@@ -25,7 +25,7 @@ export const riffParticipantLeaveRoom = (riffMeetingId, riffId) => (/*dispatch*/
             return true;
         })
         .catch((err) => {
-            logger.error('shit, caught an error:', err);
+            logger.error('caught an error:', err);
             return false;
         });
 };

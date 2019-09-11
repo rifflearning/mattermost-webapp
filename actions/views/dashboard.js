@@ -121,7 +121,7 @@ export const loadRecentMeetings = (uid) => (dispatch) => {
             });
 
             // TODO: this will include meetings where someone joins but does not speak.
-            // because we use the utterance data to inform our shit, the # of attendees will also be wrong.
+            // because we use the utterance data to inform our stuff, the # of attendees will also be wrong.
             // right thing to do here is to try and create a service on the server that will reliably give
             // us # of attendees
             logger.debug('num participants:', numParticipants, meetings);
