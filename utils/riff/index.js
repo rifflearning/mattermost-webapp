@@ -153,6 +153,12 @@ function addA11yBrowserAlert(text, priority = 'polite') {
     }, 1000);
 }
 
+const LoadMeetingErrorTypes = {
+    NO_PARTICIPANT: 'no participant found',
+    NO_USEFUL_MEETINGS: 'no useful meetings found',
+    NO_MEETINGS_WITH_OTHERS: 'no meetings with other participants found',
+};
+
 /* **************************************************************************** *
  * Module exports                                                               *
  * **************************************************************************** */
@@ -181,4 +187,5 @@ export {
     calculateBitrate,
     isScreenShareSourceAvailable,
     readablePeers,
+    LoadMeetingErrorTypes,
 };
