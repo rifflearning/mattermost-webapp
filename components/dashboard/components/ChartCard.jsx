@@ -72,13 +72,15 @@ const StyledInfo = styled.p.attrs({
 })`
     padding: 2rem;
     color: #fff;
+    white-space: pre-line;
 `;
 
 const StyledInfoSmall = styled.p.attrs({
     className: 'is-size-7',
 })`
-padding: 2rem 0.5rem 0.5rem 0.5rem;
-color: #fff;
+    padding: 2rem 0.5rem 0.5rem 0.5rem;
+    color: #fff;
+    white-space: pre-line;
 `;
 
 const INFO_CLICKED = 'INFO_CLICKED';
