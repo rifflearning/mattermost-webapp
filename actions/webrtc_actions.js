@@ -21,11 +21,11 @@ export const riffParticipantLeaveRoom = (riffMeetingId, riffId) => (/*dispatch*/
             remove_participants: [riffId],
         })
         .then(() => {
-            logger.debug(`removed participant: ${riffId} from meeting ${riffMeetingId}`);
+            logger.debug(`WebrtcAction: removed participant: ${riffId} from meeting ${riffMeetingId}`);
             return true;
         })
         .catch((err) => {
-            logger.error('caught an error:', err);
+            logger.error('WebrtcAction: couldn\'t remove participant from meeting', err);
             return false;
         });
 };
@@ -41,7 +41,7 @@ export const handleMuteAudioClick = (event, muted, webrtc) => (dispatch) => {
 };
 
 export const joinWebRtcRoom = (roomName, teamId, videoId) => (dispatch) => {
-    logger.debug('Joining webrtc room', roomName, teamId, videoId);
+    logger.debug('WebrtcAction: Joining webrtc room', roomName, teamId, videoId);
     dispatch(joinRoom(`${roomName}-${videoId}`));
     browserHistory.push(`/${teamId}/${roomName}/video/${videoId}`);
 };
@@ -55,7 +55,7 @@ export const handleReadyClick = (event, props, webrtc) => (dispatch) => {
         dispatch(joinRoomError('Make sure your camera and microphone are ready, and refresh the page.'));
     } else {
         // add user to riff meetings
-        logger.debug('adding user to meetings with props:', props);
+        logger.debug('WebrtcAction: adding user to meetings with props:', props);
         event.preventDefault();
         riffAddUserToMeeting(
             props.user.id,
@@ -86,9 +86,9 @@ export const handleScreenShareClick = (event, isUserSharing, webRtcRemoteSharedS
     } else if (webRtcRemoteSharedScreen) {
         // someone is already sharing
         // TODO tell user to quit it
-        logger.debug('Stop that, someone is already sharing!');
+        logger.debug('WebrtcAction: Stop that, someone is already sharing!');
     } else {
-        logger.debug('Sharing screen!');
+        logger.debug('WebrtcAction: Sharing screen!');
         dispatch(shareScreen());
         webrtc.shareScreen();
     }
@@ -191,14 +191,14 @@ export const sendTextChatMsg = (message, participant, meeting) => (dispatch) => 
             meeting,
         })
         .then((result) => {
-            logger.debug('created a message!', result);
+            logger.debug('WebrtcAction.sendTextChatMsg: added message to messages service', result);
             dispatch(updateTextChat(result.msg,
                                     result.meeting,
                                     result.participant,
                                     result.time));
         })
         .catch((err) => {
-            logger.error('errored out', err);
+            logger.error('WebrtcAction.sendTextChatMsg: couldn\'t add message to service', err);
         });
 };
 

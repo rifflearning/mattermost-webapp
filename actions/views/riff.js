@@ -21,7 +21,7 @@ export const riffAuthFail = (err) => {
 };
 
 export const updateTurnData = (transitions, turns) => {
-    logger.debug('updating turn data:', transitions, turns);
+    logger.debug('RiffActions: updating turn data:', {transitions, turns});
     return {
         type: RiffServerActionTypes.RIFF_TURN_UPDATE,
         transitions,
@@ -30,7 +30,7 @@ export const updateTurnData = (transitions, turns) => {
 };
 
 export const updateMeetingParticipants = (participants) => {
-    logger.debug('updating riff meeting participants', participants);
+    logger.debug('RiffActions: updating riff meeting participants', participants);
     return {
         type: RiffServerActionTypes.RIFF_PARTICIPANTS_CHANGED,
         participants,
@@ -51,11 +51,11 @@ export const participantLeaveRoom = (meetingId, participantId) => {
             remove_participants: [participantId],
         }).
         then(() => {
-            logger.debug(`removed participant: ${participantId} from meeting ${meetingId}`);
+            logger.debug(`RiffActions: removed participant: ${participantId} from meeting ${meetingId}`);
             return true;
         }).
         catch((err) => {
-            logger.error('caught an error:', err);
+            logger.error(`RiffActions: couldn't remove participant: ${participantId} from meeting ${meetingId}`, err);
             return false;
         });
 };
@@ -67,15 +67,15 @@ export const attemptRiffAuthenticate = () => (dispatch) => {
         password: 'default-user-password',
     }).
         then((result) => {
-            logger.debug('riff data server auth result!: ', result);
+            logger.info('RiffActions: Riff data server authentication: Succeeded');
             dispatch(riffAuthSuccess(result.accessToken));
 
             //return this.recordMeetingJoin();
         }).
         catch((err) => {
-            logger.warn('riff data server auth ERROR:', err);
+            logger.warn('RiffActions: Riff data server authentication: Failed', err);
             dispatch(riffAuthFail(err));
-            logger.info('trying to authenticate again...');
+            logger.info('RiffActions: Riff data server authentication: Retrying...');
             dispatch(attemptRiffAuthenticate());
         });
 };
