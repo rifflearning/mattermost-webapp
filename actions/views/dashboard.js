@@ -18,6 +18,7 @@ import {
     logger,
     mapObject,
     reverseCmp,
+    LoadMeetingErrorTypes,
 } from 'utils/riff';
 
 export const loadMoreMeetings = () => {
@@ -63,7 +64,7 @@ export const loadRecentMeetings = (uid) => (dispatch) => {
         .then((res) => {
             if (res.data.length === 0) {
                 // no found participants. Throw an error to break out early.
-                throw new Error('no participant');
+                throw new Error(LoadMeetingErrorTypes.NO_PARTICIPANT);
             }
             logger.debug('>>fetched participant:', res);
             return res.data[0];
@@ -88,7 +89,7 @@ export const loadRecentMeetings = (uid) => (dispatch) => {
             });
 
             if (usefulMeetings.length === 0) {
-                throw new Error('no useful meetings after filter');
+                throw new Error(LoadMeetingErrorTypes.NO_USEFUL_MEETINGS);
             }
 
             // fetch data for first meeting
@@ -120,7 +121,7 @@ export const loadRecentMeetings = (uid) => (dispatch) => {
             });
 
             // TODO: this will include meetings where someone joins but does not speak.
-            // because we use the utterance data to inform our shit, the # of attendees will also be wrong.
+            // because we use the utterance data to inform our stuff, the # of attendees will also be wrong.
             // right thing to do here is to try and create a service on the server that will reliably give
             // us # of attendees
             logger.debug('num participants:', numParticipants, meetings);
@@ -129,7 +130,7 @@ export const loadRecentMeetings = (uid) => (dispatch) => {
             });
             logger.debug('kept meetings:', meetingsWithOthers);
             if (meetingsWithOthers.length === 0) {
-                throw new Error('no meetings after participants filter');
+                throw new Error(LoadMeetingErrorTypes.NO_MEETINGS_WITH_OTHERS);
             }
             meetingsWithOthers.sort(reverseCmp(cmpObjectProp('startTime'))); // sort by descending time
 
@@ -146,23 +147,21 @@ export const loadRecentMeetings = (uid) => (dispatch) => {
             }
         })
         .catch((err) => {
-            if (err.message === 'no participant') {
+            if (err.message === LoadMeetingErrorTypes.NO_PARTICIPANT) {
                 dispatch({
                     type: DashboardActionTypes.DASHBOARD_LOADING_ERROR,
                     status: true,
                     message:
                         'No meetings found. Meetings that last for over two minutes will show up here.',
                 });
-            } else if (err.message === 'no useful meetings after filter') {
+            } else if (err.message === LoadMeetingErrorTypes.NO_USEFUL_MEETINGS) {
                 dispatch({
                     type: DashboardActionTypes.DASHBOARD_LOADING_ERROR,
                     status: true,
                     message:
                         "We'll only show meetings that lasted for over two minutes. Go have a riff!",
                 });
-            } else if (
-                err.message === 'no meetings after nparticipants filter'
-            ) {
+            } else if (err.message === LoadMeetingErrorTypes.NO_MEETINGS_WITH_OTHERS) {
                 dispatch({
                     type: DashboardActionTypes.DASHBOARD_LOADING_ERROR,
                     status: true,
