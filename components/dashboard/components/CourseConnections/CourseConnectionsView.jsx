@@ -79,6 +79,18 @@ class CourseConnectionsView extends React.Component {
         fetchUserInteractions: PropTypes.func,
     };
 
+    /**
+     * Description of this chart that is presented to the user via the ChartCard info button
+     * @type {string}
+     */
+    static chartInfo =
+        'This metric shows how many times you\'ve connected with members of your group(s) ' +
+        'and other people in the course. Connections are a total of your posts, direct ' +
+        'messages, mentions, replies, and reactions in Riff.\n' +
+        '\n' +
+        'Learners who engage with their peers are more likely to complete the course, ' +
+        'and have higher grades.';
+
     constructor(props) {
         super(props);
 
@@ -126,10 +138,6 @@ class CourseConnectionsView extends React.Component {
     }
 
     render() {
-        const chartInfo = 'This metric shows how many times you\'ve connected with members of your group(s) and other people in the course.' +
-        ' Connections are a total of your direct messages, mentions, replies, and reactions in Riff.' +
-        '\n Learners who engage with their peers are more likely to complete the course, and have higher grades.';
-
         const networkGraph = <div id='network-graph-div' style={{width: '100%', height: '100%'}}/>;
 
         return (
@@ -137,7 +145,7 @@ class CourseConnectionsView extends React.Component {
                 <ChartCard
                     title={'Course Interactions'}
                     chartDiv={networkGraph}
-                    chartInfo={chartInfo}
+                    chartInfo={CourseConnectionsView.chartInfo}
                     chartTable={false}
                     chartCardId={'cc-network-graph'}
                     isNetworkGraphCard={true}
