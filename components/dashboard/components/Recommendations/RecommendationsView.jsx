@@ -56,8 +56,6 @@ class RecommendationsView extends React.Component {
     constructor(props) {
         super(props);
 
-        this.updateRecommendations = this.updateRecommendations.bind(this);
-        this.shouldUpdateRecommendations = this.shouldUpdateRecommendations.bind(this);
         this.state = {recommendations: []};
     }
 
@@ -111,7 +109,7 @@ class RecommendationsView extends React.Component {
         try {
             const startTime = await getCourseStartTime();
 
-            logger.debug(`RecommendationsView.updateRecommendations: course start time is ${new Date(startTime).toUTCString()}`);
+            logger.info(`RecommendationsView.updateRecommendations: course start time is ${new Date(startTime).toUTCString()}`);
 
             const allRecs = getRecommendations(
                 this.props.currentUserId,
@@ -125,7 +123,7 @@ class RecommendationsView extends React.Component {
                 .sort((a, b) => b.displayPriority() - a.displayPriority())
                 .slice(0, MAX_REC_DISPLAY_NUMBER);
 
-            logger.debug('RecommendationsView.updateRecommendations: recommendations to display', {recsToDisplayInOrder});
+            logger.info('RecommendationsView.updateRecommendations: recommendations to display', {recsToDisplayInOrder, allRecs});
 
             // FIXME this can log a single dashboard view multiple times
             // if componentDidUpdate is called multiple times with different props
