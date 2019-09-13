@@ -128,7 +128,7 @@ function getRecommendations(userId, teamId, learningGroups, courseStartTime) {
         userId,
         // eslint-disable-next-line no-magic-numbers
         5, //first week to display this recommendation
-        3, // number of weeks to display for
+        4, // number of weeks to display for
         0, // relative priority to other recs for this week
         async () => {
             // TODO see about doing this via redux and the state -mjl 2019-09-09
