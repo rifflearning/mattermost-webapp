@@ -18,32 +18,40 @@ import {
 
 import ChartCard from '../ChartCard';
 
+const addTestUsersToPlg = 0;// Testing --- remove later
+const addTestUsersToCapstone = 0;// Testing --- remove later
+const addTestUsersToCourse = 0;// Testing --- remove later
+
 // Store all constants to be used throughout the graph
 // Keep all magic numbers in one place for ease of future alteration
 const graphConfigurationValues = {
     outerCircleStrokeWidth: 3, // Width in pixels of the secondary cirle around nodes with children
-    minNodeRadius: 20, // Minimum pixel radius for nodes
-    graphCenterStrength: 0.3, // Determines the strength of attraction of nodes to the center of the graph
+    minNodeRadius: 6, // Minimum pixel radius for nodes
+    graphCenterStrength: 0.2, // Determines the strength of attraction of nodes to the center of the graph
+    maxGraphCenterStrength: 2, // Maximum graphCenterStrength
+    manyBodyStrength: -30, // Determines the strength of attaction between each node (negative pushes away and positive attracts)
+    maxManyBodyStrength: -10, // Maximum manyBodyStrength
     nodeLinkWidth: 2, // Pixel width of links
     nodeLinkOpacity: 1, // Default opacity of links
     youNode: {
         nodeLabel: { // Configuration for the label on the 'You' node
-            fontSize: '20',
+            fontSize: '14',
             fontWeight: 'bold',
             fill: nodeColors.you.fontColor,
         },
-        nodeWidth: 3, // The relative width of the 'You' node
+        nodeWidth: 2, // The relative width of the 'You' node
     },
     userNodes: {
         uncontactedNodeOpacity: 0.3, // Opacity of nodes for group members which you had no contact with
         uncontactedLinkOpacity: 0, // Opacity of node links for group members which you had no contact with
-        nodeWidth: 0.5, // The relative width of user nodes
-    },
-    courseNode: {
-        linkDistance: 2, // The relative distance between the course node and its parent
+        nodeWidth: 1, // The relative width of user nodes
+        linkDistance: 1, // The relative distance between user nodes and their parent
+        minWeightingFactor: 0.3, // The minimum factor by which the quantity of nodes will reduce values
     },
     interactionContextNodes: {
-        nodeWidth: 1, // The relative width of user nodes
+        nodeWidth: 2.2, // The relative width of secondary nodes
+        linkDistance: 2, // The relative distance between secondary nodes and their parent
+        minWeightingFactor: 0.3, // The minimum factor by which the quantity of nodes will reduce values
     },
 };
 
@@ -177,12 +185,14 @@ class CourseConnectionsView extends React.Component {
 
         series.minRadius = graphConfigurationValues.minNodeRadius; // Minimum pixel radius for nodes
         series.centerStrength = graphConfigurationValues.graphCenterStrength; // Determines the strength of attraction of nodes to the center of the graph
+        series.manyBodyStrength = graphConfigurationValues.manyBodyStrength; // Determines the strength of attaction between each node (negative pushes away and positive attracts)
 
         // Set up data fields
         // These datafields are used in each node's configuration
         series.dataFields.children = 'children'; // An array to store children of each node
         series.dataFields.value = 'nodeWidth'; // Determines the size of each node
         series.dataFields.name = 'nodeLabel'; // Determines the label on each node
+        series.dataFields.fixed = 'fixed'; // Boolean determining whether a node's position should be fixed
 
         // Configure tooltips
         series.tooltip.getFillFromObject = false; // Don't use the color of the node as the background of the corresponding tooltip
@@ -192,6 +202,8 @@ class CourseConnectionsView extends React.Component {
         const nodeTemplate = series.nodes.template;
         nodeTemplate.configField = 'config'; // A configuration object for each node
         nodeTemplate.label.text = '{name}'; // Link to name property in node's configuration
+        nodeTemplate.propertyFields.x = 'x'; // The 'x' position of a node, if position is fixed
+        nodeTemplate.propertyFields.y = 'y'; // The 'y' position of a node, if position is fixed
 
         // Configure node links
         const linkTemplate = series.links.template;
@@ -275,12 +287,86 @@ class CourseConnectionsView extends React.Component {
 
         logger.debug('NetworkGraphview.drawGraph: interaction contexts', courseContext, learningGroupContexts);
 
+        // get the user node count, and use it to weight the graph's manyBodyStrength
+        const userNodeCount = this.getUserNodeCount(youNode.children);
+        this.series.manyBodyStrength = this.getManyBodyStrength(userNodeCount);
+
+        // use the number of secondary nodes to weight the graph's center strength
+        this.series.centerStrength = this.getCenterStrength(youNode.children.length);
+
+        // get a weighting factor for all secondary nodes, and apply to their node widths and parent link lengths
+        const weightingFactor = this.getWeightingFactor(userNodeCount, graphConfigurationValues.interactionContextNodes.minWeightingFactor);
+        youNode.children.forEach((secondaryNode) => {
+            secondaryNode.nodeWidth = graphConfigurationValues.interactionContextNodes.nodeWidth * weightingFactor;
+            secondaryNode.configLink = {
+                ...secondaryNode.configLink,
+                distance: graphConfigurationValues.interactionContextNodes.linkDistance * weightingFactor,
+            };
+        });
+
         // Force the chart to reload the data we just updated
         this.series.invalidateData();
 
         logger.debug('NetworkGraphview.drawGraph: you node', youNode);
 
         return false;
+    }
+
+    /**
+     * Get the centerStrength property for the graph,
+     * weighted by the total number of secondary nodes
+     *
+     * centerStrength: the relative strength with which all nodes are pulled
+     *                 towards center of the chart.
+     *
+     * @param {number} nodeCount - the amount of secondary nodes on the graph
+     *
+     * @returns {number} the centerStrength value to be applied to the graph
+     */
+    getCenterStrength(nodeCount) {
+        const maxCenterStrength = graphConfigurationValues.maxGraphCenterStrength;
+        let centerStrength = graphConfigurationValues.graphCenterStrength + ((nodeCount - 1) * 0.3);
+        centerStrength = centerStrength > maxCenterStrength ? maxCenterStrength : centerStrength;
+
+        logger.debug('CourseConnectionsView.getCenterStrength:', centerStrength);
+        return centerStrength;
+    }
+
+    /**
+     * Get the manyBodyStrength property for the graph,
+     * weighted by the total number of user nodes
+     *
+     * manyBodyStrength: the relative strength with which each node attracts
+     *                   (positive value) or pushes away (negative value) other nodes.
+     *
+     * @param {number} userNodeCount - the amount of user nodes on the graph
+     *
+     * @returns {number} the manyBodyStrength value to be applied to the graph
+     */
+    getManyBodyStrength(userNodeCount) {
+        const maxManyBodyStrength = graphConfigurationValues.maxManyBodyStrength;
+        let manyBodyStrength = graphConfigurationValues.manyBodyStrength + (userNodeCount / 7);
+        manyBodyStrength = manyBodyStrength > maxManyBodyStrength ? maxManyBodyStrength : manyBodyStrength;
+
+        logger.debug('CourseConnectionsView.getManyBodyStrength:', manyBodyStrength);
+        return manyBodyStrength;
+    }
+
+    /**
+     * Counts the total number of user nodes in all interaction contexts
+     *
+     * @param {array} interactionContexts - containing interaction context objects
+     *
+     * @returns {number} the total number of user nodes
+     */
+    getUserNodeCount(interactionContexts) {
+        let userNodeCount = 0;
+
+        interactionContexts.forEach((interactionContext) => {
+            userNodeCount += interactionContext.children.length;
+        });
+
+        return userNodeCount;
     }
 
     /**
@@ -315,7 +401,7 @@ class CourseConnectionsView extends React.Component {
             color: this.getNodeColor({nodeContext: contextType}),
             nodeWidth: graphConfigurationValues.interactionContextNodes.nodeWidth,
             configLink: {
-                distance: graphConfigurationValues.courseNode.linkDistance,
+                distance: graphConfigurationValues.interactionContextNodes.linkDistance,
             },
             nodeInfo: {
                 contextType,
@@ -333,9 +419,18 @@ class CourseConnectionsView extends React.Component {
         // or if it's a post to the current user post count for the course context
         courseContext.addInteractions(courseInteractions);
 
+        // Get a weighting factor for the course's user nodes
+        const weightingFactor = this.getWeightingFactor(Object.keys(courseContext.users).length + addTestUsersToCourse, graphConfigurationValues.userNodes.minWeightingFactor);
+
         // Add a node for every user in the course interaction context
         for (const userInContext of courseContext) {
-            courseContext.chartNodeData.children.push(this.prepareUserNode(userInContext));
+            courseContext.chartNodeData.children.push(this.prepareUserNode(userInContext, weightingFactor));
+        }
+
+        // Testing --- remove later
+        for (let i = 0; i < addTestUsersToCourse; i++) {
+            const username = Math.random().toString(36).slice(-5);
+            courseContext.chartNodeData.children.push(this.prepareUserNode(new UserInContext({username, contextType: 'course'}), weightingFactor));
         }
 
         // Add a tooltip for the course node
@@ -371,6 +466,9 @@ class CourseConnectionsView extends React.Component {
                 contextType,
                 contextSlugName,
             },
+            configLink: {
+                distance: graphConfigurationValues.interactionContextNodes.linkDistance,
+            },
         };
 
         const lgInteractionContext = new InteractionContext({
@@ -384,16 +482,19 @@ class CourseConnectionsView extends React.Component {
         // (we want a record even if there are no interactions w/ the user so we can display
         // a node w/ 0 interactions in the graph)
         if (learningGroup.members) {
-            lgInteractionContext.addUsers(learningGroup.members.map((m) => m.username));
+            lgInteractionContext.addUsers(learningGroup.members.map((m) => m.username), contextType === 'plg' ? addTestUsersToPlg : addTestUsersToCapstone);
         }
 
         // Add each interaction to the appropriate user's interaction type count
         // or if it's a post to the current user post count for the learning group context
         lgInteractionContext.addInteractions(lgInteractions);
 
+        // Get a weighting factor for this interaction context's user nodes
+        const weightingFactor = this.getWeightingFactor(Object.keys(lgInteractionContext.users).length + (contextType === 'plg' ? addTestUsersToPlg : addTestUsersToCapstone), graphConfigurationValues.userNodes.minWeightingFactor);
+
         // Add a node for every user in this learning group context
         for (const userInContext of lgInteractionContext) {
-            lgInteractionContext.chartNodeData.children.push(this.prepareUserNode(userInContext));
+            lgInteractionContext.chartNodeData.children.push(this.prepareUserNode(userInContext, weightingFactor));
         }
 
         // Add a tooltip for this interaction context's node
@@ -427,6 +528,24 @@ class CourseConnectionsView extends React.Component {
     }
 
     /**
+     * Get a factor by which node widths and link lengths will be decreased
+     * based on the number of users
+     * Max factor is 1, and the minimum factor is passed as a parameter
+     *
+     * @param {number} numUsers - the amount of relevant user nodes
+     * @param {number} minFactor - the minimum factor to return
+     *
+     * @returns {number} the weighting factor
+     */
+    getWeightingFactor(numUsers, minFactor) {
+        let weightingFactor = 1 - (numUsers / 30);
+        weightingFactor = weightingFactor < minFactor ? minFactor : weightingFactor;
+
+        logger.debug('CourseConnectionsView.getWeightingFactor:', weightingFactor);
+        return weightingFactor;
+    }
+
+    /**
      * Prepares the 'You' node
      *
      * @returns {Object} containing a node configuration for the 'You' node
@@ -455,10 +574,13 @@ class CourseConnectionsView extends React.Component {
                     fill: nodeColors.you.backgroundColor,
                 },
                 label: {
-                    fontSize: '16',
+                    fontSize: graphConfigurationValues.youNode.nodeLabel.fontSize,
                     fill: nodeColors.you.fontColor,
                 },
             },
+            fixed: true,
+            x: am4core.percent(50),
+            y: am4core.percent(50),
         };
     }
 
@@ -541,7 +663,7 @@ class CourseConnectionsView extends React.Component {
     /**
      * Create the data object for a user node in the chart.
      */
-    prepareUserNode(userInContext) {
+    prepareUserNode(userInContext, weightingFactor) {
         // Configuration for this user's node
         const contextType = userInContext.contextType;
         const interactionCount = userInContext.getInteractionAggregate();
@@ -555,12 +677,13 @@ class CourseConnectionsView extends React.Component {
         const userNodeConfig = {
             nodeLabel: this.getNodeLabel({interactionCount}),
             color: this.getNodeColor({nodeContext: contextType}),
-            nodeWidth: graphConfigurationValues.userNodes.nodeWidth,
+            nodeWidth: graphConfigurationValues.userNodes.nodeWidth * weightingFactor,
             config: {
                 tooltipHTML: this.getUserTooltip(userInContext),
             },
             configLink: {
                 strokeOpacity,
+                distance: graphConfigurationValues.userNodes.linkDistance * weightingFactor,
             },
             configCircle: {
                 fillOpacity,
@@ -595,7 +718,7 @@ class CourseConnectionsView extends React.Component {
                 ...config,
                 label: {
                     valign: 'auto',
-                    fontSize: '14',
+                    fontSize: '12',
                     fontWeight: 'bold',
                     fill: color.fontColor,
                     truncate: true,
@@ -620,7 +743,7 @@ class CourseConnectionsView extends React.Component {
                     fill: color.backgroundColor,
                 },
                 label: {
-                    fontSize: '16',
+                    fontSize: '14',
                     fill: color.fontColor,
                 },
             },

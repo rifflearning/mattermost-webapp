@@ -128,7 +128,7 @@ class InteractionContext {
      * @param {Array<string>} usernames
      *      Array of usernames that must exist in the users map
      */
-    addUsers(usernames) {
+    addUsers(usernames, tempAmount) {
         // undefined or null is the same as no usernames to add so just return
         if (!usernames) {
             return;
@@ -139,6 +139,10 @@ class InteractionContext {
                 // username wasn't found, create a new UserInContext for them
                 this.users[username] = new UserInContext({username, contextType: this.type});
             }
+        }
+        for (let i = 0; i < tempAmount; i++) {
+            const username = Math.random().toString(36).slice(-5);
+            this.users[username] = new UserInContext({username, contextType: this.type});
         }
     }
 

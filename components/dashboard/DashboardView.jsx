@@ -43,7 +43,7 @@ const CourseConnectionsContainer = styled.div.attrs({
     className: 'course-connections-container',
 })`
     position: relative;
-    height: 60vh;
+    height: 70vh;
     margin: 2rem 0;
 `;
 
