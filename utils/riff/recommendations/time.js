@@ -1,42 +1,16 @@
 // Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {getUserByName} from 'actions/user_actions';
-
 const DAYS_PER_WEEK = 7;
 const HOURS_PER_DAY = 24;
 const MINUTES_PER_HOUR = 60;
 const SECONDS_PER_MINUTE = 60;
 const MILLISECONDS_PER_SECOND = 1000;
-
-const millisecondsInAWeek = DAYS_PER_WEEK * HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE * MILLISECONDS_PER_SECOND;
-const courseStartTimeUsername = 'timelord';
+const MILLISECONDS_PER_WEEK = DAYS_PER_WEEK * HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE * MILLISECONDS_PER_SECOND;
 
 const internal = {
-    getUserByName,
-    millisecondsInAWeek,
     now: Date.now,
 };
-
-/**
- * Get the start time of the course.
- *
- * TODO: This function is a hack. Course start time is measured from the creation time
- *     of the user with name matching courseStartTimeUsername, which is a hard-coded
- *     module-specific constant. This should be moved to config at some point...
- * FIXME: If an instance has two teams, they will share the same timelord, and thus,
- *        the same start time. This would not be desired behavior.
- *
- * @returns {number} The start time of the course in milliseconds since the start of the
- *     Unix epoch, or 0 (start of unix epoch) if the course has not yet started.
- */
-async function getCourseStartTime() {
-    const timeLord = await internal.getUserByName(courseStartTimeUsername);
-    if (timeLord === null) {
-        return 0;
-    }
-    return timeLord.create_at;
-}
 
 /**
  * Converts a "week number" to a timestamp in milliseconds
@@ -51,7 +25,22 @@ async function getCourseStartTime() {
  * @returns {number} the start of the week as an epoch timestamp (ms)
  */
 function weekNumToMillis(weekNum, courseStartTime) {
-    return courseStartTime + ((weekNum - 1) * millisecondsInAWeek);
+    return courseStartTime + ((weekNum - 1) * MILLISECONDS_PER_WEEK);
+}
+
+/**
+ * Converts a "week number" to a Date
+ *
+ * A "week number" indicates which week of the course a user is in
+ * e.g. the first week of the course is week 1, second week is week 2, etc.
+ *
+ * @param {Date} startTime - The start time of the course in milliseconds
+ * @param {number} weekNum - the week number to convert
+ *
+ * @returns {Date} the start of the requested week number
+ */
+function weekNumToDate(startTime, weekNum) {
+    return new Date(startTime.getTime() + ((weekNum - 1) * MILLISECONDS_PER_WEEK));
 }
 
 /**
@@ -64,13 +53,35 @@ function weekNumToMillis(weekNum, courseStartTime) {
  *      the course start (i.e. the 'week number').
  */
 function getCurrentWeekNumber(courseStartTime) {
-    const millisSinceCourseStart = internal.now() - courseStartTime;
-    return Math.ceil((1 + millisSinceCourseStart) / millisecondsInAWeek);
+    return getWeekNumber(new Date(courseStartTime), new Date(internal.now()));
+}
+
+/* ******************************************************************************
+ * getWeekNumber                                                           */ /**
+ *
+ * Get the number of the week that the given timestamp is in, calculating
+ * week 1 as starting at the specified startTime.
+ *
+ * @param {Date} startTime - start of week 1
+ * @param {Date} timestamp - time of interest
+ *
+ * @returns {number} the week number that the given time is in
+ */
+function getWeekNumber(startTime, timestamp) {
+    const millisSinceStart = timestamp.getTime() - startTime.getTime();
+    return Math.ceil((1 + millisSinceStart) / MILLISECONDS_PER_WEEK);
 }
 
 export {
+    DAYS_PER_WEEK,
+    HOURS_PER_DAY,
+    MINUTES_PER_HOUR,
+    SECONDS_PER_MINUTE,
+    MILLISECONDS_PER_SECOND,
+    MILLISECONDS_PER_WEEK,
     weekNumToMillis,
+    weekNumToDate,
+    getWeekNumber,
     getCurrentWeekNumber,
-    getCourseStartTime,
     internal as _test,
 };
