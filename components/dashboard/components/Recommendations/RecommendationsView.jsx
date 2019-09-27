@@ -5,9 +5,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 
-import {getRecommendations} from 'utils/riff/recommendations';
-import {getCourseStartTime} from 'utils/riff/recommendations/time';
-import {MAX_REC_DISPLAY_NUMBER} from 'utils/riff/recommendations/recs';
+import {MAX_REC_DISPLAY_NUMBER, RecommendationBase} from 'utils/riff/recommendations';
 import {app, logger} from 'utils/riff';
 
 import {Recommendation} from './Recommendation';
@@ -39,116 +37,69 @@ const Container = styled.div.attrs({
  *
  * React component to render course connection recommendations.
  *
+ * When this component is instantiated the recommendations are updated and
+ * some set of those are displayed. The recommendations that are displayed
+ * are also logged.
+ * We don't refresh the recommendations until a new RecommendationsView is
+ * instantiated.
+ *
  ********************************************************************************/
 class RecommendationsView extends React.Component {
     static propTypes = {
 
+        /** An array of recommendations to be displayed */
+        recommendations: PropTypes.arrayOf(PropTypes.instanceOf(RecommendationBase)),
+
         /** An array of learning groups that the current user is a member of */
-        userLearningGroups: PropTypes.array,
+        userLearningGroups: PropTypes.arrayOf(PropTypes.shape({
+            learning_group_name: PropTypes.string.isRequired,
+            learning_group_prefix: PropTypes.string.isRequired,
+            channel_id: PropTypes.string.isRequired,
+            channel_slug_name: PropTypes.string.isRequired,
+            channel_display_name: PropTypes.string.isRequired,
+            members: PropTypes.arrayOf(PropTypes.shape({
+                id: PropTypes.string.isRequired,
+                username: PropTypes.string.isRequired,
+            })),
+            has_left_group: PropTypes.bool.isRequired,
+        })),
 
         /** The id of the current user */
-        currentUserId: PropTypes.string.isRequired,
+        userId: PropTypes.string.isRequired,
 
-        /** The id of the currently selected MM team */
-        currentTeamId: PropTypes.string.isRequired,
+        /** Function to update the recommendations */
+        updateRecommendations: PropTypes.func.isRequired,
     };
 
+    /* **************************************************************************
+     * constructor                                                         */ /**
+     *
+     * RecommendationsView constructor
+     */
     constructor(props) {
         super(props);
 
-        this.state = {recommendations: []};
+        // Make sure the recommendations are fresh and logged when this component is used.
+        // We don't bother saving the returned promise, when the recommendations are
+        // updated, the props will be updated and we'll re-render.
+        this.updateRecommendations();
     }
 
-    /**
-     * Determines whether or not we need to update the recommendations
-     * based on if props have changed
+    /* **************************************************************************
+     * render                                                              */ /**
      *
-     * The recommendations should be updated if the user ID changes,
-     * the team ID changes, or if the userLearningGroups array changes
-     * The first two are unlikely (impossible?) to happen
-     * userLearningGroups however is likely to change on the user's first visit
-     * to the dashboard
+     * Required method of a React component.
+     * @see {@link https://reactjs.org/docs/react-component.html#render|React.Component.render}
      */
-    shouldUpdateRecommendations(prevProps) {
-        return (
-            prevProps.currentUserId !== this.props.currentUserId ||
-            prevProps.currentTeamId !== this.props.currentTeamId ||
-            prevProps.userLearningGroups.length !== this.props.userLearningGroups.length ||
-            prevProps.userLearningGroups.some(
-                (element, index) => this.props.userLearningGroups[index] !== element
-            )
-        );
-    }
-
-    /**
-     * Logs the generated recommendations in riff-server
-     */
-    logRecommendations(recs, userId) {
-        // NOTE this is a little gnarly
-        // we did this because we don't have the results of isComplete here
-        // it's computed in a child component normally
-        // we need all recommendations at once for logging, though,
-        // so for now we're doing this here
-        // - jr 8.29.2019
-        const promisedRecs = recs
-            .map((rec) => rec.isComplete().then((isComplete) => ({ //eslint-disable-line max-nested-callbacks
-                name: rec.name,
-                isComplete,
-            })));
-
-        Promise.all(promisedRecs).then((recommendations) => {
-            const recLog = {
-                participantId: userId,
-                recommendations,
-            };
-            app.service('recommendationLogs').create(recLog);
-        });
-    }
-
-    async updateRecommendations() {
-        try {
-            const startTime = await getCourseStartTime();
-
-            logger.info(`RecommendationsView.updateRecommendations: course start time is ${new Date(startTime).toUTCString()}`);
-
-            const allRecs = getRecommendations(
-                this.props.currentUserId,
-                this.props.currentTeamId,
-                this.props.userLearningGroups,
-                startTime,
-            );
-
-            const recsToDisplayInOrder = allRecs
-                .filter((rec) => rec.shouldDisplay())
-                .sort((a, b) => b.displayPriority() - a.displayPriority())
-                .slice(0, MAX_REC_DISPLAY_NUMBER);
-
-            logger.info('RecommendationsView.updateRecommendations: recommendations to display', {recsToDisplayInOrder, allRecs});
-
-            // FIXME this can log a single dashboard view multiple times
-            // if componentDidUpdate is called multiple times with different props
-            this.logRecommendations(recsToDisplayInOrder, this.props.currentUserId);
-            this.setState({recommendations: recsToDisplayInOrder});
-        }
-        catch (e) {
-            // Report and swallow the error (not sure what else to do w/ it)
-            logger.error('RecommendationsView.updateRecommendations: Updating failed w/ exception', e);
-        }
-    }
-
-    componentDidUpdate(prevProps) {
-        if (this.shouldUpdateRecommendations(prevProps)) {
-            this.updateRecommendations();
-        }
-    }
-
     render() {
-        const recommendations = this.state.recommendations.map((rec) => (
-            <Recommendation
-                recommendation={rec}
-                key={rec.name}
-            />
-        ));
+        const recommendations = this.props.recommendations
+            .slice(0, MAX_REC_DISPLAY_NUMBER)
+            .map((rec) => (
+                <Recommendation
+                    recommendation={rec}
+                    key={rec.recType}
+                />
+            ));
 
         return (
             <Container id='recommendations-view'>
@@ -156,6 +107,49 @@ class RecommendationsView extends React.Component {
                 {recommendations}
             </Container>
         );
+    }
+
+    /**
+     * Update the recommendations and then log the updated recommendations
+     */
+    async updateRecommendations() {
+        const recommendations = await this.props.updateRecommendations();
+
+        // we use the recommendations from the async action rather than the props
+        // because that way we can do this with the updated recommendations before
+        // the redux state causes the props to be reloaded.
+        // These recommendations have been initialized so their isComplete property
+        // has been updated.
+        this.logRecommendations(recommendations.slice(0, MAX_REC_DISPLAY_NUMBER));
+    }
+
+    /**
+     * Logs the generated recommendations in riff-server
+     */
+    logRecommendations(recs) {
+        // All recs have finished initializing, which means their isComplete property
+        // is up-to-date.
+        const logRecs = recs.map((r) => {
+            // Recommendations now have a recType which should probably replace the
+            // name property being logged now.
+            return {
+                name: r.description,
+                isComplete: r.isComplete,
+            };
+        });
+        const recLog = {
+            participantId: this.props.userId,
+            recommendations: logRecs,
+        };
+
+        try {
+            logger.debug('RecommendationsView.logRecommendations: Logging recommendations', {recLog, timestamp: new Date()});
+            app.service('recommendationLogs').create(recLog);
+        }
+        catch (e) {
+            // Report and swallow the error (not sure what else to do w/ it)
+            logger.error('RecommendationsView.logRecommendations: Creating the log record failed w/ exception', e);
+        }
     }
 }
 

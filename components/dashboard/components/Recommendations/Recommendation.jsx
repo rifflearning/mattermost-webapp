@@ -1,15 +1,13 @@
 // Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-/* eslint
-    "react/require-optimization": "off",
-    multiline-ternary: ["error", "always-multiline"],
-*/
-
 import React from 'react';
 import PropTypes from 'prop-types';
 import styled from 'styled-components';
 import FontAwesome from 'react-fontawesome';
+
+import {RecommendationBase} from 'utils/riff/recommendations';
+import {logger} from 'utils/riff';
 
 const Container = styled.div.attrs({
     className: 'recommendation-container',
@@ -41,7 +39,7 @@ const IconWrapper = styled.div.attrs({
     }
 `;
 
-const Text = styled.div.attrs({
+const RecText = styled.div.attrs({
     className: 'recommendation-text',
 })`
     font-size: 15px;
@@ -58,31 +56,26 @@ const Text = styled.div.attrs({
 class Recommendation extends React.Component {
     static propTypes = {
 
-        /** A Recommendation object containing a course connection recommendation */
-        recommendation: PropTypes.object,
+        /** An initialized Recommendation object containing a course connection recommendation */
+        recommendation: PropTypes.instanceOf(RecommendationBase),
     };
 
-    constructor(props) {
-        super(props);
-
-        // TODO we may want to have a 'loading' state
-        this.state = {
-            isComplete: false,
-            isCompleteLoaded: false,
-        };
-    }
-
-    componentDidMount() {
-        // since isComplete is async, we need to call it after mounting and re-render
-        this.props.recommendation.isComplete().then((res) => this.setState({isCompleteLoaded: true, isComplete: res}));
+    render() {
+        return (
+            <Container>
+                {this.renderIcon()}
+                <RecText>{this.props.recommendation.displayText}</RecText>
+            </Container>
+        );
     }
 
     renderIcon() {
-        if (!this.state.isCompleteLoaded) {
-            return false;
+        const rec = this.props.recommendation;
+        if (rec.isInitialized === null) {
+            logger.error('Recommendation.renderIcon: The recommendation has not even been requested to be initialized!');
         }
 
-        if (this.state.isComplete) {
+        if (rec.isComplete) {
             return (
                 <IconWrapper
                     color='#009e0f'
@@ -105,15 +98,6 @@ class Recommendation extends React.Component {
                     style={{color: '#4a4a4a'}}
                 />
             </IconWrapper>
-        );
-    }
-
-    render() {
-        return (
-            <Container>
-                {this.renderIcon()}
-                <Text>{this.props.recommendation.displayText}</Text>
-            </Container>
         );
     }
 }
