@@ -12,8 +12,13 @@ describe('components/ProfilePicture', () => {
         status: 'away',
     };
 
-    test('should match snapshot, no user specified, default props', () => {
-        const props = baseProps;
+    test('should match snapshot, user specified', () => {
+        const props = {
+            ...baseProps,
+            user: {
+                username: 'username',
+            },
+        };
         const wrapper = shallow(
             <ProfilePicture {...props}/>
         );
@@ -21,9 +26,12 @@ describe('components/ProfilePicture', () => {
         expect(wrapper).toMatchSnapshot();
     });
 
-    test('should match snapshot, no user specified, overridden props', () => {
+    test('should match snapshot, user specified, overridden props', () => {
         const props = {
             ...baseProps,
+            user: {
+                username: 'username',
+            },
             width: '48',
             height: '48',
             isRHS: true,

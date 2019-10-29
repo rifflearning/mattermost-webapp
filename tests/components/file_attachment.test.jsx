@@ -2,7 +2,7 @@
 // See LICENSE.txt for license information.
 
 import React from 'react';
-import {shallow, mount} from 'enzyme';
+import {shallow} from 'enzyme';
 
 import FileAttachment from 'components/file_attachment/file_attachment.jsx';
 
@@ -118,12 +118,5 @@ describe('component/FileAttachment', () => {
         const wrapper = shallow(createComponent());
         wrapper.setState({loaded: false});
         expect(wrapper).toMatchSnapshot();
-    });
-
-    test('should call the handleImageClick on attachment clicked', () => {
-        const handleImageClick = jest.fn();
-        const wrapper = mount(createComponent({handleImageClick}));
-        wrapper.find('.post-image__thumbnail').simulate('click');
-        expect(handleImageClick).toBeCalled();
     });
 });

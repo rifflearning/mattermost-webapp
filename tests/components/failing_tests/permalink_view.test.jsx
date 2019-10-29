@@ -4,7 +4,7 @@
 import React from 'react';
 import {shallow} from 'enzyme';
 
-import {emitPostFocusEvent} from 'actions/global_actions.jsx';
+//import {emitPostFocusEvent} from 'actions/global_actions.jsx';
 
 import PermalinkView from 'components/permalink_view/permalink_view.jsx';
 
@@ -21,7 +21,6 @@ describe('components/PermalinkView', () => {
         teamName: 'team_name',
     };
 
-    /*
     test('should match snapshot', () => {
         const wrapper = shallow(
             <PermalinkView {...baseProps}/>
@@ -30,20 +29,8 @@ describe('components/PermalinkView', () => {
         wrapper.setState({valid: true});
         expect(wrapper).toMatchSnapshot();
     });
-    */
 
-    test('should call emitPostFocusEvent on doPermalinkEvent', () => {
-        const wrapper = shallow(
-            <PermalinkView {...baseProps}/>
-        );
-
-        wrapper.setState({valid: false});
-        wrapper.instance().doPermalinkEvent();
-        expect(emitPostFocusEvent).toHaveBeenCalledTimes(1);
-        expect(emitPostFocusEvent).toBeCalledWith(baseProps.match.params.postid, baseProps.returnTo);
-    });
-
-/*    test('should match snapshot with archived channel', () => {
+    test('should match snapshot with archived channel', () => {
         const props = {...baseProps, channelIsArchived: true};
 
         const wrapper = shallow(
@@ -53,5 +40,4 @@ describe('components/PermalinkView', () => {
         wrapper.setState({valid: true});
         expect(wrapper).toMatchSnapshot();
     });
-    */
 });
