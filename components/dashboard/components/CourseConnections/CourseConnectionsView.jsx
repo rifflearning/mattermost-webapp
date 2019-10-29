@@ -282,7 +282,7 @@ class CourseConnectionsView extends React.Component {
         youNode.config.tooltipHTML = this.getUserTooltip(currentUserOverallContext);
 
         // update the aria label for the You node
-        youNode.config.readerLabelledBy = this.getAriaLabel(currentUserOverallContext);
+        youNode.config.readerDescription = this.getUserAriaLabel(currentUserOverallContext);
 
         logger.debug('NetworkGraphview.drawGraph: interaction contexts', courseContext, learningGroupContexts);
 
@@ -353,7 +353,7 @@ class CourseConnectionsView extends React.Component {
         courseContext.chartNodeData.config.tooltipHTML = this.getContextTooltip(courseContext);
 
         // Add an aria label for the course node
-        courseContext.chartNodeData.config.readerLabelledBy = this.getAriaLabel(courseContext);
+        courseContext.chartNodeData.config.readerDescription = this.getContextAriaLabel(courseContext);
 
         return courseContext;
     }
@@ -414,7 +414,7 @@ class CourseConnectionsView extends React.Component {
         lgInteractionContext.chartNodeData.config.tooltipHTML = this.getContextTooltip(lgInteractionContext);
 
         // Add an aria label for this interaction context's node
-        lgInteractionContext.chartNodeData.config.readerLabelledBy = this.getAriaLabel(lgInteractionContext);
+        lgInteractionContext.chartNodeData.config.readerDescription = this.getContextAriaLabel(lgInteractionContext);
 
         return lgInteractionContext;
     }
@@ -480,53 +480,27 @@ class CourseConnectionsView extends React.Component {
     }
 
     /**
-     * Prepares the aria description for a node
-     * If the data object passed is an instance of:
-     *     - InteractionContext, then interaction counts are retrieved using getTypeAggregateTotals()
-     *     - UserInContext, then interaction counts are retrieved using getInteractionCount()
+     * Prepares the aria description for a user node
      *
-     * Use data.username to check if the data parameter is an instance of UserInContext
-     *
-     * @param {InteractionContext | UserInContext} data - containing interaction counts for the node
+     * @param {InteractionContext} data - containing interaction counts for the node
      *
      * @returns {string} containing the aria label for the node
      */
-    getAriaLabel(data) {
+    getUserAriaLabel(data) {
         const ariaDescription = ['You\'ve'];
 
-        // All user nodes but the 'you' node
-        if (data.username && data.contextType !== 'you') {
-            ariaDescription.push('had');
+        if (data.contextType === 'you') {
+            ariaDescription.push('made');
         }
         else {
-            ariaDescription.push('made');
+            ariaDescription.push('had');
         }
 
         // Add aggregate interaction count to aria description
-        if (data.username) {
-            ariaDescription.push(getInteractionCountPhrase('aggregate', data.getInteractionAggregate()));
-        }
-        else {
-            ariaDescription.push(getInteractionCountPhrase('aggregate', data.getTypeAggregateTotals().getTotal()));
-        }
-
-        // course node
-        if (data.type === 'course') {
-            ariaDescription.push('with people outside of your peer learning group and capstone channels. They include:');
-        }
-
-        // plg node
-        else if (data.type === 'plg') {
-            ariaDescription.push('in your peer learning group, including:');
-        }
-
-        // capstone node
-        else if (data.type === 'capstone') {
-            ariaDescription.push('in your capstone team, including:');
-        }
+        ariaDescription.push(getInteractionCountPhrase('aggregate', data.getInteractionAggregate()));
 
         // user in course node
-        else if (data.contextType === 'course') {
+        if (data.contextType === 'course') {
             ariaDescription.push(`in the course with ${data.username}, including:`);
         }
 
@@ -547,45 +521,77 @@ class CourseConnectionsView extends React.Component {
 
         const counts = [];
 
-        // Add reaction count for all nodes
-        if (data.username) {
-            counts.push(getInteractionCountPhrase('reaction', data.getInteractionCount('Reaction')));
-        }
-        else {
-            counts.push(getInteractionCountPhrase('reaction', data.getTypeAggregateTotals().getCount('Reaction')));
-        }
+        // Add reaction count
+        counts.push(getInteractionCountPhrase('reaction', data.getInteractionCount('Reaction')));
 
-        // Add reply count for all nodes
-        if (data.username) {
-            counts.push(getInteractionCountPhrase('reply', data.getInteractionCount('Reply')));
-        }
-        else {
-            counts.push(getInteractionCountPhrase('reply', data.getTypeAggregateTotals().getCount('Reply')));
-        }
+        // Add reply count
+        counts.push(getInteractionCountPhrase('reply', data.getInteractionCount('Reply')));
 
-        // Add mention count for all nodes
-        if (data.username) {
-            counts.push(getInteractionCountPhrase('mention', data.getInteractionCount('Mention')));
-        }
-        else {
-            counts.push(getInteractionCountPhrase('mention', data.getTypeAggregateTotals().getCount('Mention')));
-        }
+        // Add mention count
+        counts.push(getInteractionCountPhrase('mention', data.getInteractionCount('Mention')));
 
-        // Add post count for all interaction context nodes and the 'you' node
-        if (data.type) {
-            counts.push(getInteractionCountPhrase('post', data.getTypeAggregateTotals().getCount('Post')));
-        }
-        else if (data.contextType === 'you') {
+        // Add post count for the 'You' node
+        if (data.contextType === 'you') {
             counts.push(getInteractionCountPhrase('post', data.getInteractionCount('Post')));
         }
 
-        // Add direct message count for all course nodes and the 'you' node
-        if (data.type === 'course') {
-            counts.push(getInteractionCountPhrase('directMessage', data.getTypeAggregateTotals().getCount('DirectMessage')));
-        }
-        else if (['course', 'you'].includes(data.contextType)) {
+        // Add direct message count for the 'You' node AND course nodes
+        if (['course', 'you'].includes(data.contextType)) {
             counts.push(getInteractionCountPhrase('directMessage', data.getInteractionCount('DirectMessage')));
         }
+
+        // Add counts to aria description
+        ariaDescription.push(counts.join(', '));
+
+        return ariaDescription.join(' ') + '.';
+    }
+
+    /**
+     * Prepares the aria description for an interaction context node
+     *
+     * @param {InteractionContext} data - containing interaction counts for the node
+     *
+     * @returns {string} containing the aria label for the node
+     */
+    getContextAriaLabel(data) {
+        const ariaDescription = ['You\'ve'];
+
+        ariaDescription.push('made');
+
+        // Add aggregate interaction count to aria description
+        ariaDescription.push(getInteractionCountPhrase('aggregate', data.getTypeAggregateTotals().getTotal()));
+
+        // course node
+        if (data.type === 'course') {
+            ariaDescription.push('with people outside of your peer learning group and capstone channels. They include:');
+        }
+
+        // plg node
+        else if (data.type === 'plg') {
+            ariaDescription.push('in your peer learning group, including:');
+        }
+
+        // capstone node
+        else if (data.type === 'capstone') {
+            ariaDescription.push('in your capstone team, including:');
+        }
+
+        const counts = [];
+
+        // Add reaction count
+        counts.push(getInteractionCountPhrase('reaction', data.getTypeAggregateTotals().getCount('Reaction')));
+
+        // Add reply count
+        counts.push(getInteractionCountPhrase('reply', data.getTypeAggregateTotals().getCount('Reply')));
+
+        // Add mention count
+        counts.push(getInteractionCountPhrase('mention', data.getTypeAggregateTotals().getCount('Mention')));
+
+        // Add post count
+        counts.push(getInteractionCountPhrase('post', data.getTypeAggregateTotals().getCount('Post')));
+
+        // Add direct message count
+        counts.push(getInteractionCountPhrase('directMessage', data.getTypeAggregateTotals().getCount('DirectMessage')));
 
         // Add counts to aria description
         ariaDescription.push(counts.join(', '));
@@ -689,7 +695,7 @@ class CourseConnectionsView extends React.Component {
             nodeWidth: graphConfigurationValues.userNodes.nodeWidth,
             config: {
                 tooltipHTML: this.getUserTooltip(userInContext),
-                readerLabelledBy: this.getAriaLabel(userInContext),
+                readerDescription: this.getUserAriaLabel(userInContext),
             },
             configLink: {
                 strokeOpacity,
