@@ -36,7 +36,7 @@
  */
 const Colors = {
     black:            '#000000',
-    turkoise:         '#128ead',
+    turquoise:        '#128ead',
     aquamarine:       '#1b998b',
     eggplant:         '#321325',
     darkFern:         '#3c493f',
@@ -68,7 +68,7 @@ const Colors = {
 const PeerColors = [
     Colors.brightPlum,
     Colors.reddishPeach,
-    Colors.turkoise,
+    Colors.turquoise,
     Colors.sage,
     Colors.apricot,
     Colors.eggplant,
@@ -94,7 +94,7 @@ const networkGraphNodeColors = {
     },
     learningGroupColors: [
         {
-            backgroundColor: Colors.turkoise,
+            backgroundColor: Colors.turquoise,
             fontColor: Colors.black,
         },
         {
