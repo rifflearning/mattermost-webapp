@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/analytics/doughnut_chart.jsx should match snapshot, on loading 1`] = `
+<div
+  className="col-sm-6"
+>
+  <div
+    className="total-count"
+  >
+    <div
+      className="title"
+    >
+      Test
+    </div>
+    <div
+      className="content"
+    >
+      <FormattedMessage
+        defaultMessage="Loading..."
+        id="analytics.chart.loading"
+        values={Object {}}
+      />
+    </div>
+  </div>
+</div>
+`;

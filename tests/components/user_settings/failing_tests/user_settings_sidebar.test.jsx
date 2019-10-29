@@ -2,9 +2,8 @@
 // See LICENSE.txt for license information.
 
 import React from 'react';
-import {shallow} from 'enzyme';
 
-//import {mountWithIntl} from 'tests/helpers/intl-test-helper.jsx';
+import {mountWithIntl} from 'tests/helpers/intl-test-helper.jsx';
 
 import UserSettingsSidebar from 'components/user_settings/sidebar/user_settings_sidebar.jsx';
 
@@ -26,29 +25,22 @@ describe('components/user_settings/sidebar/UserSettingsSidebar', () => {
         },
     };
 
-    test('should match snapshot', () => {
-        const wrapper = shallow(<UserSettingsSidebar {...defaultProps}/>);
+    test('should pass handleChange', () => {
+        const props = {...defaultProps, activeSection: 'unreadChannels'};
+        const wrapper = mountWithIntl(<UserSettingsSidebar {...props}/>);
+        wrapper.find('#unreadSectionNever').simulate('change');
 
-        expect(wrapper).toMatchSnapshot();
-        expect(wrapper.state('isSaving')).toEqual(false);
         expect(wrapper.state('settings')).toEqual({
             close_unused_direct_messages: defaultProps.closeUnusedDirectMessages,
-            show_unread_section: defaultProps.displayUnreadSection,
+            show_unread_section: 'false',
             channel_switcher_section: defaultProps.channelSwitcherOption,
         });
-    });
 
-    test('should match state when updateSection is called', () => {
-        const newUpdateSection = jest.fn();
-        const updateArg = 'unreadChannels';
-        const props = {...defaultProps, updateSection: newUpdateSection};
-        const wrapper = shallow(<UserSettingsSidebar {...props}/>);
-
-        wrapper.setState({isSaving: true});
-        wrapper.instance().updateSection(updateArg);
-
-        expect(wrapper.state('isSaving')).toEqual(false);
-        expect(newUpdateSection).toHaveBeenCalledTimes(1);
-        expect(newUpdateSection).toHaveBeenCalledWith(updateArg);
+        wrapper.find('#unreadSectionEnabled').simulate('change');
+        expect(wrapper.state('settings')).toEqual({
+            close_unused_direct_messages: defaultProps.closeUnusedDirectMessages,
+            show_unread_section: 'true',
+            channel_switcher_section: defaultProps.channelSwitcherOption,
+        });
     });
 });

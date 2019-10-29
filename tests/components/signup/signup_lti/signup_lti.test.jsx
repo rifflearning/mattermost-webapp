@@ -25,43 +25,6 @@ describe('components/signup/SignupLTI', () => {
         termsOfServiceLink: '',
     };
 
-    test('should match snapshot', () => {
-        const wrapper = shallow(
-            <SignupLTI {...baseProps}/>
-        );
-
-        expect(wrapper).toMatchSnapshot();
-    });
-
-    test('should redirect to / when not signup with lti disabled', () => {
-        const props = {
-            ...baseProps,
-            enableSignUpWithLTI: false,
-        };
-        const wrapper = shallow(
-            <SignupLTI {...props}/>
-        );
-        expect(wrapper).toMatchSnapshot();
-    });
-
-    test('should pick email, username and full name from state', () => {
-        const props = {
-            ...baseProps,
-            enableSignUpWithLTI: false,
-        };
-        const wrapper = shallow(
-            <SignupLTI {...props}/>
-        );
-        wrapper.setState({
-            formData: {
-                lis_person_contact_email_primary: 'test@nowhere.com',
-                lis_person_name_full: 'Test User',
-                lis_person_sourcedid: 'test',
-            },
-        });
-        expect(wrapper).toMatchSnapshot();
-    });
-
     test('should have match state and make API call when handleSubmit is called', () => {
         const wrapper = shallow(
             <SignupLTI {...baseProps}/>

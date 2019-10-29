@@ -13,10 +13,14 @@ describe('components/select_team/components/SelectTeamItem', () => {
         loading: false,
     };
 
-    test('should call props.onTeamClick on handleTeamClick', () => {
+    test('should match snapshot', () => {
         const wrapper = shallow(<SelectTeamItem {...baseProps}/>);
-        wrapper.instance().handleTeamClick({preventDefault: jest.fn()});
-        expect(baseProps.onTeamClick).toHaveBeenCalledTimes(1);
-        expect(baseProps.onTeamClick).toHaveBeenCalledWith(baseProps.team);
+        expect(wrapper).toMatchSnapshot();
+    });
+
+    test('should match snapshot, on loading', () => {
+        const props = {...baseProps, loading: true};
+        const wrapper = shallow(<SelectTeamItem {...props}/>);
+        expect(wrapper).toMatchSnapshot();
     });
 });
