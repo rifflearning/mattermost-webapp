@@ -112,4 +112,30 @@ describe('components/admin_console/permission_schemes_settings/permission_team_s
             done();
         });
     });
+
+    test('should show error if editRole fails', (done) => {
+        const editRole = jest.fn().mockImplementation(() => Promise.resolve({error: {message: 'test error'}}));
+        const createScheme = jest.fn().mockImplementation(() => Promise.resolve({
+            data: {
+                id: '123',
+                default_team_user_role: 'aaa',
+                default_team_admin_role: 'bbb',
+                default_channel_user_role: 'ccc',
+                default_channel_admin_role: 'ddd',
+            },
+        }));
+        const updateTeamScheme = jest.fn().mockImplementation(() => Promise.resolve({}));
+        const wrapper = shallow(
+            <PermissionTeamSchemeSettings
+                {...defaultProps}
+                actions={{...defaultProps.actions, editRole, createScheme, updateTeamScheme}}
+            />
+        );
+
+        wrapper.find(SaveButton).simulate('click');
+        setTimeout(() => {
+            expect(wrapper.state().serverError).toBe('test error');
+            done();
+        });
+    });
 });
