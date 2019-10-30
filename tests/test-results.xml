@@ -1,0 +1,101 @@
+<?xml-stylesheet type="text/xsl" href="junit-tests-report.xslt" ?>
+<testsuites name="jest tests" tests="43" failures="0" time="10.457">
+  <testsuite name="utils/riff/recommendations/index" errors="0" failures="0" skipped="0" timestamp="2019-10-30T21:23:41" time="6.601" tests="11">
+    <testcase classname="utils/riff/recommendations/index getGroupChannel should handle empty learningGroup being empty" name="utils/riff/recommendations/index getGroupChannel should handle empty learningGroup being empty" time="0.01">
+    </testcase>
+    <testcase classname="utils/riff/recommendations/index getGroupChannel should return the requested learningGroup object based on prefix" name="utils/riff/recommendations/index getGroupChannel should return the requested learningGroup object based on prefix" time="0.002">
+    </testcase>
+    <testcase classname="utils/riff/recommendations/index getGroupChannel should return an accurate array of teammateIds" name="utils/riff/recommendations/index getGroupChannel should return an accurate array of teammateIds" time="0.001">
+    </testcase>
+    <testcase classname="utils/riff/recommendations/index getRecommendations should display the recommendations for week 0 in that week" name="utils/riff/recommendations/index getRecommendations should display the recommendations for week 0 in that week" time="0.002">
+    </testcase>
+    <testcase classname="utils/riff/recommendations/index getRecommendations should display the recommendations for week 1 in that week" name="utils/riff/recommendations/index getRecommendations should display the recommendations for week 1 in that week" time="0.001">
+    </testcase>
+    <testcase classname="utils/riff/recommendations/index getRecommendations should display the recommendations for week 2 in that week" name="utils/riff/recommendations/index getRecommendations should display the recommendations for week 2 in that week" time="0.002">
+    </testcase>
+    <testcase classname="utils/riff/recommendations/index getRecommendations should display the recommendations for week 3 in that week" name="utils/riff/recommendations/index getRecommendations should display the recommendations for week 3 in that week" time="0.001">
+    </testcase>
+    <testcase classname="utils/riff/recommendations/index getRecommendations should display the recommendations for week 4 in that week" name="utils/riff/recommendations/index getRecommendations should display the recommendations for week 4 in that week" time="0.001">
+    </testcase>
+    <testcase classname="utils/riff/recommendations/index getRecommendations should display the recommendations for week 5 in that week" name="utils/riff/recommendations/index getRecommendations should display the recommendations for week 5 in that week" time="0.002">
+    </testcase>
+    <testcase classname="utils/riff/recommendations/index getRecommendations should display the recommendations for week 6 in that week" name="utils/riff/recommendations/index getRecommendations should display the recommendations for week 6 in that week" time="0.001">
+    </testcase>
+    <testcase classname="utils/riff/recommendations/index getRecommendations should display the recommendations for week 7 in that week" name="utils/riff/recommendations/index getRecommendations should display the recommendations for week 7 in that week" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="Riff Recommendation Channel Utils" errors="0" failures="0" skipped="0" timestamp="2019-10-30T21:23:48" time="0.255" tests="10">
+    <testcase classname="Riff Recommendation Channel Utils getChannelURL Normal channel." name="Riff Recommendation Channel Utils getChannelURL Normal channel." time="0.002">
+    </testcase>
+    <testcase classname="Riff Recommendation Channel Utils getChannelURL Channel not present: " name="Riff Recommendation Channel Utils getChannelURL Channel not present: " time="0.001">
+    </testcase>
+    <testcase classname="Riff Recommendation Channel Utils getChannelURL No channels at all." name="Riff Recommendation Channel Utils getChannelURL No channels at all." time="0.001">
+    </testcase>
+    <testcase classname="Riff Recommendation Channel Utils getChannelURL Two channels with same name." name="Riff Recommendation Channel Utils getChannelURL Two channels with same name." time="0.001">
+    </testcase>
+    <testcase classname="Riff Recommendation Channel Utils didUserPostInChannel user did post once" name="Riff Recommendation Channel Utils didUserPostInChannel user did post once" time="0.001">
+    </testcase>
+    <testcase classname="Riff Recommendation Channel Utils didUserPostInChannel user did not post" name="Riff Recommendation Channel Utils didUserPostInChannel user did not post" time="0.001">
+    </testcase>
+    <testcase classname="Riff Recommendation Channel Utils didUserPostInChannel user posted more than once." name="Riff Recommendation Channel Utils didUserPostInChannel user posted more than once." time="0.001">
+    </testcase>
+    <testcase classname="Riff Recommendation Channel Utils didUserPostInChannel empty posts" name="Riff Recommendation Channel Utils didUserPostInChannel empty posts" time="0.001">
+    </testcase>
+    <testcase classname="Riff Recommendation Channel Utils didUserPostInChannel Only join events" name="Riff Recommendation Channel Utils didUserPostInChannel Only join events" time="0.001">
+    </testcase>
+    <testcase classname="Riff Recommendation Channel Utils didUserPostInChannel Join &amp; regular post" name="Riff Recommendation Channel Utils didUserPostInChannel Join &amp; regular post" time="0.005">
+    </testcase>
+  </testsuite>
+  <testsuite name="Meeting Utils" errors="0" failures="0" skipped="0" timestamp="2019-10-30T21:23:48" time="0.264" tests="4">
+    <testcase classname="Meeting Utils numberOfUserMeetingsDuringWeeks should handle when the user has been in no meetings with teammates" name="Meeting Utils numberOfUserMeetingsDuringWeeks should handle when the user has been in no meetings with teammates" time="0.003">
+    </testcase>
+    <testcase classname="Meeting Utils numberOfUserMeetingsDuringWeeks should handle when the user has been in exactly one meeting with exactly one teammate" name="Meeting Utils numberOfUserMeetingsDuringWeeks should handle when the user has been in exactly one meeting with exactly one teammate" time="0">
+    </testcase>
+    <testcase classname="Meeting Utils numberOfUserMeetingsDuringWeeks should handle when the user has been in exactly one meeting with more than one teammate" name="Meeting Utils numberOfUserMeetingsDuringWeeks should handle when the user has been in exactly one meeting with more than one teammate" time="0">
+    </testcase>
+    <testcase classname="Meeting Utils numberOfUserMeetingsDuringWeeks should handle when the user has been in multiple meetings with more than one teammate" name="Meeting Utils numberOfUserMeetingsDuringWeeks should handle when the user has been in multiple meetings with more than one teammate" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="Riff Recommendations Time Utility" errors="0" failures="0" skipped="0" timestamp="2019-10-30T21:23:48" time="0.253" tests="13">
+    <testcase classname="Riff Recommendations Time Utility getCourseStartTime tests: Returns timelord&apos;s creation time:" name="Riff Recommendations Time Utility getCourseStartTime tests: Returns timelord&apos;s creation time:" time="0.002">
+    </testcase>
+    <testcase classname="Riff Recommendations Time Utility getCourseStartTime tests: Returns 0 if timelord does not exist:" name="Riff Recommendations Time Utility getCourseStartTime tests: Returns 0 if timelord does not exist:" time="0.001">
+    </testcase>
+    <testcase classname="Riff Recommendations Time Utility weekNumToMillis tests: Course just started:" name="Riff Recommendations Time Utility weekNumToMillis tests: Course just started:" time="0.001">
+    </testcase>
+    <testcase classname="Riff Recommendations Time Utility weekNumToMillis tests: Week 2:" name="Riff Recommendations Time Utility weekNumToMillis tests: Week 2:" time="0.001">
+    </testcase>
+    <testcase classname="Riff Recommendations Time Utility weekNumToMillis tests: Week 8:" name="Riff Recommendations Time Utility weekNumToMillis tests: Week 8:" time="0.001">
+    </testcase>
+    <testcase classname="Riff Recommendations Time Utility weekNumToMillis tests: Week 11:" name="Riff Recommendations Time Utility weekNumToMillis tests: Week 11:" time="0.001">
+    </testcase>
+    <testcase classname="Riff Recommendations Time Utility getCurrentWeekNumber tests: Course just started this millisecond:" name="Riff Recommendations Time Utility getCurrentWeekNumber tests: Course just started this millisecond:" time="0.001">
+    </testcase>
+    <testcase classname="Riff Recommendations Time Utility getCurrentWeekNumber tests: Middle of week 1:" name="Riff Recommendations Time Utility getCurrentWeekNumber tests: Middle of week 1:" time="0.001">
+    </testcase>
+    <testcase classname="Riff Recommendations Time Utility getCurrentWeekNumber tests: Alternate middle of week 1:" name="Riff Recommendations Time Utility getCurrentWeekNumber tests: Alternate middle of week 1:" time="0">
+    </testcase>
+    <testcase classname="Riff Recommendations Time Utility getCurrentWeekNumber tests: Week 1 completed:" name="Riff Recommendations Time Utility getCurrentWeekNumber tests: Week 1 completed:" time="0.001">
+    </testcase>
+    <testcase classname="Riff Recommendations Time Utility getCurrentWeekNumber tests: Middle of week 4:" name="Riff Recommendations Time Utility getCurrentWeekNumber tests: Middle of week 4:" time="0.001">
+    </testcase>
+    <testcase classname="Riff Recommendations Time Utility getCurrentWeekNumber tests: Alternate middle of week 4:" name="Riff Recommendations Time Utility getCurrentWeekNumber tests: Alternate middle of week 4:" time="0.002">
+    </testcase>
+    <testcase classname="Riff Recommendations Time Utility getCurrentWeekNumber tests: Week 4 completed:" name="Riff Recommendations Time Utility getCurrentWeekNumber tests: Week 4 completed:" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="Recommendations Class" errors="0" failures="0" skipped="0" timestamp="2019-10-30T21:23:48" time="0.28" tests="4">
+    <testcase classname="Recommendations Class should calculate if meeting is complete based on provided function" name="Recommendations Class should calculate if meeting is complete based on provided function" time="0.002">
+    </testcase>
+    <testcase classname="Recommendations Class should calculate whether or not to display properly" name="Recommendations Class should calculate whether or not to display properly" time="0.002">
+    </testcase>
+    <testcase classname="Recommendations Class should calculate priority correctly" name="Recommendations Class should calculate priority correctly" time="0.001">
+    </testcase>
+    <testcase classname="Recommendations Class should display given text" name="Recommendations Class should display given text" time="0.001">
+    </testcase>
+  </testsuite>
+  <testsuite name="Riff Utils" errors="0" failures="0" skipped="0" timestamp="2019-10-30T21:23:49" time="0.075" tests="1">
+    <testcase classname="Riff Utils readablePeers handles empty array" name="Riff Utils readablePeers handles empty array" time="0.001">
+    </testcase>
+  </testsuite>
+</testsuites>

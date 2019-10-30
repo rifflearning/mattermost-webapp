@@ -162,7 +162,11 @@
       "/node_modules/",
       "<rootDir>/non_npm_dependencies/",
       "<rootDir>/components/",
-      "<rootDir>/tests/"
+      "<rootDir>/tests/components/",
+      "<rootDir>/tests/plugins/",
+      "<rootDir>/tests/redux/",
+      "<rootDir>/tests/stores/",
+      "<rootDir>/tests/utils/"
     ],
     "clearMocks": true,
     "collectCoverageFrom": [
