@@ -24,6 +24,21 @@ exports[`components/select_team/components/SelectTeamItem should match snapshot 
           "_callbacks": Array [],
           "_renderer": ReactShallowRenderer {
             "_context": Object {},
+            "_didScheduleRenderPhaseUpdate": false,
+            "_dispatcher": Object {
+              "readContext": [Function],
+              "useCallback": [Function],
+              "useContext": [Function],
+              "useDebugValue": [Function],
+              "useEffect": [Function],
+              "useImperativeHandle": [Function],
+              "useLayoutEffect": [Function],
+              "useMemo": [Function],
+              "useReducer": [Function],
+              "useRef": [Function],
+              "useResponder": [Function],
+              "useState": [Function],
+            },
             "_element": <SelectTeamItem
               loading={false}
               onTeamClick={[MockFunction]}
@@ -34,9 +49,13 @@ exports[`components/select_team/components/SelectTeamItem should match snapshot 
                 }
               }
             />,
+            "_firstWorkInProgressHook": null,
             "_forcedUpdate": false,
             "_instance": [Circular],
+            "_isReRender": false,
             "_newState": null,
+            "_numberOfReRenders": 0,
+            "_renderPhaseUpdates": null,
             "_rendered": <div
               className="signup-team-dir"
             >
@@ -85,6 +104,7 @@ exports[`components/select_team/components/SelectTeamItem should match snapshot 
             </div>,
             "_rendering": false,
             "_updater": [Circular],
+            "_workInProgressHook": null,
           },
         },
         Symbol(enzyme.__setState__): [Function],
@@ -157,6 +177,21 @@ exports[`components/select_team/components/SelectTeamItem should match snapshot,
           "_callbacks": Array [],
           "_renderer": ReactShallowRenderer {
             "_context": Object {},
+            "_didScheduleRenderPhaseUpdate": false,
+            "_dispatcher": Object {
+              "readContext": [Function],
+              "useCallback": [Function],
+              "useContext": [Function],
+              "useDebugValue": [Function],
+              "useEffect": [Function],
+              "useImperativeHandle": [Function],
+              "useLayoutEffect": [Function],
+              "useMemo": [Function],
+              "useReducer": [Function],
+              "useRef": [Function],
+              "useResponder": [Function],
+              "useState": [Function],
+            },
             "_element": <SelectTeamItem
               loading={true}
               onTeamClick={[MockFunction]}
@@ -167,9 +202,13 @@ exports[`components/select_team/components/SelectTeamItem should match snapshot,
                 }
               }
             />,
+            "_firstWorkInProgressHook": null,
             "_forcedUpdate": false,
             "_instance": [Circular],
+            "_isReRender": false,
             "_newState": null,
+            "_numberOfReRenders": 0,
+            "_renderPhaseUpdates": null,
             "_rendered": <div
               className="signup-team-dir"
             >
@@ -218,6 +257,7 @@ exports[`components/select_team/components/SelectTeamItem should match snapshot,
             </div>,
             "_rendering": false,
             "_updater": [Circular],
+            "_workInProgressHook": null,
           },
         },
         Symbol(enzyme.__setState__): [Function],

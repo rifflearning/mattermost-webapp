@@ -5,7 +5,7 @@ exports[`components/PermalinkView should match snapshot 1`] = `
   className="app__content"
   id="app-content"
 >
-  <withRouter(Connect(ChannelHeader))
+  <Connect(ChannelHeader)
     channelId="channel_id"
   />
   <Connect(PostList)
@@ -38,7 +38,7 @@ exports[`components/PermalinkView should match snapshot with archived channel 1`
   className="app__content"
   id="app-content"
 >
-  <withRouter(Connect(ChannelHeader))
+  <Connect(ChannelHeader)
     channelId="channel_id"
   />
   <Connect(PostList)

@@ -5,15 +5,15 @@ exports[`/components/common/SiteNameAndDescription should match snapshot, defaul
   <h1>
     Mattermost
   </h1>
-  <h4
-    className="color--light"
+  <p
+    className="color--light h4"
   >
     <FormattedMessage
       defaultMessage="All team communication in one place, searchable and accessible anywhere"
       id="web.root.signup_info"
       values={Object {}}
     />
-  </h4>
+  </p>
 </Fragment>
 `;
 
@@ -22,10 +22,10 @@ exports[`/components/common/SiteNameAndDescription should match snapshot, with c
   <h1>
     other_site
   </h1>
-  <h4
-    className="color--light"
+  <p
+    className="color--light h4"
   >
     custom_description_text
-  </h4>
+  </p>
 </Fragment>
 `;
