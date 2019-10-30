@@ -160,9 +160,9 @@
     ],
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "/non_npm_dependencies/",
-      "/components/",
-      "/tests/"
+      "<rootDir>/non_npm_dependencies/",
+      "<rootDir>/components/",
+      "<rootDir>/tests/"
     ],
     "clearMocks": true,
     "collectCoverageFrom": [
