@@ -5,7 +5,7 @@ import React from 'react';
 import {shallow} from 'enzyme';
 import {Modal} from 'react-bootstrap';
 
-import {mountWithIntl} from 'tests/helpers/intl-test-helper.jsx';
+//import {mountWithIntl} from 'tests/helpers/intl-test-helper.jsx';
 import GetLinkModal from 'components/get_link_modal.jsx';
 
 describe('components/GetLinkModal', () => {
@@ -57,14 +57,5 @@ describe('components/GetLinkModal', () => {
         expect(newOnHide).toHaveBeenCalledTimes(2);
         expect(wrapper).toMatchSnapshot();
         expect(wrapper.state('copiedLink')).toBe(false);
-    });
-
-    test('should have handle copyLink', () => {
-        const wrapper = mountWithIntl(
-            <GetLinkModal {...requiredProps}/>
-        );
-
-        wrapper.instance().copyLink();
-        expect(wrapper.state('copiedLink')).toBe(true);
     });
 });

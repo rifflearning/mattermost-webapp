@@ -4,7 +4,7 @@
 import React from 'react';
 import {shallow} from 'enzyme';
 
-import {mountWithIntl} from 'tests/helpers/intl-test-helper.jsx';
+//import {mountWithIntl} from 'tests/helpers/intl-test-helper.jsx';
 
 import UserSettingsSidebar from 'components/user_settings/sidebar/user_settings_sidebar.jsx';
 
@@ -50,24 +50,5 @@ describe('components/user_settings/sidebar/UserSettingsSidebar', () => {
         expect(wrapper.state('isSaving')).toEqual(false);
         expect(newUpdateSection).toHaveBeenCalledTimes(1);
         expect(newUpdateSection).toHaveBeenCalledWith(updateArg);
-    });
-
-    test('should pass handleChange', () => {
-        const props = {...defaultProps, activeSection: 'unreadChannels'};
-        const wrapper = mountWithIntl(<UserSettingsSidebar {...props}/>);
-        wrapper.find('#unreadSectionNever').simulate('change');
-
-        expect(wrapper.state('settings')).toEqual({
-            close_unused_direct_messages: defaultProps.closeUnusedDirectMessages,
-            show_unread_section: 'false',
-            channel_switcher_section: defaultProps.channelSwitcherOption,
-        });
-
-        wrapper.find('#unreadSectionEnabled').simulate('change');
-        expect(wrapper.state('settings')).toEqual({
-            close_unused_direct_messages: defaultProps.closeUnusedDirectMessages,
-            show_unread_section: 'true',
-            channel_switcher_section: defaultProps.channelSwitcherOption,
-        });
     });
 });

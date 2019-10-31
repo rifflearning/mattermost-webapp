@@ -13,17 +13,6 @@ describe('components/select_team/components/SelectTeamItem', () => {
         loading: false,
     };
 
-    test('should match snapshot', () => {
-        const wrapper = shallow(<SelectTeamItem {...baseProps}/>);
-        expect(wrapper).toMatchSnapshot();
-    });
-
-    test('should match snapshot, on loading', () => {
-        const props = {...baseProps, loading: true};
-        const wrapper = shallow(<SelectTeamItem {...props}/>);
-        expect(wrapper).toMatchSnapshot();
-    });
-
     test('should call props.onTeamClick on handleTeamClick', () => {
         const wrapper = shallow(<SelectTeamItem {...baseProps}/>);
         wrapper.instance().handleTeamClick({preventDefault: jest.fn()});

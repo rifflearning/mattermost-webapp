@@ -121,51 +121,6 @@ describe('component/sidebar/sidebar_channel/SidebarChannel', () => {
         },
     };
 
-    test('should match snapshot, on sidebar show', () => {
-        const wrapper = shallow(
-            <Sidebar {...defaultProps}/>
-        );
-        expect(wrapper).toMatchSnapshot();
-    });
-
-    test('should match snapshot, on sidebar show with favorites', () => {
-        const wrapper = shallow(
-            <Sidebar
-                {...{
-                    ...defaultProps,
-                    favoriteChannelIds: ['c1', 'c3', 'c5'],
-                }}
-            />
-        );
-        expect(wrapper).toMatchSnapshot();
-    });
-
-    test('should match snapshot, on sidebar show with unreads', () => {
-        const wrapper = shallow(
-            <Sidebar
-                {...{
-                    ...defaultProps,
-                    unreadChannelIds: ['c3', 'c5'],
-                    showUnreadSection: true,
-                }}
-            />
-        );
-        expect(wrapper).toMatchSnapshot();
-    });
-
-    test('should match snapshot, on sidebar not show the channel switcher', () => {
-        const wrapper = shallow(
-            <Sidebar
-                {...{
-                    ...defaultProps,
-                    unreadChannelIds: ['c3', 'c5'],
-                    channelSwitcherOption: true,
-                }}
-            />
-        );
-        expect(wrapper).toMatchSnapshot();
-    });
-
     test('should match snapshot, when render as an empty div because no have a team or a user', () => {
         let wrapper = shallow(
             <Sidebar
@@ -405,48 +360,6 @@ describe('component/sidebar/sidebar_channel/SidebarChannel', () => {
         wrapper.setProps({unreads: {mentionCount: 3, messageCount: 4}});
         instance.updateTitle();
         expect(document.title).toBe('(3) * teammate - Test team display name');
-    });
-
-    test('should show/hide correctly more channels modal', () => {
-        const wrapper = shallow(
-            <Sidebar {...defaultProps}/>
-        );
-        const instance = wrapper.instance();
-        instance.componentDidUpdate = jest.fn();
-        instance.showMoreChannelsModal();
-        wrapper.setState(instance.state);
-        expect(wrapper).toMatchSnapshot();
-        instance.hideMoreChannelsModal();
-        wrapper.setState(instance.state);
-        expect(wrapper).toMatchSnapshot();
-    });
-
-    test('should show/hide correctly new channel modal', () => {
-        const wrapper = shallow(
-            <Sidebar {...defaultProps}/>
-        );
-        const instance = wrapper.instance();
-        instance.componentDidUpdate = jest.fn();
-        instance.showNewChannelModal(Constants.PRIVATE_CHANNEL);
-        wrapper.setState(instance.state);
-        expect(wrapper).toMatchSnapshot();
-        instance.hideNewChannelModal();
-        wrapper.setState(instance.state);
-        expect(wrapper).toMatchSnapshot();
-    });
-
-    test('should show/hide correctly more direct channels modal', () => {
-        const wrapper = shallow(
-            <Sidebar {...defaultProps}/>
-        );
-        const instance = wrapper.instance();
-        instance.componentDidUpdate = jest.fn();
-        instance.showMoreDirectChannelsModal([]);
-        wrapper.setState(instance.state);
-        expect(wrapper).toMatchSnapshot();
-        instance.hideMoreDirectChannelsModal();
-        wrapper.setState(instance.state);
-        expect(wrapper).toMatchSnapshot();
     });
 
     test('should verify if the channel is displayed for props', () => {

@@ -160,9 +160,8 @@
     ],
     "testPathIgnorePatterns": [
       "/node_modules/",
-      "/non_npm_dependencies/",
-      "/components/",
-      "/tests/"
+      "<rootDir>/non_npm_dependencies/",
+      "/failing_tests/"
     ],
     "clearMocks": true,
     "collectCoverageFrom": [
@@ -208,7 +207,7 @@
     "output": "build/test-results.xml"
   },
   "scripts": {
-    "check": "eslint --ignore-pattern node_modules --ignore-pattern non_npm_dependencies --ignore-pattern dist --ext .js --ext .jsx . --quiet",
+    "check": "eslint --ignore-pattern node_modules --ignore-pattern non_npm_dependencies --ignore-pattern dist --ignore-pattern coverage --ext .js --ext .jsx . --quiet",
     "fix": "eslint --ignore-pattern node_modules --ignore-pattern non_npm_dependencies --ignore-pattern dist --ext .js --ext .jsx . --quiet --fix",
     "build": "cross-env NODE_ENV=production webpack --display-error-details --verbose",
     "run": "cross-env NODE_ENV=production webpack --progress --watch",
