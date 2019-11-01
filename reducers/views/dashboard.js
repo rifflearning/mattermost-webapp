@@ -8,6 +8,7 @@
  */
 
 import _ from 'underscore';
+import {TeamTypes, UserTypes} from 'mattermost-redux/action_types';
 
 import {DashboardActionTypes} from 'utils/constants.jsx';
 import {logger} from 'utils/riff';
@@ -21,7 +22,6 @@ const initialState = {
         status: false,
         message: '',
     },
-    courseStartTime: 0,
 
     // 'loaded' at idx if utterances, influence, and timeline are all loaded
     statsStatus: [],
@@ -33,6 +33,12 @@ const initialState = {
     processedUtterances: [],
     influenceData: [],
     timelineData: [],
+
+    courseStartTime: new Date(0), // Unknown course start time is January 1, 1970 00:00:00 UTC
+
+    // Array of the displayable recommendations for the current user
+    recommendations: [],
+    recommendationsLastUpdated: new Date(0),
 };
 
 const getMeetingIndex = (meetings, meetingId) => {
@@ -73,6 +79,8 @@ const updateLoadingStatus = (state) => {
 
 const dashboard = (state = initialState, action) => {
     switch (action.type) {
+    case UserTypes.LOGOUT_SUCCESS: // logging out the user clears the dashboard data
+    case TeamTypes.SELECT_TEAM: // changing to a new team clears the dashboard data
     case DashboardActionTypes.LOG_OUT:
         return initialState;
     case DashboardActionTypes.DASHBOARD_LOAD_MORE_MEETINGS:
@@ -152,6 +160,12 @@ const dashboard = (state = initialState, action) => {
         return {
             ...state,
             courseStartTime: action.courseStartTime,
+        };
+    case DashboardActionTypes.DASHBOARD_SET_RECOMMENDATIONS:
+        return {
+            ...state,
+            recommendations: action.recommendations,
+            recommendationsLastUpdated: action.timestamp,
         };
     default:
         return state;

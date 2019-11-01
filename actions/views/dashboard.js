@@ -3,13 +3,17 @@
 
 /* eslint
     header/header: "off",
+    "brace-style": ["error", "stroustrup", { "allowSingleLine": false }],
     dot-location: ["error", "property"],
     indent: ["error", 4, { "CallExpression": { "arguments": "first" } }]
  */
 
 import _ from 'underscore';
+import {getUserByUsername} from 'mattermost-redux/actions/users';
 
+import {getCourseStartTime} from 'selectors/views/dashboard';
 import {DashboardActionTypes} from 'utils/constants.jsx';
+import {getRecsForNowByPriority} from 'utils/riff/recommendations';
 import {
     app,
     cmpObjectProp,
@@ -20,6 +24,16 @@ import {
     reverseCmp,
     LoadMeetingErrorTypes,
 } from 'utils/riff';
+
+/**
+ * internal contains all module internal values used by the exported
+ * classes/functions defined in this module. This provides a way to
+ * mock these values in unit tests of the exported functions.
+ */
+const internal = {
+    getUserByUsername,
+    getCourseStartTime,
+};
 
 export const loadMoreMeetings = () => {
     return {
@@ -39,13 +53,6 @@ export const selectMeeting = (meeting) => {
     return {
         type: DashboardActionTypes.DASHBOARD_SELECT_MEETING,
         meeting,
-    };
-};
-
-export const setCourseStartTime = (courseStartTime) => {
-    return {
-        type: DashboardActionTypes.DASHBOARD_SET_COURSE_START_TIME,
-        courseStartTime,
     };
 };
 
@@ -154,21 +161,24 @@ export const loadRecentMeetings = (uid) => (dispatch) => {
                     message:
                         'No meetings found. Meetings that last for over two minutes will show up here.',
                 });
-            } else if (err.message === LoadMeetingErrorTypes.NO_USEFUL_MEETINGS) {
+            }
+            else if (err.message === LoadMeetingErrorTypes.NO_USEFUL_MEETINGS) {
                 dispatch({
                     type: DashboardActionTypes.DASHBOARD_LOADING_ERROR,
                     status: true,
                     message:
                         "We'll only show meetings that lasted for over two minutes. Go have a riff!",
                 });
-            } else if (err.message === LoadMeetingErrorTypes.NO_MEETINGS_WITH_OTHERS) {
+            }
+            else if (err.message === LoadMeetingErrorTypes.NO_MEETINGS_WITH_OTHERS) {
                 dispatch({
                     type: DashboardActionTypes.DASHBOARD_LOADING_ERROR,
                     status: true,
                     message:
                         'Only had meetings by yourself? Come back after some meetings with others to explore some insights.',
                 });
-            } else {
+            }
+            else {
                 logger.error("Couldn't retrieve meetings", err);
 
                 //dispatch(loadRecentMeetings(uid));
@@ -281,7 +291,8 @@ export const processInfluence = (uid, utterances, meetingId) => { // eslint-disa
         for (const [k, v] of Object.entries(ut.counts)) {
             if (k in obj) {
                 obj[k] += v;
-            } else {
+            }
+            else {
                 obj[k] = v;
             }
         }
@@ -465,3 +476,60 @@ export const loadMeetingData = (uid, meetingId) => (dispatch) => {
             logger.error("couldn't retrieve meeting data", err);
         });
 };
+
+/**
+ * TODO: This function is a hack. Course start time is measured from the creation time
+ *     of the user with name matching courseStartTimeUsername, which is a hard-coded
+ *     module-specific constant. This should be moved to config at some point...
+ *     or a better way of determining the start time of a course should be designed.
+ * FIXME: If an instance has two teams, they will share the same timelord, and thus,
+ *        the same start time. This would not be desired behavior.
+ */
+export function updateCourseStartTime() {
+    return async (dispatch, getState) => {
+        const courseStartTimeUsername = 'timelord';
+        let courseStartTime;
+        const {data: timeLord} = await internal.getUserByUsername(courseStartTimeUsername)(dispatch, getState);
+
+        if (typeof timeLord === 'object') {
+            courseStartTime = new Date(timeLord.create_at);
+        }
+        else {
+            // TimeLord user was not found
+            courseStartTime = new Date(0);
+        }
+
+        // Only update the start time if it has changed
+        if (courseStartTime.getTime() !== internal.getCourseStartTime(getState()).getTime()) {
+            dispatch({
+                type: DashboardActionTypes.DASHBOARD_SET_COURSE_START_TIME,
+                courseStartTime,
+            });
+        }
+
+        return courseStartTime;
+    };
+}
+
+/**
+ * updateRecommendations async action creator
+ */
+export function updateRecommendations() {
+    return async (dispatch, getState) => {
+        // Recommendations depend on the course start time so update it first
+        await dispatch(updateCourseStartTime());
+
+        const timestamp = new Date();
+        const recommendations = await getRecsForNowByPriority(dispatch, getState);
+
+        dispatch({
+            type: DashboardActionTypes.DASHBOARD_SET_RECOMMENDATIONS,
+            recommendations,
+            timestamp,
+        });
+
+        logger.info(`dashboardActions.updateRecommendations: updated recommendations at ${timestamp}`);
+
+        return recommendations;
+    };
+}

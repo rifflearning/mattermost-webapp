@@ -2,7 +2,7 @@
 // See LICENSE.txt for license information.
 
 //import didUserPostInChannel from 'utils/riff/recommendations/channelUtils'
-import {_test, didUserPostInChannel, getChannelURL} from 'utils/riff/recommendations/channelUtils';
+import {_test, didUserPostInChannel} from 'utils/riff/recommendations/channelUtils';
 
 describe('Riff Recommendation Channel Utils', () => {
     const uid = 'abcUserID';
@@ -11,34 +11,7 @@ describe('Riff Recommendation Channel Utils', () => {
     const otherPost = {prop1: 'v1', user_id: 'otherID', type: ''};
     const channelJoinPost = {prop1: 'v1', user_id: uid, type: 'join'};
 
-    const targetChannel = {id: 'abcd123', name: 'plgchan'};
-    const otherChannel = {id: '123abcd', name: 'otherchan'};
-    const currentTeam = {id: 'xyz456', name: 'riffTeam'};
-    const otherTeam = {id: 'lmp789', name: 'otherTeam'};
-
     _test.getAllPostsFromChannel = jest.fn();
-    _test.TeamStore = {entities: {currentTeamId: currentTeam.id, teams: {xyz456: currentTeam, lmp789: otherTeam}}};
-
-    describe('getChannelURL', () => {
-        _test.ChannelStore = {entities: {channels: {abcd123: targetChannel, '123abcd': otherChannel}}};
-        it('Normal channel.', () => {
-            expect(getChannelURL(targetChannel.id)).toBe('/riffTeam/channels/plgchan');
-        });
-        _test.ChannelStore = {entities: {channels: {'123abcd': otherChannel}}};
-        it('Channel not present: ', () => {
-            expect(() => {
-                getChannelURL('5');
-            }).toThrow(Error);
-        });
-        _test.ChannelStore = {entities: {channels: {}}};
-        it('No channels at all.', () => {
-            expect(getChannelURL(targetChannel.id)).toBe('/riffTeam/channels/plgchan');
-        });
-        _test.ChannelStore = {entities: {channels: {abcd123: targetChannel, '123abcd': targetChannel}}};
-        it('Two channels with same name.', () => {
-            expect(getChannelURL(targetChannel.id)).toBe('/riffTeam/channels/plgchan');
-        });
-    });
 
     describe('didUserPostInChannel', () => {
         let mockPosts = [targetPost, otherPost];

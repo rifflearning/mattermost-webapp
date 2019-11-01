@@ -1,8 +1,7 @@
 // Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
 
-import {app} from 'utils/riff';
-import {weekNumToMillis} from 'utils/riff/recommendations/time';
+import {app, logger} from 'utils/riff';
 
 /**
  * Returns a promise that resolves to an array of all the participantEvents from the given time range
@@ -32,37 +31,44 @@ const internal = {
 };
 
 /**
- * Return the number of meetings a user participated in
- * that had at least one teammate
+ * Get the count of meetings that fit the given criteria
+ * - meeting occurred in the given time period
+ * - meeting was attended by the given participant
+ * - meeting was also attended by at least one of the other participants
  *
- * TODO: for something that is just counting, there seem to be potentially large
- * intermediate collections created. Can't we do this a little more efficiently? -mjl 2019-09-09
- *
- * @param {string} userId - the user ID (string)
- * @param {Array<string>} teammateIds - an array of the IDs of all of the user's team members
- * @param {number} startWeek - the week number of the course to start the count from
- * @param {number} numWeeks - the number of weeks to count (should be at least 1)
+ * @param {Object} constraint
+ * @param {Date} constraint.startTime - only consider meetings that occurred after this time
+ * @param {Date} constraint.endTime - only consider meetings that occurred before this time
+ * @param {string} constraint.participantId - Id of participant who must have attended the meeting
+ * @param {Set<string>} constraint.withOneParticipantOf - a set of ids of participants one of whom
+ *      must have attended the meeting
  *
  * @returns {Promise<number>}
  */
-async function numberOfUserMeetingsDuringWeeks(userId, teammateIds, startWeek, numWeeks, courseStartTime) {
-    if (numWeeks <= 0) {
+async function numberOfMeetingsWhere({startTime, endTime, participantId, withOneParticipantOf}) {
+    try {
+        const {data: events} = await internal.getUserParticipantEvents(participantId, startTime.getTime(), endTime.getTime());
+
+        const meetingsWithTeammates = events.reduce((meetings, event) => {
+            if (event.participants.some((id) => withOneParticipantOf.has(id))) {
+                meetings.add(event.meeting);
+            }
+            return meetings;
+        }, new Set());
+
+        return meetingsWithTeammates.size;
+    }
+    catch (e) {
+        logger.error('numberOfMeetingsWhere: failed to count meetings',
+                     {e, startTime, endTime, participantId, withOneParticipantOf});
         return 0;
     }
-
-    const startTimeMs = weekNumToMillis(startWeek, courseStartTime);
-    const endTimeMs = weekNumToMillis(startWeek + numWeeks, courseStartTime);
-    const events = await internal.getUserParticipantEvents(userId, startTimeMs, endTimeMs);
-    const eventsWithTeammates = events.data.filter((event) => {
-        // we count any meeting with at least one other team member
-        return teammateIds.some((id) => event.participants.includes(id));
-    });
-    const meetingsWithTeammates = new Set(eventsWithTeammates.map((event) => event.meeting));
-
-    return meetingsWithTeammates.size;
 }
 
+/* **************************************************************************** *
+ * Module exports                                                               *
+ * **************************************************************************** */
 export {
-    numberOfUserMeetingsDuringWeeks,
+    numberOfMeetingsWhere,
     internal as _test,
 };

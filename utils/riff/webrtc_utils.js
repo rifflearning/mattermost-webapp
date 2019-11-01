@@ -8,25 +8,13 @@
  * @author                  Michael Jay Lippert
  *
  * @copyright (c) 2019-present Riff Learning Inc.,
- *                      MIT License (see https://opensource.org/licenses/MIT)
+ *            MIT License (see https://opensource.org/licenses/MIT)
  *
  * ******************************************************************************/
 
-// Riff Learning lint overrides
 /* eslint
     header/header: "off",
-    dot-location: ["error", "property"],
-    indent: ["error", 4, { "CallExpression": { "arguments": "first" }, "ObjectExpression": "first" }],
-    "react/jsx-max-props-per-line": ["error", { "when": "multiline" }],
-    "no-underscore-dangle": ["error", { "allow": [ "_id" ] }],
 */
-
-// I haven't figured out for sure if we(Riff) want to use the underscore prefix to
-// signify private properties/methods or not, and I've used that convention in here
-// for now, so I'm disabling no-underscore-dangle. -mjl
-/* eslint
-    no-underscore-dangle: off,
- */
 
 /** The separator character in a riff webrtc nick between the riff id and the display name */
 const NICK_SEPARATOR = '|';
@@ -69,10 +57,12 @@ class WebRtcNick {
         if (args.length === 1 && typeof args[0] === 'string') {
             // a single string argument is a riff webrtc nick string
             [this._riffId, this._displayName] = WebRtcNick.getIdAndDisplayName(args[0]);
-        } else if (args.length === 2 && typeof args[0] === 'string' && typeof args[1] === 'string') {
+        }
+        else if (args.length === 2 && typeof args[0] === 'string' && typeof args[1] === 'string') {
             // 2 string arguments means the 1st is the riff ID and the 2nd is the display name
             [this._riffId, this._displayName] = args;
-        } else {
+        }
+        else {
             throw new TypeError(`Incorrect arguments for creating a WebRtcNick (${args})`);
         }
     }

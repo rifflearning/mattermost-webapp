@@ -1,9 +1,55 @@
 {
-    "rules": {
-        "header/header": [
-            "error",
-            "line",
-            " Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.\n See LICENSE.txt for license information."
-        ]
-    }
+  "rules": {
+    "brace-style": [
+      "error",
+      "stroustrup",
+      {
+        "allowSingleLine": false
+      }
+    ],
+    "dot-location": [
+      "error",
+      "property"
+    ],
+    "eqeqeq": [
+      "error",
+      "always"
+    ],
+    "header/header": [
+      "error",
+      "line",
+      " Copyright (c) 2018-present Riff Learning, Inc. All Rights Reserved.\n See LICENSE.txt for license information."
+    ],
+    "indent": [
+      "error",
+      4,
+      {
+        "CallExpression": { "arguments": "first" }
+      }
+    ],
+    "key-spacing": [
+        "error",
+        {
+          "beforeColon": false,
+          "afterColon": true,
+          "mode": "minimum"
+        }
+    ],
+    "no-multi-spaces": [
+      "error",
+      {
+        "exceptions": {
+          "Property": true
+        }
+      }
+    ],
+    "no-underscore-dangle": "off",
+    "react/jsx-max-props-per-line": [
+      "error",
+      {
+        "when": "multiline",
+        "maximum": 1
+      }
+    ]
+  }
 }
