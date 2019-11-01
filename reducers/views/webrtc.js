@@ -16,7 +16,7 @@ import {joinWebRtcRoom} from 'actions/webrtc_actions';
 const initialState = {
     peerColors: [
         Colors.reddishPeach,
-        Colors.turkoise,
+        Colors.turquoise,
         Colors.sage,
         Colors.apricot,
         Colors.eggplant,

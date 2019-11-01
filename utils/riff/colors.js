@@ -36,7 +36,7 @@
  */
 const Colors = {
     black:            '#000000',
-    turkoise:         '#128ead',
+    turquoise:        '#128ead',
     aquamarine:       '#1b998b',
     eggplant:         '#321325',
     darkFern:         '#3c493f',
@@ -68,7 +68,7 @@ const Colors = {
 const PeerColors = [
     Colors.brightPlum,
     Colors.reddishPeach,
-    Colors.turkoise,
+    Colors.turquoise,
     Colors.sage,
     Colors.apricot,
     Colors.eggplant,
@@ -85,24 +85,24 @@ const PeerColors = [
  */
 const networkGraphNodeColors = {
     you: {
-        backgroundColor: '#8e7cc3', // purple
+        backgroundColor: Colors.brightPlum,
         fontColor: Colors.white,
     },
     course: {
-        backgroundColor: '#6aa84f', // green
+        backgroundColor: Colors.sage,
         fontColor: Colors.black,
     },
     learningGroupColors: [
         {
-            backgroundColor: '#2b78e4', // blue
+            backgroundColor: Colors.turquoise,
             fontColor: Colors.black,
         },
         {
-            backgroundColor: '#f6b26b', // orange
+            backgroundColor: Colors.apricot,
             fontColor: Colors.black,
         },
         {
-            backgroundColor: '#db4c40', // red
+            backgroundColor: Colors.redPunch,
             fontColor: Colors.black,
         },
     ],
@@ -200,7 +200,7 @@ function getCountOtherColors(cnt) {
  *      containing the background and font colors for the nth learning group.
  */
 function getColorForLearningGroup(n) {
-    const i = (n % (networkGraphNodeColors.learningGroupColors.length - 1)) + 1;
+    const i = (n % (networkGraphNodeColors.learningGroupColors.length - 1));
     return networkGraphNodeColors.learningGroupColors[i];
 }
 
