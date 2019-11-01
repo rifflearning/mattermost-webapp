@@ -210,8 +210,16 @@ class CourseConnectionsView extends React.Component {
      * Draw the graph w/ the latest interaction data
      */
     drawGraph() {
-        const {userInteractions, userLearningGroups} = this.props;
+        const userLearningGroups = this.props.userLearningGroups;
         const learningGroupTypes = this.sortedLearningGroupTypes;
+
+        /** DevNote: This is a temporary solution that filters direct messages sent by 'riffbot'
+         *          out of the user interactions. This is to prevent them from appearing on the
+         *          course connections graph. In the future, the user interactions query in
+         *          mattermost-server will be refactored, and will account for this, and we can
+         *          remove this filter at that point.
+         */
+        const userInteractions = this.props.userInteractions.filter((interaction) => interaction.Username !== 'riffbot');
 
         // this will summarize the current user's overall context interactions for the 'you' node
         const currentUserOverallContext = new UserInContext({
