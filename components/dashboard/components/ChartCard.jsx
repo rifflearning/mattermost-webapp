@@ -137,7 +137,7 @@ const ChartCard = enhance((props) => {
                         onClick={() => props.dispatch({type: INFO_CLICKED})}
                         aria-describedby={`chart-info-${props.chartCardId}`}
                         id={`chart-info-btn-${props.chartCardId}`}
-                        tabIndex='-1'
+                        tabIndex='0'
                     >
                         <MaterialIcon icon='info'/>
                     </button>
