@@ -330,19 +330,19 @@ class InteractionCounts {
  * get either the singular or plural summary phrase for
  * a given interaction type and count
  *
- * @param {string} type - the type of interaction
+ * @param {string} type - An InteractionType, or 'aggregate'
  * @param {number} count - the number of interactions of this type
  *
- * @returns {string} a summary phrase for an interaction type and count.
+ * @returns {string} a summary phrase for the interaction type and count.
  */
 function getInteractionCountPhrase(type, count) {
     /* eslint-disable no-multi-spaces */
     const typePhrases = {
-        reply:          {singular: 'reply',             plural: 'replies'},
-        mention:        {singular: 'mention',           plural: 'mentions'},
-        directMessage:  {singular: 'direct message',    plural: 'direct messages'},
-        reaction:       {singular: 'reaction',          plural: 'reactions'},
-        post:           {singular: 'post',              plural: 'posts'},
+        Reply:          {singular: 'reply',             plural: 'replies'},
+        Mention:        {singular: 'mention',           plural: 'mentions'},
+        DirectMessage:  {singular: 'direct message',    plural: 'direct messages'},
+        Reaction:       {singular: 'reaction',          plural: 'reactions'},
+        Post:           {singular: 'post',              plural: 'posts'},
         aggregate:      {singular: 'contact',           plural: 'contacts'},
     };
     /* eslint-enable no-multi-spaces */

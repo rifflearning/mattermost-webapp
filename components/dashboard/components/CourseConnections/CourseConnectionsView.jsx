@@ -481,64 +481,47 @@ class CourseConnectionsView extends React.Component {
 
     /**
      * Prepares the aria description for a user node
+     * The aria description will be phrased in english directed at the current user's
+     * relationship with the given user node so either "You've made..." or "You've had..."
+     * depending on if the node is about the current user's interactions overall
+     * or about the node user's interactions with the current user.
      *
-     * @param {InteractionContext} data - containing interaction counts for the node
+     * @param {UserInContext} user - containing interaction counts for a user's node
      *
-     * @returns {string} containing the aria label for the node
+     * @returns {string} containing the aria label for the user node
      */
-    getUserAriaLabel(data) {
-        const ariaDescription = ['You\'ve'];
+    getUserAriaLabel(user) {
+        // Text for all contexts that are not 'you' that should follow the aggregate count
+        // before the node user's name
+        /* eslint-disable no-multi-spaces */
+        const aggregateContextSuffix = {
+            course:     'in the course with',
+            plg:        'in your peer learning group with',
+            capstone:   'in your capstone team with',
+        };
+        /* eslint-enable no-multi-spaces */
 
-        if (data.contextType === 'you') {
-            ariaDescription.push('made');
+        const aggregateCountPhrase = getInteractionCountPhrase('aggregate', user.getInteractionAggregate());
+
+        const ariaDescription = [];
+
+        if (user.contextType === 'you') {
+            ariaDescription.push(`You've made ${aggregateCountPhrase} for the entire course, including:`);
         }
         else {
-            ariaDescription.push('had');
+            ariaDescription.push('You\'ve had ' +
+                `${aggregateCountPhrase} ${aggregateContextSuffix[user.contextType]} ${user.username}` +
+                ', including:');
         }
 
-        // Add aggregate interaction count to aria description
-        ariaDescription.push(getInteractionCountPhrase('aggregate', data.getInteractionAggregate()));
-
-        // user in course node
-        if (data.contextType === 'course') {
-            ariaDescription.push(`in the course with ${data.username}, including:`);
-        }
-
-        // user in plg team node
-        else if (data.contextType === 'plg') {
-            ariaDescription.push(`in your peer learning group with ${data.username}, including:`);
-        }
-
-        // user in capstone team node
-        else if (data.contextType === 'capstone') {
-            ariaDescription.push(`in your capstone team with ${data.username}, including:`);
-        }
-
-        // 'you' node
-        else if (data.contextType === 'you') {
-            ariaDescription.push('for the entire course, including:');
-        }
+        // Interaction types in the order we want them added to the aria description
+        const interactionTypes = ['Reaction', 'Reply', 'Mention'];
+        user.contextType === 'you' && interactionTypes.push('Post');
+        ['course', 'you'].includes(user.contextType) && interactionTypes.push('DirectMessage');
 
         const counts = [];
-
-        // Add reaction count
-        counts.push(getInteractionCountPhrase('reaction', data.getInteractionCount('Reaction')));
-
-        // Add reply count
-        counts.push(getInteractionCountPhrase('reply', data.getInteractionCount('Reply')));
-
-        // Add mention count
-        counts.push(getInteractionCountPhrase('mention', data.getInteractionCount('Mention')));
-
-        // Add post count for the 'You' node
-        if (data.contextType === 'you') {
-            counts.push(getInteractionCountPhrase('post', data.getInteractionCount('Post')));
-        }
-
-        // Add direct message count for the 'You' node AND course nodes
-        if (['course', 'you'].includes(data.contextType)) {
-            counts.push(getInteractionCountPhrase('directMessage', data.getInteractionCount('DirectMessage')));
-        }
+        const pushTypePhrase = (type) => counts.push(getInteractionCountPhrase(type, user.getInteractionCount(type)));
+        interactionTypes.forEach(pushTypePhrase);
 
         // Add counts to aria description
         ariaDescription.push(counts.join(', '));
@@ -547,51 +530,34 @@ class CourseConnectionsView extends React.Component {
     }
 
     /**
-     * Prepares the aria description for an interaction context node
+     * Prepares the aria description for an interaction context's node
      *
-     * @param {InteractionContext} data - containing interaction counts for the node
+     * @param {InteractionContext} context - containing interaction counts for this context
      *
      * @returns {string} containing the aria label for the node
      */
-    getContextAriaLabel(data) {
-        const ariaDescription = ['You\'ve'];
+    getContextAriaLabel(context) {
+        // Text for all contexts that are not 'you' that should follow the aggregate count
+        // before the node user's name
+        /* eslint-disable no-multi-spaces */
+        const aggregateContextSuffix = {
+            course:     'with people outside of your peer learning group and capstone channels. They include:',
+            plg:        'in your peer learning group, including:',
+            capstone:   'in your capstone team, including:',
+        };
+        /* eslint-enable no-multi-spaces */
 
-        ariaDescription.push('made');
+        const aggregateCountPhrase = getInteractionCountPhrase('aggregate', context.getTypeAggregateTotals().getTotal());
 
-        // Add aggregate interaction count to aria description
-        ariaDescription.push(getInteractionCountPhrase('aggregate', data.getTypeAggregateTotals().getTotal()));
+        const ariaDescription = [`You've made ${aggregateCountPhrase} ${aggregateContextSuffix[context.type]}`];
 
-        // course node
-        if (data.type === 'course') {
-            ariaDescription.push('with people outside of your peer learning group and capstone channels. They include:');
-        }
-
-        // plg node
-        else if (data.type === 'plg') {
-            ariaDescription.push('in your peer learning group, including:');
-        }
-
-        // capstone node
-        else if (data.type === 'capstone') {
-            ariaDescription.push('in your capstone team, including:');
-        }
-
+        // Interaction types in the order we want them added to the aria description
+        const interactionTypes = ['Reaction', 'Reply', 'Mention', 'Post', 'DirectMessage'];
         const counts = [];
-
-        // Add reaction count
-        counts.push(getInteractionCountPhrase('reaction', data.getTypeAggregateTotals().getCount('Reaction')));
-
-        // Add reply count
-        counts.push(getInteractionCountPhrase('reply', data.getTypeAggregateTotals().getCount('Reply')));
-
-        // Add mention count
-        counts.push(getInteractionCountPhrase('mention', data.getTypeAggregateTotals().getCount('Mention')));
-
-        // Add post count
-        counts.push(getInteractionCountPhrase('post', data.getTypeAggregateTotals().getCount('Post')));
-
-        // Add direct message count
-        counts.push(getInteractionCountPhrase('directMessage', data.getTypeAggregateTotals().getCount('DirectMessage')));
+        const pushTypePhrase = (type) => {
+            counts.push(getInteractionCountPhrase(type, context.getTypeAggregateTotals().getCount(type)));
+        };
+        interactionTypes.forEach(pushTypePhrase);
 
         // Add counts to aria description
         ariaDescription.push(counts.join(', '));
