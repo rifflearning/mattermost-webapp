@@ -27,10 +27,24 @@
         "CallExpression": { "arguments": "first" }
       }
     ],
+    "key-spacing": [
+        "error",
+        {
+          "beforeColon": false,
+          "afterColon": true,
+          "mode": "minimum"
+        }
+    ],
     "no-underscore-dangle": [
       "error",
       {
         "allow": [ "_id" ]
+      }
+    ],
+    "no-unused-expressions": [
+      "error",
+      {
+        "allowShortCircuit": true
       }
     ],
     "react/jsx-max-props-per-line": [
