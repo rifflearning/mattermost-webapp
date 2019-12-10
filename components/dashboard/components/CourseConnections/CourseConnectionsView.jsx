@@ -7,7 +7,7 @@ import PropTypes from 'prop-types';
 import * as am4core from '@amcharts/amcharts4/core';
 import * as am4plugins_forceDirected from '@amcharts/amcharts4/plugins/forceDirected'; // eslint-disable-line camelcase
 
-import {InteractionContext, UserInContext} from 'utils/riff/user_analytic_utils';
+import {InteractionContext, UserInContext, getInteractionCountPhrase} from 'utils/riff/user_analytic_utils';
 
 import {
     cmpObjectProp,
@@ -281,6 +281,9 @@ class CourseConnectionsView extends React.Component {
         // update the tooltip for the You node
         youNode.config.tooltipHTML = this.getUserTooltip(currentUserOverallContext);
 
+        // update the aria label for the You node
+        youNode.config.readerDescription = this.getUserAriaLabel(currentUserOverallContext);
+
         logger.debug('NetworkGraphview.drawGraph: interaction contexts', courseContext, learningGroupContexts);
 
         // Force the chart to reload the data we just updated
@@ -349,6 +352,9 @@ class CourseConnectionsView extends React.Component {
         // Add a tooltip for the course node
         courseContext.chartNodeData.config.tooltipHTML = this.getContextTooltip(courseContext);
 
+        // Add an aria label for the course node
+        courseContext.chartNodeData.config.readerDescription = this.getContextAriaLabel(courseContext);
+
         return courseContext;
     }
 
@@ -406,6 +412,9 @@ class CourseConnectionsView extends React.Component {
 
         // Add a tooltip for this interaction context's node
         lgInteractionContext.chartNodeData.config.tooltipHTML = this.getContextTooltip(lgInteractionContext);
+
+        // Add an aria label for this interaction context's node
+        lgInteractionContext.chartNodeData.config.readerDescription = this.getContextAriaLabel(lgInteractionContext);
 
         return lgInteractionContext;
     }
@@ -468,6 +477,92 @@ class CourseConnectionsView extends React.Component {
                 },
             },
         };
+    }
+
+    /**
+     * Prepares the aria description for a user node
+     * The aria description will be phrased in english directed at the current user's
+     * relationship with the given user node so either "You've made..." or "You've had..."
+     * depending on if the node is about the current user's interactions overall
+     * or about the node user's interactions with the current user.
+     *
+     * @param {UserInContext} user - containing interaction counts for a user's node
+     *
+     * @returns {string} containing the aria label for the user node
+     */
+    getUserAriaLabel(user) {
+        // Text for all contexts that are not 'you' that should follow the aggregate count
+        // before the node user's name
+        /* eslint-disable no-multi-spaces */
+        const aggregateContextSuffix = {
+            course:     'in the course with',
+            plg:        'in your peer learning group with',
+            capstone:   'in your capstone team with',
+        };
+        /* eslint-enable no-multi-spaces */
+
+        const aggregateCountPhrase = getInteractionCountPhrase('aggregate', user.getInteractionAggregate());
+
+        const ariaDescription = [];
+
+        if (user.contextType === 'you') {
+            ariaDescription.push(`You've made ${aggregateCountPhrase} for the entire course, including:`);
+        }
+        else {
+            ariaDescription.push('You\'ve had ' +
+                `${aggregateCountPhrase} ${aggregateContextSuffix[user.contextType]} ${user.username}` +
+                ', including:');
+        }
+
+        // Interaction types in the order we want them added to the aria description
+        const interactionTypes = ['Reaction', 'Reply', 'Mention'];
+        user.contextType === 'you' && interactionTypes.push('Post');
+        ['course', 'you'].includes(user.contextType) && interactionTypes.push('DirectMessage');
+
+        const counts = [];
+        const pushTypePhrase = (type) => counts.push(getInteractionCountPhrase(type, user.getInteractionCount(type)));
+        interactionTypes.forEach(pushTypePhrase);
+
+        // Add counts to aria description
+        ariaDescription.push(counts.join(', '));
+
+        return ariaDescription.join(' ') + '.';
+    }
+
+    /**
+     * Prepares the aria description for an interaction context's node
+     *
+     * @param {InteractionContext} context - containing interaction counts for this context
+     *
+     * @returns {string} containing the aria label for the node
+     */
+    getContextAriaLabel(context) {
+        // Text for all contexts that are not 'you' that should follow the aggregate count
+        // before the node user's name
+        /* eslint-disable no-multi-spaces */
+        const aggregateContextSuffix = {
+            course:     'with people outside of your peer learning group and capstone channels. They include:',
+            plg:        'in your peer learning group, including:',
+            capstone:   'in your capstone team, including:',
+        };
+        /* eslint-enable no-multi-spaces */
+
+        const aggregateCountPhrase = getInteractionCountPhrase('aggregate', context.getTypeAggregateTotals().getTotal());
+
+        const ariaDescription = [`You've made ${aggregateCountPhrase} ${aggregateContextSuffix[context.type]}`];
+
+        // Interaction types in the order we want them added to the aria description
+        const interactionTypes = ['Reaction', 'Reply', 'Mention', 'Post', 'DirectMessage'];
+        const counts = [];
+        const pushTypePhrase = (type) => {
+            counts.push(getInteractionCountPhrase(type, context.getTypeAggregateTotals().getCount(type)));
+        };
+        interactionTypes.forEach(pushTypePhrase);
+
+        // Add counts to aria description
+        ariaDescription.push(counts.join(', '));
+
+        return ariaDescription.join(' ') + '.';
     }
 
     /**
@@ -566,6 +661,7 @@ class CourseConnectionsView extends React.Component {
             nodeWidth: graphConfigurationValues.userNodes.nodeWidth,
             config: {
                 tooltipHTML: this.getUserTooltip(userInContext),
+                readerDescription: this.getUserAriaLabel(userInContext),
             },
             configLink: {
                 strokeOpacity,

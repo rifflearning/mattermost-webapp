@@ -324,6 +324,35 @@ class InteractionCounts {
     }
 }
 
+/* ******************************************************************************
+ * getInteractionCountPhrase                                               */ /**
+ *
+ * get either the singular or plural summary phrase for
+ * a given interaction type and count
+ *
+ * @param {string} type - An InteractionType, or 'aggregate'
+ * @param {number} count - the number of interactions of this type
+ *
+ * @returns {string} a summary phrase for the interaction type and count.
+ */
+function getInteractionCountPhrase(type, count) {
+    /* eslint-disable no-multi-spaces */
+    const typePhrases = {
+        Reply:          {singular: 'reply',             plural: 'replies'},
+        Mention:        {singular: 'mention',           plural: 'mentions'},
+        DirectMessage:  {singular: 'direct message',    plural: 'direct messages'},
+        Reaction:       {singular: 'reaction',          plural: 'reactions'},
+        Post:           {singular: 'post',              plural: 'posts'},
+        aggregate:      {singular: 'contact',           plural: 'contacts'},
+    };
+    /* eslint-enable no-multi-spaces */
+
+    const unknownTypePhrase = {singular: '', plural: ''};
+    const typePhrase = typePhrases[type] || unknownTypePhrase;
+
+    return `${count} ${count === 1 ? typePhrase.singular : typePhrase.plural}`;
+}
+
 /* **************************************************************************** *
  * Module exports                                                               *
  * **************************************************************************** */
@@ -332,4 +361,5 @@ export {
     InteractionCounts,
     InteractionContext,
     UserInContext,
+    getInteractionCountPhrase,
 };
