@@ -27,7 +27,7 @@
     "compass-mixins": "0.12.10",
     "connected-react-router": "^4.5.0",
     "d3-axis": "^1.0.12",
-    "d3-scale": "^2.2.2",
+    "d3-scale": "^3.2.1",
     "d3-selection": "^1.4.1",
     "d3-time": "^1.1.0",
     "d3-time-format": "^2.2.2",
