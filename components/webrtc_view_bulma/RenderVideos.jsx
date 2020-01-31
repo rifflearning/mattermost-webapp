@@ -88,7 +88,6 @@ class RenderVideos extends React.Component {
                         aria-label={`Video chat. ${readablePeers(this.props.webRtcPeers)}`}
                     >
                         <RemoteVideoContainer
-                            ref='remote'
                             peers={this.props.webRtcPeers}
                             chat={this.props.chat}
                             remoteSharedScreen={this.props.webRtcRemoteSharedScreen}
