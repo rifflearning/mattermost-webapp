@@ -17,7 +17,6 @@ left: 1rem;
 
 export const VideoPlaceholder = styled.div.attrs({
     className: 'has-text-centered',
-    ref: 'local',
 })`
 background: linear-gradient(30deg, rgba(138,106,148,1) 12%, rgba(171,69,171,1) 87%);
 height: 144px;
