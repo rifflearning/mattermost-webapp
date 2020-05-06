@@ -16,7 +16,6 @@ export default class PostProfilePicture extends React.PureComponent {
         compactDisplay: PropTypes.bool.isRequired,
         enablePostIconOverride: PropTypes.bool.isRequired,
         hasImageProxy: PropTypes.bool.isRequired,
-        isBusy: PropTypes.bool,
         isRHS: PropTypes.bool,
         post: PropTypes.object.isRequired,
         status: PropTypes.string,
@@ -72,7 +71,6 @@ export default class PostProfilePicture extends React.PureComponent {
         return (
             <ProfilePicture
                 hasMention={hasMention}
-                isBusy={this.props.isBusy}
                 isRHS={this.props.isRHS}
                 src={src}
                 status={status}

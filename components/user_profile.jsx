@@ -42,10 +42,6 @@ export default class UserProfile extends React.Component {
             return true;
         }
 
-        if (nextProps.isBusy !== this.props.isBusy) {
-            return true;
-        }
-
         return false;
     }
 
@@ -65,7 +61,6 @@ export default class UserProfile extends React.Component {
         if (this.props.overwriteName) {
             name = this.props.overwriteName;
         }
-
         if (this.props.disablePopover) {
             return <div className='user-popover'>{name}</div>;
         }
@@ -82,7 +77,6 @@ export default class UserProfile extends React.Component {
                             user={this.props.user}
                             src={profileImg}
                             status={this.props.status}
-                            isBusy={this.props.isBusy}
                             hide={this.hideProfilePopover}
                             isRHS={this.props.isRHS}
                             hasMention={this.props.hasMention}
@@ -115,7 +109,6 @@ UserProfile.propTypes = {
     disablePopover: PropTypes.bool,
     displayNameType: PropTypes.string,
     status: PropTypes.string,
-    isBusy: PropTypes.bool,
     isRHS: PropTypes.bool,
     hasMention: PropTypes.bool,
 };

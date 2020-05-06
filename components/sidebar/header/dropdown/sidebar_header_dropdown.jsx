@@ -12,8 +12,7 @@ import {Permissions} from 'mattermost-redux/constants';
 
 import * as GlobalActions from 'actions/global_actions.jsx';
 import TeamStore from 'stores/team_store.jsx';
-import WebrtcStore from 'stores/webrtc_store.jsx';
-import {Constants, WebrtcActionTypes} from 'utils/constants.jsx';
+import {Constants} from 'utils/constants.jsx';
 import {useSafeUrl} from 'utils/url';
 import * as UserAgent from 'utils/user_agent.jsx';
 import AboutBuildModal from 'components/about_build_modal';
@@ -80,8 +79,6 @@ export default class SidebarHeaderDropdown extends React.Component {
 
         this.renderCustomEmojiLink = this.renderCustomEmojiLink.bind(this);
 
-        this.handleClick = this.handleClick.bind(this);
-
         this.state = {
             teamMembers: TeamStore.getMyTeamMembers(),
             teamListings: TeamStore.getTeamListings(),
@@ -90,13 +87,6 @@ export default class SidebarHeaderDropdown extends React.Component {
             showTeamMembersModal: false,
             showAddUsersToTeamModal: false,
         };
-    }
-
-    handleClick(e) {
-        if (WebrtcStore.isBusy()) {
-            WebrtcStore.emitChanged({action: WebrtcActionTypes.IN_PROGRESS});
-            e.preventDefault();
-        }
     }
 
     toggleDropdown = (val) => {
@@ -225,7 +215,6 @@ export default class SidebarHeaderDropdown extends React.Component {
             <li>
                 <Link
                     id='customEmoji'
-                    onClick={this.handleClick}
                     to={'/' + this.props.teamName + '/emoji'}
                 >
                     <FormattedMessage
@@ -395,7 +384,6 @@ export default class SidebarHeaderDropdown extends React.Component {
                         <Link
                             id='Integrations'
                             to={'/' + this.props.teamName + '/integrations'}
-                            onClick={this.handleClick}
                         >
                             <FormattedMessage
                                 id='navbar_dropdown.integrations'
@@ -413,7 +401,6 @@ export default class SidebarHeaderDropdown extends React.Component {
                     <Link
                         id='systemConsole'
                         to={'/admin_console'}
-                        onClick={this.handleClick}
                     >
                         <FormattedMessage
                             id='navbar_dropdown.console'
@@ -437,7 +424,6 @@ export default class SidebarHeaderDropdown extends React.Component {
                         id='createTeam'
                         key='newTeam_a'
                         to='/create_team'
-                        onClick={this.handleClick}
                     >
                         <FormattedMessage
                             id='navbar_dropdown.create'
@@ -466,7 +452,6 @@ export default class SidebarHeaderDropdown extends React.Component {
                     <li key='joinTeam_li'>
                         <Link
                             id='joinAnotherTeam'
-                            onClick={this.handleClick}
                             to='/select_team'
                         >
                             <FormattedMessage
