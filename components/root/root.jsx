@@ -40,6 +40,7 @@ import loadPasswordResetSendLink from 'bundle-loader?lazy!components/password_re
 import loadPasswordResetForm from 'bundle-loader?lazy!components/password_reset_form';
 import loadSignupController from 'bundle-loader?lazy!components/signup/signup_controller';
 import loadSignupEmail from 'bundle-loader?lazy!components/signup/signup_email';
+import loadSignupLTI from 'bundle-loader?lazy!components/signup/signup_lti';
 import loadTermsOfService from 'bundle-loader?lazy!components/terms_of_service';
 import loadShouldVerifyEmail from 'bundle-loader?lazy!components/should_verify_email';
 import loadDoVerifyEmail from 'bundle-loader?lazy!components/do_verify_email';
@@ -64,6 +65,7 @@ const PasswordResetSendLink = makeAsyncComponent(loadPasswordResetSendLink);
 const PasswordResetForm = makeAsyncComponent(loadPasswordResetForm);
 const SignupController = makeAsyncComponent(loadSignupController);
 const SignupEmail = makeAsyncComponent(loadSignupEmail);
+const SignupLTI = makeAsyncComponent(loadSignupLTI);
 const ShouldVerifyEmail = makeAsyncComponent(loadShouldVerifyEmail);
 const DoVerifyEmail = makeAsyncComponent(loadDoVerifyEmail);
 const ClaimController = makeAsyncComponent(loadClaimController);
@@ -295,6 +297,10 @@ export default class Root extends React.Component {
                     <HFTRoute
                         path={'/signup_email'}
                         component={SignupEmail}
+                    />
+                    <HFTRoute
+                        path={'/signup_lti'}
+                        component={SignupLTI}
                     />
                     <HFTRoute
                         path={'/should_verify_email'}
