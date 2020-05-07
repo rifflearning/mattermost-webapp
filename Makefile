@@ -13,7 +13,7 @@ build-storybook: node_modules ## Build the storybook
 storybook: node_modules ## Run the storybook development environment
 	npm run storybook
 
-check-style: node_modules ## Checks JS file for ESLint confirmity
+check-style: node_modules ## Checks JS file for ESLint conformity
 	@echo Checking for style guide compliance
 
 	npm run check
@@ -154,6 +154,22 @@ emojis: ## Creates emoji JSON, JSX and Go files and extracts emoji images from t
 	gem install bundler
 	bundle install --gemfile=$(EMOJI_TOOLS_DIR)/Gemfile
 	BUNDLE_GEMFILE=$(EMOJI_TOOLS_DIR)/Gemfile SERVER_DIR=$(BUILD_SERVER_DIR) bundle exec $(EMOJI_TOOLS_DIR)/make-emojis
+
+check-style-ci: THRESHOLD ?= 51
+check-style-ci: node_modules ## Checks JS file for ESLint conformity but only output summary for gitlab job log
+	-npm run check --silent -- --format=html >build/check-style.log.html
+	build/check-style-ci-report.sh build/check-style.log.html $(THRESHOLD)
+
+test-ci: node_modules ## Runs tests but only output summary for gitlab job log
+	npm run test --silent >build/test.log 2>&1 || ( \
+		sed -n -e '/^FAIL /,+1p ; /^Snapshot Summary$$/,/^$$/p ; /^Test Suites:/,$$p' build/test.log ; \
+		false \
+	)
+	sed -n -e '/^Test Suites:/,$$p' build/test.log
+
+# Can be loaded in firefox from the file system if you change the privacy.file_unique_origin setting to false
+viewable-test-results: ## copy test-results.xml to /tests with a stylesheet processing instruction
+	sed -e '1s;^;<?xml-stylesheet type="text/xsl" href="junit-tests-report.xslt" ?>\n;' build/test-results.xml > tests/test-results.xml
 
 ## Help documentatin à la https://marmelab.com/blog/2016/02/29/auto-documented-makefile.html
 help:
