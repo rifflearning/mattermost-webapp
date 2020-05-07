@@ -255,12 +255,7 @@ export default class RhsRootPost extends React.Component {
             userProfile = (
                 <UserProfile
                     user={{}}
-                    overwriteName={
-                        <FormattedMessage
-                            id='post_info.system'
-                            defaultMessage='System'
-                        />
-                    }
+                    overwriteName={Constants.SYSTEM_BRAND_NAME}
                     overwriteImage={Constants.SYSTEM_MESSAGE_PROFILE_IMAGE}
                     disablePopover={true}
                 />

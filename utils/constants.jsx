@@ -27,6 +27,7 @@ import logoWebhook from 'images/webhook_icon.jpg';
 import Permissions from 'mattermost-redux/constants/permissions';
 
 import {t} from 'utils/i18n';
+import {customTheme} from 'components/needs_team/theme';
 
 import githubCSS from '!!file-loader?name=files/code_themes/[hash].[ext]!highlight.js/styles/github.css';
 
@@ -786,30 +787,32 @@ export const Constants = {
     MAX_POST_LEN: 4000,
     EMOJI_SIZE: 16,
     THEMES: {
-        default: {
+        default: customTheme,
+        mattermost: {
             type: 'Mattermost',
-            sidebarBg: '#145dbf',
+            sidebarBg: '#6e5080',
             sidebarText: '#ffffff',
             sidebarUnreadText: '#ffffff',
-            sidebarTextHoverBg: '#4578bf',
-            sidebarTextActiveBorder: '#579eff',
+            sidebarTextHoverBg: '#6f5d7d',
+            sidebarTextActiveBorder: '#b5a2bf',
             sidebarTextActiveColor: '#ffffff',
-            sidebarHeaderBg: '#1153ab',
+            sidebarHeaderBg: '#6e5080',
             sidebarHeaderTextColor: '#ffffff',
-            onlineIndicator: '#06d6a0',
-            awayIndicator: '#ffbc42',
-            dndIndicator: '#f74343',
-            mentionBg: '#ffffff',
-            mentionColor: '#145dbf',
-            centerChannelBg: '#ffffff',
-            centerChannelColor: '#3d3c40',
+            onlineIndicator: '#8dde5d',
+            awayIndicator: '#ff8b2c',
+            dndIndicator: '#ff5f5f',
+            mentionBj: '#fbfbfb',
+            mentionColor: '#0f758e',
+            centerChannelBg: '#f5f5f5',
+            centerChannelColor: '#4a4a4a',
             newMessageSeparator: '#ff8800',
-            linkColor: '#2389d7',
-            buttonBg: '#166de0',
+            linkColor: '#0f758e',
+            buttonBg: '#0f758e',
             buttonColor: '#ffffff',
-            errorTextColor: '#fd5960',
-            mentionHighlightBg: '#ffe577',
-            mentionHighlightLink: '#166de0',
+            errorTextColor: '#ce5252',
+            mentionHighlightBg: '#fdff8e',
+            mentionHighlightLink: '#0f758e',
+            mentionBg: '#fbfbfb',
             codeTheme: 'github',
             image: mattermostThemeImage,
         },
@@ -1295,6 +1298,7 @@ export const Constants = {
     CHANNEL_ID_LENGTH: 26,
     TRANSPARENT_PIXEL: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
     TRIPLE_BACK_TICKS: /```/g,
+    SYSTEM_BRAND_NAME: 'Riff Edu',
 };
 
 t('suggestion.mention.channels');

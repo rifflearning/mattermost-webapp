@@ -17,6 +17,8 @@ import {makeAsyncComponent} from 'components/async_load';
 import loadBackstageController from 'bundle-loader?lazy!components/backstage';
 import ChannelController from 'components/channel_layout/channel_controller';
 
+import {customTheme} from './theme.js';
+
 const BackstageController = makeAsyncComponent(loadBackstageController);
 
 let wakeUpInterval;
@@ -107,7 +109,8 @@ export default class NeedsTeam extends React.Component {
 
         // Set up tracking for whether the window is active
         window.isActive = true;
-        Utils.applyTheme(this.props.theme);
+        const theme = this.props.theme || customTheme;
+        Utils.applyTheme(theme);
 
         if (UserAgent.isIosSafari()) {
             // Use iNoBounce to prevent scrolling past the boundaries of the page

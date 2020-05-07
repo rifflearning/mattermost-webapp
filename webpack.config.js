@@ -316,6 +316,7 @@ if (TEST) {
             filename: 'root.html',
             inject: 'head',
             template: 'root.html',
+            favicon: './images/favicon/favicon-16x16.png',
         })
     );
     config.plugins.push(

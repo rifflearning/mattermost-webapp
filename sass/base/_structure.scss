@@ -84,3 +84,7 @@ img {
         @include border-radius(100%);
     }
 }
+
+.tooltip {
+    opacity: 1; //overrides bootstrap setting
+}
