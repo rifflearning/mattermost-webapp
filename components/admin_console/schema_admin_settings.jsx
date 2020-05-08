@@ -36,7 +36,11 @@ export default class SchemaAdminSettings extends React.Component {
     static propTypes = {
         config: PropTypes.object,
         environmentConfig: PropTypes.object,
+        schema: PropTypes.object,
+        roles: PropTypes.object,
+        license: PropTypes.object,
         setNavigationBlocked: PropTypes.func,
+        editRole: PropTypes.func,
     }
 
     constructor(props) {
