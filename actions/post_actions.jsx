@@ -255,6 +255,34 @@ export function increasePostVisibility(channelId, focusedPostId) {
     };
 }
 
+/**
+ * Fetches all the posts that were made in the provided channel.
+ *
+ * @param {string} channelId - The unique ID for the chanel we should fetch posts from.
+ *
+ * @returns {Array} An array of Mattermost Post objects.
+ *      See {@link https://api.mattermost.com/#tag/posts}
+ *      The returned array represents all the posts made in the specified channel.
+ *      The array will be empty if the channel contains no posts, _or_ if the channel
+ *      does not exist.
+ */
+export async function getAllPostsFromChannel(channelId) {
+    const currentPosts = await PostActions.getPosts(channelId)(dispatch, getState);
+    if (currentPosts.error) {
+        return [];
+    }
+    const somePost = Object.values(currentPosts.data.posts)[0];
+    const earlyPosts = await PostActions.getPostsBefore(channelId, somePost.id)(dispatch, getState);
+    const latePosts = await PostActions.getPostsAfter(channelId, somePost.id)(dispatch, getState);
+
+    const extractPostsFromQuery = (query) => {
+        return query.error ? [] : Object.values(query.data.posts);
+    };
+    return [...extractPostsFromQuery(earlyPosts),
+            ...somePost, // eslint-disable-line indent
+            ...extractPostsFromQuery(latePosts)]; // eslint-disable-line indent
+}
+
 export function searchForTerm(term) {
     dispatch(RhsActions.updateSearchTerms(term));
     dispatch(RhsActions.showSearchResults());
@@ -304,7 +332,7 @@ export function setEditingPost(postId = '', commentCount = 0, refocusId = '', ti
             if (config.AllowEditPost === Constants.ALLOW_EDIT_POST_NEVER) {
                 canEditNow = false;
             } else if (config.AllowEditPost === Constants.ALLOW_EDIT_POST_TIME_LIMIT) {
-                if ((post.create_at + (config.PostEditTimeLimit * 1000)) < Date.now()) {
+                if ((post.create_at + (config.PostEditTimeLimit * 1000)) < Date.now()) { // eslint-disable-line no-magic-numbers
                     canEditNow = false;
                 }
             }

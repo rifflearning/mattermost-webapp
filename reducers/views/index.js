@@ -6,6 +6,7 @@ import {combineReducers} from 'redux';
 import admin from './admin';
 import browser from './browser';
 import channel from './channel';
+import dashboard from './dashboard';
 import rhs from './rhs';
 import posts from './posts';
 import modals from './modals';
@@ -21,6 +22,7 @@ export default combineReducers({
     admin,
     browser,
     channel,
+    dashboard,
     rhs,
     posts,
     modals,

@@ -93,12 +93,17 @@ export default class Sidebar extends React.PureComponent {
         unreadChannelIds: PropTypes.array.isRequired,
 
         /**
+         * Current page name
+         */
+        currentPage: PropTypes.string,
+
+        /**
          * Current channel object
          */
         currentChannel: PropTypes.object,
 
         /**
-         * Current channel teammeat (for direct messages)
+         * Current channel teammate (for direct messages)
          */
         currentTeammate: PropTypes.object,
 
@@ -478,7 +483,7 @@ export default class Sidebar extends React.PureComponent {
                 key={channelId}
                 ref={channelId}
                 channelId={channelId}
-                active={channelId === this.props.currentChannel.id}
+                active={channelId === this.props.currentChannel.id && this.props.currentPage === null}
                 currentTeamName={this.props.currentTeam.name}
                 currentUserId={this.props.currentUser.id}
             />
@@ -524,6 +529,46 @@ export default class Sidebar extends React.PureComponent {
                     <FormattedMessage
                         id='sidebar.moreElips'
                         defaultMessage='More...'
+                    />
+                </button>
+            </li>
+        );
+
+        var dashboard = (
+            <li
+                key='dashboard'
+                className={this.props.currentPage === 'dashboard' ? 'active' : ''}
+            >
+                <button
+                    id='dashboard'
+                    className='nav-more cursor--pointer style--none btn--block'
+                    onClick={
+                        () => {
+                            browserHistory.push(`/${this.props.currentTeam.name}/pages/dashboard`);
+                        }
+                    }
+                >
+
+                    <span style={{marginRight: '.5rem'}}>
+                        <svg
+                            xmlns='http://www.w3.org/2000/svg'
+                            width='17'
+                            height='17'
+                            viewBox='0 0 24 24'
+                        >
+                            <path
+                                d='M0 0h24v24H0z'
+                                fill='none'
+                            />
+                            <path
+                                d='M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z'
+                                fill='#ffffff'
+                            />
+                        </svg>
+                    </span>
+                    <FormattedMessage
+                        id='sidebar.dashboard'
+                        defaultMessage='Riff Metrics'
                     />
                 </button>
             </li>
@@ -772,6 +817,15 @@ export default class Sidebar extends React.PureComponent {
                                 {favoriteItems}
                             </ul>}
                             <ul className='nav nav-pills nav-stacked'>
+                                <li>
+                                    <h4 id='dashboard'>
+                                        <FormattedMessage
+                                            id='sidebar.dashboard'
+                                            defaultMessage='DASHBOARD'
+                                        />
+                                    </h4>
+                                </li>
+                                {dashboard}
                                 <li>
                                     <h4 id='publicChannel'>
                                         <FormattedMessage

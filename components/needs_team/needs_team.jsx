@@ -16,6 +16,7 @@ import {loadProfilesForSidebar} from 'actions/user_actions.jsx';
 import {makeAsyncComponent} from 'components/async_load';
 import loadBackstageController from 'bundle-loader?lazy!components/backstage';
 import ChannelController from 'components/channel_layout/channel_controller';
+import PageController from 'components/page_layout/page_controller';
 import WebRtcController from 'components/webrtc_layout/webrtc_controller';
 
 import {customTheme} from './theme.js';
@@ -234,7 +235,6 @@ export default class NeedsTeam extends React.Component {
             return <div/>;
         }
         const teamType = this.state.team ? this.state.team.type : '';
-
         return (
             <Switch>
                 <Route
@@ -244,6 +244,16 @@ export default class NeedsTeam extends React.Component {
                 <Route
                     path={'/:team/emoji'}
                     component={BackstageController}
+                />
+                <Route
+                    exact={true}
+                    path={'/:team/:path(pages)/:identifier'}
+                    render={(renderProps) => (
+                        <PageController
+                            pathName={renderProps.location.pathname}
+                            teamType={teamType}
+                        />
+                    )}
                 />
                 <Route
                     exact={true}

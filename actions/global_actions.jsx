@@ -51,6 +51,14 @@ import {equalServerVersions} from 'utils/server_version';
 const dispatch = store.dispatch;
 const getState = store.getState;
 
+export function getCurrentPage(match) {
+    if (match.params.path === 'pages') {
+        return match.params.identifier;
+    }
+
+    return null;
+}
+
 export function emitChannelClickEvent(channel) {
     async function userVisitedFakeChannel(chan, success, fail) {
         const currentUserId = UserStore.getCurrentId();
