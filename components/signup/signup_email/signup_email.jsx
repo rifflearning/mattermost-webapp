@@ -46,6 +46,7 @@ export default class SignupEmail extends React.Component {
 
         this.getInviteInfo = this.getInviteInfo.bind(this);
         this.renderEmailSignup = this.renderEmailSignup.bind(this);
+        this.renderTerms = this.renderTerms.bind(this);
         this.isUserValid = this.isUserValid.bind(this);
 
         this.state = this.getInviteInfo();
@@ -167,6 +168,7 @@ export default class SignupEmail extends React.Component {
                 passwordError: '',
                 serverError: '',
             });
+            this.refs.email.focus();
             return false;
         }
 
@@ -177,6 +179,7 @@ export default class SignupEmail extends React.Component {
                 passwordError: '',
                 serverError: '',
             });
+            this.refs.email.focus();
             return false;
         }
 
@@ -188,6 +191,7 @@ export default class SignupEmail extends React.Component {
                 passwordError: '',
                 serverError: '',
             });
+            this.refs.name.focus();
             return false;
         }
 
@@ -199,6 +203,7 @@ export default class SignupEmail extends React.Component {
                 passwordError: '',
                 serverError: '',
             });
+            this.refs.name.focus();
             return false;
         } else if (usernameError) {
             this.setState({
@@ -215,6 +220,7 @@ export default class SignupEmail extends React.Component {
                 passwordError: '',
                 serverError: '',
             });
+            this.refs.name.focus();
             return false;
         }
 
@@ -227,6 +233,7 @@ export default class SignupEmail extends React.Component {
                 passwordError: error,
                 serverError: '',
             });
+            this.refs.password.focus();
             return false;
         }
 
@@ -271,6 +278,34 @@ export default class SignupEmail extends React.Component {
         }
     }
 
+    renderTerms() {
+        const {
+            termsOfServiceLink,
+            privacyPolicyLink,
+            enableSignUpWithEmail,
+            siteName,
+        } = this.props;
+
+        let terms = null;
+        if (!this.state.noOpenServerError && enableSignUpWithEmail) {
+            terms = (
+                <p className='margin--extra'>
+                    <FormattedMarkdownMessage
+                        id='create_team.agreement'
+                        defaultMessage='By proceeding to create your account and use {siteName}, you agree to our [Terms of Service]({TermsOfServiceLink}) and [Privacy Policy]({PrivacyPolicyLink}). If you do not agree, you cannot use {siteName}.'
+                        values={{
+                            siteName,
+                            TermsOfServiceLink: termsOfServiceLink,
+                            PrivacyPolicyLink: privacyPolicyLink,
+                        }}
+                    />
+                </p>
+            );
+        }
+
+        return terms;
+    }
+
     renderEmailSignup() {
         let emailError = null;
         let emailHelpText = (
@@ -283,7 +318,14 @@ export default class SignupEmail extends React.Component {
         );
         let emailDivStyle = 'form-group';
         if (this.state.emailError) {
-            emailError = (<label className='control-label'>{this.state.emailError}</label>);
+            emailError = (
+                <label
+                    className='control-label'
+                    id='email-error'
+                >
+                    {this.state.emailError}
+                </label>
+            );
             emailHelpText = '';
             emailDivStyle += ' has-error';
         }
@@ -303,7 +345,14 @@ export default class SignupEmail extends React.Component {
         );
         let nameDivStyle = 'form-group';
         if (this.state.nameError) {
-            nameError = <label className='control-label'>{this.state.nameError}</label>;
+            nameError = (
+                <label
+                    className='control-label'
+                    id='name-error'
+                >
+                    {this.state.nameError}
+                </label>
+            );
             nameHelpText = '';
             nameDivStyle += ' has-error';
         }
@@ -311,7 +360,14 @@ export default class SignupEmail extends React.Component {
         let passwordError = null;
         let passwordDivStyle = 'form-group';
         if (this.state.passwordError) {
-            passwordError = <label className='control-label'>{this.state.passwordError}</label>;
+            passwordError = (
+                <label
+                    className='control-label'
+                    id='password-error'
+                >
+                    {this.state.passwordError}
+                </label>
+            );
             passwordDivStyle += ' has-error';
         }
 
@@ -338,12 +394,12 @@ export default class SignupEmail extends React.Component {
             <form>
                 <div className='inner__content'>
                     <div className={emailContainerStyle}>
-                        <h5><strong>
+                        <label htmlFor='email'><strong>
                             <FormattedMessage
                                 id='signup_user_completed.whatis'
                                 defaultMessage="What's your email address?"
                             />
-                        </strong></h5>
+                        </strong></label>
                         <div className={emailDivStyle}>
                             <input
                                 id='email'
@@ -356,6 +412,7 @@ export default class SignupEmail extends React.Component {
                                 autoFocus={true}
                                 spellCheck='false'
                                 autoCapitalize='off'
+                                aria-describedby={`${this.state.emailError ? 'email-error' : ''}`}
                             />
                             {emailError}
                             {emailHelpText}
@@ -363,12 +420,12 @@ export default class SignupEmail extends React.Component {
                     </div>
                     {yourEmailIs}
                     <div className='margin--extra'>
-                        <h5><strong>
+                        <label htmlFor='name'><strong>
                             <FormattedMessage
                                 id='signup_user_completed.chooseUser'
                                 defaultMessage='Choose your username'
                             />
-                        </strong></h5>
+                        </strong></label>
                         <div className={nameDivStyle}>
                             <input
                                 id='name'
@@ -379,18 +436,19 @@ export default class SignupEmail extends React.Component {
                                 maxLength={Constants.MAX_USERNAME_LENGTH}
                                 spellCheck='false'
                                 autoCapitalize='off'
+                                aria-describedby={`${this.state.nameError ? 'name-error' : ''}`}
                             />
                             {nameError}
                             {nameHelpText}
                         </div>
                     </div>
                     <div className='margin--extra'>
-                        <h5><strong>
+                        <label htmlFor='password'><strong>
                             <FormattedMessage
                                 id='signup_user_completed.choosePwd'
                                 defaultMessage='Choose your password'
                             />
-                        </strong></h5>
+                        </strong></label>
                         <div className={passwordDivStyle}>
                             <input
                                 id='password'
@@ -400,10 +458,12 @@ export default class SignupEmail extends React.Component {
                                 placeholder=''
                                 maxLength='128'
                                 spellCheck='false'
+                                aria-describedby={`${this.state.passwordError ? 'password-error' : ''}`}
                             />
                             {passwordError}
                         </div>
                     </div>
+                    {this.renderTerms()}
                     <p className='margin--extra'>
                         <button
                             id='createAccountButton'
@@ -428,9 +488,7 @@ export default class SignupEmail extends React.Component {
             customDescriptionText,
             enableSignUpWithEmail,
             location,
-            privacyPolicyLink,
             siteName,
-            termsOfServiceLink,
         } = this.props;
 
         let serverError = null;
@@ -453,23 +511,6 @@ export default class SignupEmail extends React.Component {
             return null;
         }
 
-        let terms = null;
-        if (!this.state.noOpenServerError && emailSignup) {
-            terms = (
-                <p>
-                    <FormattedMarkdownMessage
-                        id='create_team.agreement'
-                        defaultMessage='By proceeding to create your account and use {siteName}, you agree to our [Terms of Service]({TermsOfServiceLink}) and [Privacy Policy]({PrivacyPolicyLink}). If you do not agree, you cannot use {siteName}.'
-                        values={{
-                            siteName,
-                            TermsOfServiceLink: termsOfServiceLink,
-                            PrivacyPolicyLink: privacyPolicyLink,
-                        }}
-                    />
-                </p>
-            );
-        }
-
         if (this.state.noOpenServerError) {
             emailSignup = null;
         }
@@ -487,12 +528,12 @@ export default class SignupEmail extends React.Component {
                             customDescriptionText={customDescriptionText}
                             siteName={siteName}
                         />
-                        <h4 className='color--light'>
+                        <p className='color--light h4'>
                             <FormattedMessage
                                 id='signup_user_completed.lets'
                                 defaultMessage="Let's create your account"
                             />
-                        </h4>
+                        </p>
                         <span className='color--light'>
                             <FormattedMessage
                                 id='signup_user_completed.haveAccount'
@@ -510,7 +551,6 @@ export default class SignupEmail extends React.Component {
                         </span>
                         {emailSignup}
                         {serverError}
-                        {terms}
                     </div>
                 </div>
             </div>
