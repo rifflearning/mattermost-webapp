@@ -77,7 +77,6 @@ describe('components/SearchResultsItem', () => {
             term: 'test',
             isMentionSearch: false,
             isFlagged: true,
-            isBusy: false,
             status: 'hello',
             enablePostUsernameOverride: false,
             actions: {

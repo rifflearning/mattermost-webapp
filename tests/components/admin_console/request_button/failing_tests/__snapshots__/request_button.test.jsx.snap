@@ -1,0 +1,34 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`components/admin_console/request_button/request_button.jsx should match snapshot 1`] = `
+<div
+  className="form-group"
+>
+  <div
+    className="col-sm-offset-4 col-sm-8"
+  >
+    <div>
+      <button
+        className="btn btn-default"
+        disabled={false}
+        onClick={[Function]}
+      >
+        <FormattedMessage
+          defaultMessage="Button Text"
+          id="test"
+          values={Object {}}
+        />
+      </button>
+    </div>
+    <div
+      className="help-text"
+    >
+      <FormattedMessage
+        defaultMessage="Help Text"
+        id="test"
+        values={Object {}}
+      />
+    </div>
+  </div>
+</div>
+`;

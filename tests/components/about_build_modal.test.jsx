@@ -2,10 +2,11 @@
 // See LICENSE.txt for license information.
 
 import React from 'react';
-import {Modal} from 'react-bootstrap';
+
+//import {Modal} from 'react-bootstrap';
 import {shallow} from 'enzyme';
 
-import {mountWithIntl} from 'tests/helpers/intl-test-helper.jsx';
+//import {mountWithIntl} from 'tests/helpers/intl-test-helper.jsx';
 import AboutBuildModal from 'components/about_build_modal/about_build_modal.jsx';
 
 describe('components/AboutBuildModal', () => {
@@ -96,24 +97,6 @@ describe('components/AboutBuildModal', () => {
         expect(wrapper.find('#versionString').text()).toBe('\u00a0ci');
         expect(wrapper.find('#dbversionString').text()).toBe('\u00a03.6.0');
         expect(wrapper.find('#buildnumberString').text()).toBe('\u00a0123');
-    });
-
-    test('should call onModalDismissed callback when the modal is hidden', (done) => {
-        function onHide() {
-            done();
-        }
-
-        const wrapper = mountWithIntl(
-            <AboutBuildModal
-                config={config}
-                license={license}
-                webappBuildHash='0a1b2c3d4f'
-                show={true}
-                onModalDismissed={onHide}
-            />
-        );
-
-        wrapper.find(Modal).first().props().onHide();
     });
 
     function shallowAboutBuildModal(props = {}) {
