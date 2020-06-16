@@ -13,8 +13,9 @@ import {getUserIdFromChannelName, isDefault, isFavoriteChannel} from 'mattermost
 import {getLicense} from 'mattermost-redux/selectors/entities/general';
 
 import {sendWebRtcMessage} from 'actions/webrtc_channel_actions';
-import {getWebRtcLink} from 'selectors/views/webrtc';
+import {goToLastViewedChannel} from 'actions/views/channel';
 
+import {getWebRtcLink} from 'selectors/views/webrtc';
 import {getLastViewedChannelName, getPenultimateViewedChannelName} from 'selectors/local_storage';
 import {Constants} from 'utils/constants.jsx';
 
@@ -86,6 +87,7 @@ function mapDispatchToProps(dispatch) {
             openModal,
             getCustomEmojisInText,
             updateChannelNotifyProps,
+            goToLastViewedChannel,
             sendWebRtcMessage,
         }, dispatch),
     };

@@ -63,7 +63,7 @@ export default class ChannelHeader extends React.Component {
             openModal: PropTypes.func.isRequired,
             getCustomEmojisInText: PropTypes.func.isRequired,
             updateChannelNotifyProps: PropTypes.func.isRequired,
-            goToLastViewedChannel: PropTypes.func,
+            goToLastViewedChannel: PropTypes.func.isRequired,
             sendWebRtcMessage: PropTypes.func.isRequired,
         }).isRequired,
 
