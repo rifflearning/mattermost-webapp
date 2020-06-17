@@ -10,7 +10,6 @@ import {isChannelMuted} from 'mattermost-redux/utils/channel_utils';
 import {Link} from 'react-router-dom';
 import MaterialIcon from 'material-icons-react';
 
-import {createWebRtcLink} from 'utils/webrtc/webrtc';
 import * as Utils from 'utils/utils.jsx';
 import * as GlobalActions from 'actions/global_actions.jsx';
 import Markdown from 'components/markdown';
@@ -36,7 +35,6 @@ import ArchiveIcon from 'components/svg/archive_icon';
 import ToggleModalButtonRedux from 'components/toggle_modal_button_redux';
 import ChannelPermissionGate from 'components/permissions_gates/channel_permission_gate';
 import TeamPermissionGate from 'components/permissions_gates/team_permission_gate';
-import PopoverStickOnHover from 'components/PopoverStickOnHover';
 import ChannelHeaderPlug from 'plugins/channel_header_plug';
 
 import HeaderIconWrapper from './components/header_icon_wrapper';
@@ -47,7 +45,6 @@ const headerMarkdownOptions = {singleline: true, mentionHighlight: false, atMent
 const popoverMarkdownOptions = {singleline: false, mentionHighlight: false, atMentions: true};
 
 const SEARCH_BAR_MINIMUM_WINDOW_SIZE = 1140;
-const MAX_CHANNEL_MEMBERS_FOR_VIDEO = 7;
 
 export default class ChannelHeader extends React.Component {
     static propTypes = {
@@ -63,7 +60,7 @@ export default class ChannelHeader extends React.Component {
             openModal: PropTypes.func.isRequired,
             getCustomEmojisInText: PropTypes.func.isRequired,
             updateChannelNotifyProps: PropTypes.func.isRequired,
-            goToLastViewedChannel: PropTypes.func,
+            goToLastViewedChannel: PropTypes.func.isRequired,
             sendWebRtcMessage: PropTypes.func.isRequired,
         }).isRequired,
 
@@ -340,41 +337,9 @@ export default class ChannelHeader extends React.Component {
         );
     };
 
-    showMoreDirectChannelsModal = () => {
-    //    trackEvent('ui', 'ui_channels_more_direct');
-        this.setState({showDirectChannelsModal: true});
-    }
-
-    hideMoreDirectChannelsModal = () => {
-        this.setState({showDirectChannelsModal: false});
-    }
-
-    handleOpenMoreDirectChannelsModal = (e) => {
-        e.preventDefault();
-        if (this.state.showDirectChannelsModal) {
-            this.hideMoreDirectChannelsModal();
-        } else {
-            this.showMoreDirectChannelsModal();
-        }
-    }
-
-    makePostToSend = (channelId) => {
-        const time = Utils.getTimestamp();
-
-        const webRtcLink = createWebRtcLink(this.props.currentTeam.name, channelId);
-        const post = {
-            message: `I started a Riff meeting! Join here: ${webRtcLink.href}`,
-            channel_id: channelId,
-            pending_post_id: `${this.props.currentUser.id}:${time}`,
-            create_at: time,
-        };
-        return post;
-    }
-
     webRtcDisabled = () => {
-        return (!this.props.channelStats ||
-                this.props.channelStats.member_count > MAX_CHANNEL_MEMBERS_FOR_VIDEO);
-    }
+        return !this.props.channelStats;
+    };
 
     videoChatClicked = (e) => {
         if (this.webRtcDisabled()) {
@@ -387,61 +352,46 @@ export default class ChannelHeader extends React.Component {
                 this.props.currentTeam.name
             );
         }
-    }
+    };
 
     renderWebRtc = (circleClass) => {
-        let tooltipContent = null;
+        let tooltipContent = 'Start a Riff chat. Anyone in the channel will be able to join.';
         if (!this.props.channelStats) {
-            tooltipContent = (
-                <span>
-                    {'Riff chat is disabled until the page fully loads.'}
-                </span>
-            );
-        } else if (this.props.channelStats.member_count > MAX_CHANNEL_MEMBERS_FOR_VIDEO) {
-            tooltipContent = (
-                <span>
-                    {`Riff video chat only supports groups up to ${MAX_CHANNEL_MEMBERS_FOR_VIDEO} people. Create a new DM group to start a call.`}
-                    <button
-                        className='add-channel-btn cursor--pointer btn-primary btn'
-                        style={{marginTop: '.5rem', marginBottom: '.5rem'}}
-                        onClick={this.handleOpenMoreDirectChannelsModal}
-                    >
-                        {'Start a new DM'}
-                    </button>
-                </span>
-            );
-        } else {
-            tooltipContent = (
-                <span>
-                    {'Start a Riff chat. Anyone in the channel will be able to join.'}
-                </span>
-            );
+            tooltipContent = 'Riff chat is disabled until the page fully loads.';
         }
 
         const webrtcTooltip = (
-            <div>
+            <Tooltip id='riffchatTooltip'>
                 {tooltipContent}
-            </div>
+            </Tooltip>
         );
+
         return (
-            <div
-                className={'webrtc__header channel-header__icon wide text ' + circleClass}
-                style={{cursor: this.webRtcDisabled() ? 'default' : 'pointer'}}
+
+            // don't trigger on focus, because clicking assigns focus AND transfers the user
+            // to a new tab for the video. When they return to the mattermost tab the button
+            // still has focus. This means the tooltip will be displayed until the user
+            // explicitly transfers the focus somewhere else, or hovers and then unhovers
+            // the button.
+            <OverlayTrigger
+                trigger={['hover']}
+                delayShow={Constants.OVERLAY_TIME_DELAY}
+                placement='bottom'
+                overlay={webrtcTooltip}
             >
-                <Link
-                    target='_blank'
-                    id='videochat'
-                    to={this.webRtcDisabled() ? '' : this.props.webRtcLink.pathname}
-                    onClick={(e) => this.videoChatClicked(e)}
+                <div
+                    className={'webrtc__header channel-header__icon wide text ' + circleClass}
+                    style={{cursor: this.webRtcDisabled() ? 'default' : 'pointer'}}
                 >
-                    <PopoverStickOnHover
-                        component={webrtcTooltip}
-                        placement='bottom'
-                        delay={Constants.WEBRTC_TIME_DELAY}
+                    <Link
+                        target='_blank'
+                        id='videochat'
+                        to={this.webRtcDisabled() ? '' : this.props.webRtcLink.pathname}
+                        onClick={(e) => this.videoChatClicked(e)}
                     >
                         <button
                             className='style--none'
-                            disabled={this.webRtcDisabled()}//{isOffline || isDoNotDisturb}
+                            disabled={this.webRtcDisabled()}
                         >
                             <div
                                 id='webrtc-btn'
@@ -455,11 +405,11 @@ export default class ChannelHeader extends React.Component {
                                 </span>
                             </div>
                         </button>
-                    </PopoverStickOnHover>
-                </Link>
-            </div>
+                    </Link>
+                </div>
+            </OverlayTrigger>
         );
-    }
+    };
 
     render() {
         const channelIsArchived = this.props.channel.delete_at !== 0;
@@ -507,17 +457,6 @@ export default class ChannelHeader extends React.Component {
 
         const webrtc = this.renderWebRtc('', // first arg is circleClass (online or '')
         );
-
-        let moreDirectChannelsModal;
-        if (this.state.showDirectChannelsModal) {
-            moreDirectChannelsModal = (
-                <MoreDirectChannels
-                    onModalDismissed={this.hideMoreDirectChannelsModal}
-                    isExistingChannel={false}
-                    makePostToSend={this.makePostToSend}
-                />
-            );
-        }
 
         if (isDirect) {
             const teammateId = Utils.getUserIdFromChannelName(channel);
@@ -1165,7 +1104,6 @@ export default class ChannelHeader extends React.Component {
                 id='channel-header'
                 className='channel-header alt'
             >
-                {moreDirectChannelsModal}
                 <div className='flex-parent'>
                     <div className='flex-child'>
                         <div
