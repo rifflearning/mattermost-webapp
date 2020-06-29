@@ -100,6 +100,7 @@ export const WebRtcActionTypes = keyMirror({
     LEAVE_ROOM: null,
     MUTE_AUDIO: null,
     UNMUTE_AUDIO: null,
+    VIDEO_DISPLAY: null,
     VOLUME_CHANGED: null,
     GET_MEDIA: null,
     GET_MEDIA_ERROR: null,

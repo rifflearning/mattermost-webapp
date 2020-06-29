@@ -33,6 +33,7 @@ const initialState = {
     roomName: '',
 
     audioMuted: false,
+    displayVideo: true,
 
     volume: 0,
 
@@ -127,6 +128,12 @@ const webrtc = (state = initialState, action) => {
     case (WebRtcActionTypes.UNMUTE_AUDIO):
         return {...state,
             audioMuted: false,
+        };
+
+    case (WebRtcActionTypes.VIDEO_DISPLAY):
+        return {
+            ...state,
+            displayVideo: action.shouldDisplay,
         };
 
     case (WebRtcActionTypes.JOINED_ROOM):

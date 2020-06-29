@@ -40,6 +40,21 @@ export const handleMuteAudioClick = (event, muted, webrtc) => (dispatch) => {
     }
 };
 
+export const setVideoDisplayState = (shouldEnableVideo, webrtc) => (dispatch) => {
+    const reduxAction = {
+        type: WebRtcActionTypes.VIDEO_DISPLAY,
+        shouldDisplay: shouldEnableVideo,
+    };
+
+    if (shouldEnableVideo) {
+        webrtc.enableVideo();
+    } else {
+        webrtc.disableVideo();
+    }
+
+    dispatch(reduxAction);
+};
+
 export const joinWebRtcRoom = (roomName, teamId, videoId) => (dispatch) => {
     logger.debug('WebrtcAction: Joining webrtc room', roomName, teamId, videoId);
     dispatch(joinRoom(`${roomName}-${videoId}`));

@@ -66,6 +66,27 @@ const AudioStatus = (props) => {
         );
     };
 
+    const ToggleVideoDisplayButton = (tvdbProps) => {
+        // TODO update icon to change when toggling
+        let icon = <i className='fa fa-video-camera'/>
+
+        let classNames = 'button is-rounded';
+
+        if (!tvdbProps.displayVideo) {
+            classNames += ' is-danger';
+        }
+
+        return (
+            <button
+                className={classNames}
+                onClick={() => tvdbProps.setVideoDisplayState(!tvdbProps.displayVideo, tvdbProps.webrtc)}
+                aria-label={`Video is ${tvdbProps.displayVideo ? 'enabled' : 'disabled'}.`}
+            >
+                {icon}
+            </button>
+        );
+    };
+
     const ScreenShareButton = (ssbProps) => {
         let icon = <ScreenShareStartIcon/>;
         const classNames = 'button is-rounded';
@@ -104,6 +125,7 @@ const AudioStatus = (props) => {
             <div className='control'>
                 <div className='columns'>
                     <div className='column'><MicMuteButton {...props}/></div>
+                    <div className='column'><ToggleVideoDisplayButton {...props}/></div>
                     <div className='column has-text-right'>{isScreenShareSourceAvailable() && <ScreenShareButton {...props}/>}</div>
                 </div>
             </div>
