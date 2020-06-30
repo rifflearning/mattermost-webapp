@@ -8,7 +8,9 @@ import {FormattedMessage} from 'react-intl';
 import logoImage from 'images/logo.png';
 import {browserHistory} from 'utils/browser_history';
 import {LTIConstants} from 'utils/constants';
-import {isValidPassword, localizeMessage} from 'utils/utils';
+import * as Utils from 'utils/utils.jsx';
+import * as GlobalActions from 'actions/global_actions.jsx';
+import LocalStorageStore from 'stores/local_storage_store';
 
 import BackButton from 'components/common/back_button';
 import LoadingScreen from 'components/loading_screen';
@@ -21,6 +23,7 @@ export default class SignupLTI extends React.Component {
             customDescriptionText: PropTypes.string,
             actions: PropTypes.shape({
                 createLTIUser: PropTypes.func.isRequired,
+                login: PropTypes.func.isRequired,
             }).isRequired,
             enableSignUpWithLTI: PropTypes.bool,
             passwordConfig: PropTypes.object,
@@ -74,7 +77,7 @@ export default class SignupLTI extends React.Component {
 
     decodeRequest = (formData) => {
         try {
-            const decodedForm = atob(formData);
+            const decodedForm = decodeURIComponent(formData);
             const parsedForm = JSON.parse(decodedForm);
             this.setState({formData: parsedForm});
         } catch (e) {
@@ -107,13 +110,24 @@ export default class SignupLTI extends React.Component {
                 isSubmitting: true,
             });
 
-            const {data, error} = await this.props.actions.createLTIUser({password: this.refs.password.value});
+            const formData = this.state.formData || {};
+            const email = formData[LTIConstants.EMAIL_FIELD] || '';
+            const password = this.refs.password.value;
+            const {data, error} = await this.props.actions.createLTIUser({password});
             if (data) {
                 this.deleteCookie(LTIConstants.LAUNCH_DATA_COOKIE);
                 this.deleteCookie(LTIConstants.NAME_COOKIE);
-                if (data.redirect) {
-                    window.location.href = data.redirect;
-                }
+
+                // From components/login_controller/login_controller.jsx
+                this.props.actions.login(email, password, '').then(() => {
+                    Utils.setCSRFFromCookie();
+                    LocalStorageStore.setWasLoggedIn(true);
+                    if (data.redirect) {
+                        window.location.href = data.redirect;
+                    } else {
+                        GlobalActions.redirectUserToDefaultTeam();
+                    }
+                });
             }
             if (error) {
                 this.setState({
@@ -126,7 +140,7 @@ export default class SignupLTI extends React.Component {
 
     isPasswordValid = () => {
         const providedPassword = this.refs.password.value;
-        const {valid, error} = isValidPassword(providedPassword, this.props.passwordConfig);
+        const {valid, error} = Utils.isValidPassword(providedPassword, this.props.passwordConfig);
         if (!valid && error) {
             this.setState({
                 passwordError: error,
@@ -139,11 +153,9 @@ export default class SignupLTI extends React.Component {
     };
 
     renderLTISignup = () => {
-        const {formData = {}} = this.state;
-        const {
-            [LTIConstants.EMAIL_FIELD]: email = '',
-            [LTIConstants.USERNAME_FIELD]: username = '',
-        } = formData;
+        const formData = this.state.formData || {};
+        const email = formData[LTIConstants.EMAIL_FIELD] || '';
+        const username = formData[LTIConstants.USERNAME_FIELD] || '';
 
         let passwordError = null;
         let passwordDivStyle = 'form-group';
@@ -193,7 +205,7 @@ export default class SignupLTI extends React.Component {
                                 className='form-control'
                                 value={this.extractName()}
                                 disabled={true}
-                                aria-label={localizeMessage('signup_LTI.fullname', 'Full Name')}
+                                aria-label={Utils.localizeMessage('signup_LTI.fullname', 'Full Name')}
                                 aria-describedby='fullname-disabled-label'
                             />
                             <span
@@ -224,7 +236,7 @@ export default class SignupLTI extends React.Component {
                                 className='form-control'
                                 value={username}
                                 disabled={true}
-                                aria-label={localizeMessage('signup_LTI.username', 'Username')}
+                                aria-label={Utils.localizeMessage('signup_LTI.username', 'Username')}
                                 aria-describedby='username-disabled-label'
                             />
                             <span
@@ -255,7 +267,7 @@ export default class SignupLTI extends React.Component {
                                 className='form-control'
                                 value={email}
                                 disabled={true}
-                                aria-label={localizeMessage('signup_LTI.email', 'Email Address')}
+                                aria-label={Utils.localizeMessage('signup_LTI.email', 'Email Address')}
                                 aria-describedby='email-disabled-label'
                             />
                         </div>
@@ -277,7 +289,7 @@ export default class SignupLTI extends React.Component {
                                 placeholder=''
                                 maxLength='128'
                                 spellCheck='false'
-                                aria-label={localizeMessage('signup_user_completed.choosePwd', 'Choose your password')}
+                                aria-label={Utils.localizeMessage('signup_user_completed.choosePwd', 'Choose your password')}
                                 aria-describedby='password-error'
                             />
                             {passwordError}

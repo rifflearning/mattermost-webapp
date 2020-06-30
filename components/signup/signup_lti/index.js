@@ -7,6 +7,8 @@ import {bindActionCreators} from 'redux';
 import {getConfig} from 'mattermost-redux/selectors/entities/general';
 import {createLTIUser} from 'mattermost-redux/actions/users';
 
+import {login} from 'actions/views/login';
+
 import {getPasswordConfig} from 'utils/utils.jsx';
 
 import SignupLTI from './signup_lti.jsx';
@@ -34,6 +36,7 @@ function mapDispatchToProps(dispatch) {
     return {
         actions: bindActionCreators({
             createLTIUser,
+            login,
         }, dispatch),
     };
 }
