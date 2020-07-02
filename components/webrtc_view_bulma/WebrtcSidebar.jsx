@@ -49,17 +49,45 @@ const AudioStatus = (props) => {
     const MicMuteButton = (mmbProps) => {
         let icon = <MicEnabledIcon/>;
         let classNames = 'button is-rounded';
-
-        if (mmbProps.audioMuted) {
+        const isMuted = mmbProps.audioMuted;
+        if (isMuted) {
             icon = <MicDisabledIcon/>;
             classNames += ' is-danger';
         }
+
+        const ariaLabel = `Your microphone is ${isMuted ? 'off' : 'on'}.`;
+        const tooltip = `${isMuted ? 'Unmute' : 'Mute'} your microphone`;
 
         return (
             <button
                 className={classNames}
                 onClick={(event) => mmbProps.handleMuteAudioClick(event, mmbProps.audioMuted, mmbProps.webrtc)}
-                aria-label={`Your microphone is ${mmbProps.audioMuted ? 'off' : 'on'}.`}
+                aria-label={ariaLabel}
+                title={tooltip}
+            >
+                {icon}
+            </button>
+        );
+    };
+
+    const ToggleVideoDisplayButton = (tvdbProps) => {
+        const icon = <i className='fa fa-video-camera'/>;
+
+        let classNames = 'button is-rounded';
+        const videoEnabled = tvdbProps.displayVideo;
+        if (!videoEnabled) {
+            classNames += ' is-danger';
+        }
+
+        const ariaLabel = `Video is ${videoEnabled ? 'enabled' : 'disabled'}.`;
+        const tooltip = `${videoEnabled ? 'Disable' : 'Enable'} video`;
+
+        return (
+            <button
+                className={classNames}
+                onClick={() => tvdbProps.setVideoDisplayState(!tvdbProps.displayVideo, tvdbProps.webrtc)}
+                aria-label={ariaLabel}
+                title={tooltip}
             >
                 {icon}
             </button>
@@ -70,12 +98,12 @@ const AudioStatus = (props) => {
         let icon = <ScreenShareStartIcon/>;
         const classNames = 'button is-rounded';
         let disabled = false;
-        let ariaLabel = 'Share Your Screen';
+        let ariaLabel = 'Share your screen';
         if (ssbProps.webRtcRemoteSharedScreen) {
             disabled = true;
         } else if (ssbProps.userSharing) {
             icon = <ScreenShareStopIcon/>;
-            ariaLabel = 'Stop Sharing Your Screen';
+            ariaLabel = 'Stop sharing your screen';
         }
 
         const onClick = (event) => {
@@ -93,6 +121,7 @@ const AudioStatus = (props) => {
                 onClick={onClick}
                 disabled={disabled}
                 aria-label={ariaLabel}
+                title={ariaLabel}
             >
                 {icon}
             </button>
@@ -104,6 +133,7 @@ const AudioStatus = (props) => {
             <div className='control'>
                 <div className='columns'>
                     <div className='column'><MicMuteButton {...props}/></div>
+                    <div className='column'><ToggleVideoDisplayButton {...props}/></div>
                     <div className='column has-text-right'>{isScreenShareSourceAvailable() && <ScreenShareButton {...props}/>}</div>
                 </div>
             </div>

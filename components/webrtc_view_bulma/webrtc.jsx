@@ -39,10 +39,12 @@ class WebRtc extends React.Component {
         webRtcRemoteSharedScreen: PropTypes.object,
         webRtcPeers: PropTypes.arrayOf(PropTypes.object).isRequired,
         shouldFocusJoinRoomError: PropTypes.bool.isRequired,
+        displayVideo: PropTypes.bool.isRequired,
         focusJoinRoomErrorComplete: PropTypes.func.isRequired,
         handleKeyPress: PropTypes.func,
         handleReadyClick: PropTypes.func.isRequired,
         clearJoinRoomError: PropTypes.func.isRequired,
+        setVideoDisplayState: PropTypes.func.isRequired,
         dispatch: PropTypes.func.isRequired,
     };
 

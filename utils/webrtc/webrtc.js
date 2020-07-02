@@ -10,7 +10,7 @@
     "no-underscore-dangle": ["error", { "allow": [ "_id" ] }],
 */
 
-import SimpleWebRtc from 'simplewebrtc';
+import SimpleWebRtc from '@rifflearning/simplewebrtc';
 import Sibilant from 'sibilant-webaudio';
 import parse from 'url-parse';
 
