@@ -1,10 +1,21 @@
 {
-  "name": "mattermost-webapp",
+  "name": "@rifflearning/mm-webapp",
+  "version": "5.34.2-riff.0",
+  "private": true,
+  "contributors": [
+    "Dan Calacci <dan@rifflearning.com>",
+    "Jordan Reedie <jordan@riffanalytics.ai>",
+    "Mike Lippert <mike@riffanalytics.ai>",
+    "Brec Hanson <brec@rifflearning.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rifflearning/mattermost-webapp.git"
+  },
+  "bugs": "https://github.com/rifflearning/mattermost-webapp/issues",
   "browser": {
     "./client/web_client.jsx": "./client/browser_web_client.jsx"
   },
-  "version": "0.0.1",
-  "private": true,
   "dependencies": {
     "@formatjs/intl-pluralrules": "4.0.6",
     "@formatjs/intl-relativetimeformat": "6.2.3",
@@ -39,7 +50,7 @@
     "localforage-observable": "2.1.1",
     "mark.js": "8.11.1",
     "marked": "github:mattermost/marked#be741d411d4642c4cd3e009645f4cb6baa7e92bb",
-    "mattermost-redux": "github:mattermost/mattermost-redux#70ffe405ba516d02e6b1b1706ecb2e1574bbc983",
+    "mattermost-redux": "github:rifflearning/mattermost-redux#70ffe405ba516d02e6b1b1706ecb2e1574bbc983",
     "moment-timezone": "0.5.31",
     "p-queue": "6.6.1",
     "pdfjs-dist": "2.1.266",
