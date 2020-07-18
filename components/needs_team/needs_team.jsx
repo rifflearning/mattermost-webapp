@@ -16,6 +16,7 @@ import {loadProfilesForSidebar} from 'actions/user_actions.jsx';
 import {makeAsyncComponent} from 'components/async_load';
 import loadBackstageController from 'bundle-loader?lazy!components/backstage';
 import ChannelController from 'components/channel_layout/channel_controller';
+import WebRtcController from 'components/webrtc_layout/webrtc_controller';
 
 import {customTheme} from './theme.js';
 
@@ -243,6 +244,16 @@ export default class NeedsTeam extends React.Component {
                 <Route
                     path={'/:team/emoji'}
                     component={BackstageController}
+                />
+                <Route
+                    exact={true}
+                    path={'/:team/:identifier/video/:videoId'}
+                    render={(renderProps) => (
+                        <WebRtcController
+                            pathName={renderProps.location.pathname}
+                            teamType={teamType}
+                        />
+                    )}
                 />
                 <Route
                     render={(renderProps) => (

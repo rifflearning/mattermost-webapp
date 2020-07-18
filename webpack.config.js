@@ -171,6 +171,10 @@ var config = {
                 ],
             },
             {
+                test: /\.coffee$/,
+                use: ['coffee-loader'],
+            },
+            {
                 type: 'javascript/auto',
                 test: /\.json$/,
                 include: [
@@ -295,11 +299,15 @@ if (!DEV) {
 }
 
 const env = {};
+
 if (DEV) {
     env.PUBLIC_PATH = JSON.stringify(publicPath);
 } else {
     env.NODE_ENV = JSON.stringify('production');
 }
+
+env.CLIENT_ENV = JSON.stringify(process.env);
+
 config.plugins.push(new webpack.DefinePlugin({
     'process.env': env,
 }));
@@ -401,3 +409,4 @@ config.plugins.push(
 );
 
 module.exports = config;
+

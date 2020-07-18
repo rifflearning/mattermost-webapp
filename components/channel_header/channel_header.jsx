@@ -1,24 +1,19 @@
 // Copyright (c) 2015-present Mattermost, Inc. All Rights Reserved.
 // See LICENSE.txt for license information.
-
 import PropTypes from 'prop-types';
 import React from 'react';
 import {OverlayTrigger, Popover, Tooltip} from 'react-bootstrap';
 import {FormattedMessage} from 'react-intl';
 import {Permissions} from 'mattermost-redux/constants';
 import {memoizeResult} from 'mattermost-redux/utils/helpers';
-
-import 'bootstrap';
-
 import {isChannelMuted} from 'mattermost-redux/utils/channel_utils';
+import {Link} from 'react-router-dom';
+import MaterialIcon from 'material-icons-react';
 
+import * as Utils from 'utils/utils.jsx';
 import * as GlobalActions from 'actions/global_actions.jsx';
-import TeamStore from 'stores/team_store.jsx';
-
 import Markdown from 'components/markdown';
 import {Constants, NotificationLevels, RHSStates, ModalIdentifiers} from 'utils/constants.jsx';
-import * as Utils from 'utils/utils.jsx';
-import {browserHistory} from 'utils/browser_history';
 import ChannelInfoModal from 'components/channel_info_modal';
 import ChannelInviteModal from 'components/channel_invite_modal';
 import ChannelMembersModal from 'components/channel_members_modal';
@@ -40,10 +35,11 @@ import ArchiveIcon from 'components/svg/archive_icon';
 import ToggleModalButtonRedux from 'components/toggle_modal_button_redux';
 import ChannelPermissionGate from 'components/permissions_gates/channel_permission_gate';
 import TeamPermissionGate from 'components/permissions_gates/team_permission_gate';
-
 import ChannelHeaderPlug from 'plugins/channel_header_plug';
 
 import HeaderIconWrapper from './components/header_icon_wrapper';
+
+import 'bootstrap';
 
 const headerMarkdownOptions = {singleline: true, mentionHighlight: false, atMentions: true};
 const popoverMarkdownOptions = {singleline: false, mentionHighlight: false, atMentions: true};
@@ -64,9 +60,18 @@ export default class ChannelHeader extends React.Component {
             openModal: PropTypes.func.isRequired,
             getCustomEmojisInText: PropTypes.func.isRequired,
             updateChannelNotifyProps: PropTypes.func.isRequired,
+            goToLastViewedChannel: PropTypes.func.isRequired,
+            sendWebRtcMessage: PropTypes.func.isRequired,
         }).isRequired,
+
+        /**
+         * Current team object
+         */
+        currentTeam: PropTypes.object.isRequired,
+
         channel: PropTypes.object.isRequired,
         channelMember: PropTypes.object.isRequired,
+        channelStats: PropTypes.object,
         isFavorite: PropTypes.bool,
         isDefault: PropTypes.bool,
         currentUser: PropTypes.object.isRequired,
@@ -75,8 +80,11 @@ export default class ChannelHeader extends React.Component {
         rhsState: PropTypes.oneOf(
             Object.values(RHSStates)
         ),
-        lastViewedChannelName: PropTypes.string.isRequired,
         penultimateViewedChannelName: PropTypes.string.isRequired,
+        webRtcLink: PropTypes.shape({
+            pathname: PropTypes.string.isRequired,
+            href: PropTypes.string.isRequired,
+        }),
     };
 
     static defaultProps = {
@@ -136,8 +144,7 @@ export default class ChannelHeader extends React.Component {
     };
 
     handleClose = () => {
-        const {lastViewedChannelName} = this.props;
-        browserHistory.push(`${TeamStore.getCurrentTeamRelativeUrl()}/channels/${lastViewedChannelName}`);
+        this.props.actions.goToLastViewedChannel();
     };
 
     toggleFavorite = () => {
@@ -330,6 +337,80 @@ export default class ChannelHeader extends React.Component {
         );
     };
 
+    webRtcDisabled = () => {
+        return !this.props.channelStats;
+    };
+
+    videoChatClicked = (e) => {
+        if (this.webRtcDisabled()) {
+            e.preventDefault();
+        } else {
+            this.props.actions.sendWebRtcMessage(
+                this.props.channel.id,
+                this.props.currentUser.id,
+                this.props.webRtcLink.href,
+                this.props.currentTeam.name
+            );
+        }
+    };
+
+    renderWebRtc = (circleClass) => {
+        let tooltipContent = 'Start a Riff chat. Anyone in the channel will be able to join.';
+        if (!this.props.channelStats) {
+            tooltipContent = 'Riff chat is disabled until the page fully loads.';
+        }
+
+        const webrtcTooltip = (
+            <Tooltip id='riffchatTooltip'>
+                {tooltipContent}
+            </Tooltip>
+        );
+
+        return (
+
+            // don't trigger on focus, because clicking assigns focus AND transfers the user
+            // to a new tab for the video. When they return to the mattermost tab the button
+            // still has focus. This means the tooltip will be displayed until the user
+            // explicitly transfers the focus somewhere else, or hovers and then unhovers
+            // the button.
+            <OverlayTrigger
+                trigger={['hover']}
+                delayShow={Constants.OVERLAY_TIME_DELAY}
+                placement='bottom'
+                overlay={webrtcTooltip}
+            >
+                <div
+                    className={'webrtc__header channel-header__icon wide text ' + circleClass}
+                    style={{cursor: this.webRtcDisabled() ? 'default' : 'pointer'}}
+                >
+                    <Link
+                        target='_blank'
+                        id='videochat'
+                        to={this.webRtcDisabled() ? '' : this.props.webRtcLink.pathname}
+                        onClick={(e) => this.videoChatClicked(e)}
+                    >
+                        <button
+                            className='style--none'
+                            disabled={this.webRtcDisabled()}
+                        >
+                            <div
+                                id='webrtc-btn'
+                                className={'webrtc__button hidden-xs ' + circleClass}
+                            >
+                                <span
+                                    className='icon icon__members'
+                                    aria-label='Start a voice chat'
+                                >
+                                    <MaterialIcon icon='voice_chat'/>
+                                </span>
+                            </div>
+                        </button>
+                    </Link>
+                </div>
+            </OverlayTrigger>
+        );
+    };
+
     render() {
         const channelIsArchived = this.props.channel.delete_at !== 0;
         if (Utils.isEmptyObject(this.props.channel) ||
@@ -372,7 +453,10 @@ export default class ChannelHeader extends React.Component {
 
         const channelMuted = isChannelMuted(this.props.channelMember);
 
-        const teamId = TeamStore.getCurrentId();
+        const teamId = this.props.channel.team_id;
+
+        const webrtc = this.renderWebRtc('', // first arg is circleClass (online or '')
+        );
 
         if (isDirect) {
             const teammateId = Utils.getUserIdFromChannelName(channel);
@@ -1065,6 +1149,9 @@ export default class ChannelHeader extends React.Component {
                             </div>
                             {headerTextContainer}
                         </div>
+                    </div>
+                    <div className='flex-child'>
+                        {webrtc}
                     </div>
                     <div className='flex-child'>
                         {popoverListMembers}

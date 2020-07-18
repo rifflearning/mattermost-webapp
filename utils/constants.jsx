@@ -3,6 +3,7 @@
 
 /* eslint-disable no-magic-numbers */
 import keyMirror from 'key-mirror';
+import Permissions from 'mattermost-redux/constants/permissions';
 
 import audioIcon from 'images/icons/audio.svg';
 import codeIcon from 'images/icons/code.svg';
@@ -23,8 +24,6 @@ import mattermostDarkThemeImage from 'images/themes/mattermost_dark.png';
 import defaultThemeImage from 'images/themes/organization.png';
 import windows10ThemeImage from 'images/themes/windows_dark.png';
 import logoWebhook from 'images/webhook_icon.jpg';
-
-import Permissions from 'mattermost-redux/constants/permissions';
 
 import {t} from 'utils/i18n';
 import {customTheme} from 'components/needs_team/theme';
@@ -93,9 +92,46 @@ export const Preferences = {
     CATEGORY_SYSTEM_NOTICE: 'system_notice',
 };
 
+export const WebRtcActionTypes = keyMirror({
+    JOIN_ROOM: null,
+    JOIN_ROOM_STATUS: null,
+    JOINED_ROOM: null,
+    READY_TO_CALL: null,
+    LEAVE_ROOM: null,
+    MUTE_AUDIO: null,
+    UNMUTE_AUDIO: null,
+    VIDEO_DISPLAY: null,
+    VOLUME_CHANGED: null,
+    GET_MEDIA: null,
+    GET_MEDIA_ERROR: null,
+    CHANGE_PEER_RIFF_ID: null,
+    ADD_PEER: null,
+    REMOVE_PEER: null,
+    TEXT_CHAT_MSG_UPDATE: null,
+    TEXT_CHAT_SET_BADGE: null,
+    SHARE_SCREEN: null,
+    STOP_SHARE_SCREEN: null,
+    CHAT_GET_DISPLAY_ERROR: null,
+    REMOVE_SHARED_SCREEN: null,
+    ADD_SHARED_SCREEN: null,
+    ADD_LOCAL_SHARED_SCREEN: null,
+    REMOVE_LOCAL_SHARED_SCREEN: null,
+    FOCUS_JOIN_ROOM_ERROR_COMPLETE: null,
+});
+
+export const RiffServerActionTypes = keyMirror({
+    RIFF_AUTHENTICATE_SUCCESS: null,
+    RIFF_AUTHENTICATE_FAIL: null,
+    RIFF_PARTICIPANTS_CHANGED: null,
+    RIFF_TURN_UPDATE: null,
+    RIFF_JOIN_ROOM: null,
+    RIFF_MEETING_ID_UPDATE: null,
+});
+
 export const ActionTypes = keyMirror({
     RECEIVED_ERROR: null,
     CLICK_CHANNEL: null,
+    CLICK_VIDEO: null,
     CREATE_CHANNEL: null,
     CREATE_POST: null,
     CREATE_COMMENT: null,
@@ -1234,6 +1270,7 @@ export const Constants = {
         },
     },
     OVERLAY_TIME_DELAY_SMALL: 100,
+    WEBRTC_TIME_DELAY: 100,
     OVERLAY_TIME_DELAY: 400,
     DEFAULT_MAX_USERS_PER_TEAM: 50,
     DEFAULT_MAX_CHANNELS_PER_TEAM: 2000,

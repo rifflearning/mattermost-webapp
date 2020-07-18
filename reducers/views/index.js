@@ -14,6 +14,9 @@ import lhs from './lhs';
 import search from './search';
 import notice from './notice';
 
+import webrtc from './webrtc';
+import riff from './riff';
+
 export default combineReducers({
     admin,
     browser,
@@ -25,4 +28,6 @@ export default combineReducers({
     lhs,
     search,
     notice,
+    webrtc,
+    riff,
 });
