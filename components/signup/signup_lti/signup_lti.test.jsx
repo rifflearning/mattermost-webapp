@@ -27,7 +27,7 @@ describe('components/signup/SignupLTI', () => {
 
     test('should match snapshot', () => {
         const wrapper = shallow(
-            <SignupLTI {...baseProps}/>
+            <SignupLTI {...baseProps}/>,
         );
 
         expect(wrapper).toMatchSnapshot();
@@ -39,7 +39,7 @@ describe('components/signup/SignupLTI', () => {
             enableSignUpWithLTI: false,
         };
         const wrapper = shallow(
-            <SignupLTI {...props}/>
+            <SignupLTI {...props}/>,
         );
         expect(wrapper).toMatchSnapshot();
     });
@@ -50,7 +50,7 @@ describe('components/signup/SignupLTI', () => {
             enableSignUpWithLTI: false,
         };
         const wrapper = shallow(
-            <SignupLTI {...props}/>
+            <SignupLTI {...props}/>,
         );
         wrapper.setState({
             formData: {
@@ -64,11 +64,10 @@ describe('components/signup/SignupLTI', () => {
 
     test('should have match state and make API call when handleSubmit is called', () => {
         const wrapper = shallow(
-            <SignupLTI {...baseProps}/>
+            <SignupLTI {...baseProps}/>,
         );
 
-        wrapper.instance().refs = {password: {value: 'password'}};
-        wrapper.setState({serverError: '', isSubmitting: false});
+        wrapper.setState({password: 'password', serverError: '', isSubmitting: false});
         wrapper.instance().handleSubmit({preventDefault: jest.fn()});
         expect(wrapper.state('serverError')).toEqual('');
         expect(wrapper.state('isSubmitting')).toEqual(true);

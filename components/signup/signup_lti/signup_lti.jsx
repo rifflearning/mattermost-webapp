@@ -35,6 +35,7 @@ export default class SignupLTI extends React.Component {
 
         this.state = {
             formData: {},
+            password: '',
             loading: false,
             serverError: '',
             passwordError: '',
@@ -107,7 +108,7 @@ export default class SignupLTI extends React.Component {
                 isSubmitting: true,
             });
 
-            const {data, error} = await this.props.actions.createLTIUser({password: this.refs.password.value});
+            const {data, error} = await this.props.actions.createLTIUser({password: this.state.password});
             if (data) {
                 this.deleteCookie(LTIConstants.LAUNCH_DATA_COOKIE);
                 this.deleteCookie(LTIConstants.NAME_COOKIE);
@@ -125,7 +126,7 @@ export default class SignupLTI extends React.Component {
     };
 
     isPasswordValid = () => {
-        const providedPassword = this.refs.password.value;
+        const providedPassword = this.state.password;
         const {valid, error} = isValidPassword(providedPassword, this.props.passwordConfig);
         if (!valid && error) {
             this.setState({
@@ -189,7 +190,6 @@ export default class SignupLTI extends React.Component {
                             <input
                                 id='fullname'
                                 type='text'
-                                ref='fullname'
                                 className='form-control'
                                 value={this.extractName()}
                                 disabled={true}
@@ -220,7 +220,6 @@ export default class SignupLTI extends React.Component {
                             <input
                                 id='username'
                                 type='text'
-                                ref='username'
                                 className='form-control'
                                 value={username}
                                 disabled={true}
@@ -251,7 +250,6 @@ export default class SignupLTI extends React.Component {
                             <input
                                 id='email'
                                 type='email'
-                                ref='email'
                                 className='form-control'
                                 value={email}
                                 disabled={true}
@@ -272,11 +270,12 @@ export default class SignupLTI extends React.Component {
                             <input
                                 id='password'
                                 type='password'
-                                ref='password'
                                 className='form-control'
                                 placeholder=''
                                 maxLength='128'
                                 spellCheck='false'
+                                value={this.state.password}
+                                onInput={(evt) => this.setState({password: evt.target.value})}
                                 aria-label={localizeMessage('signup_user_completed.choosePwd', 'Choose your password')}
                                 aria-describedby='password-error'
                             />
