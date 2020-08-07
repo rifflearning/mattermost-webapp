@@ -253,6 +253,7 @@ var config = {
             filename: 'root.html',
             inject: 'head',
             template: 'root.html',
+            favicon: 'images/favicon/favicon-16x16.png',
             meta: {
                 csp: {
                     'http-equiv': 'Content-Security-Policy',

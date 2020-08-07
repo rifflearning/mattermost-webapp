@@ -475,7 +475,7 @@
 
 
         .icon--emoji-picker {
-            @include opacity(.5);
+            @include opacity(.7);
             @include single-transition(all, .15s);
             cursor: pointer;
 
@@ -486,7 +486,7 @@
             }
 
             .icon--attachment {
-                @include opacity(.5);
+                @include opacity(.7);
                 display: inline-block;
                 position: relative;
                 vertical-align: top;
@@ -1286,7 +1286,7 @@
                     -webkit-user-select: none; /* Chrome all / Safari all */
                     -moz-user-select: none;    /* Firefox all */
                     -ms-user-select: none;     /* IE 10+ */
-                    user-select: none;                
+                    user-select: none;
                 }
             }
         }
@@ -1569,7 +1569,7 @@
         -moz-user-select: none;    /* Firefox all */
         -ms-user-select: none;     /* IE 10+ */
         user-select: none;
-    
+
         a {
             font-weight: bold;
         }
