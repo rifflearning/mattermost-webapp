@@ -25,6 +25,8 @@ import Pluggable from 'plugins/pluggable';
 
 import LocalStorageStore from 'stores/local_storage_store';
 
+import {customTheme} from './theme';
+
 const BackstageController = makeAsyncComponent(LazyBackstageController);
 
 let wakeUpInterval: number;
@@ -141,7 +143,8 @@ export default class NeedsTeam extends React.PureComponent<Props, State> {
 
         // Set up tracking for whether the window is active
         window.isActive = true;
-        Utils.applyTheme(this.props.theme);
+        const theme = this.props.theme || customTheme;
+        Utils.applyTheme(theme);
 
         if (UserAgent.isIosSafari()) {
             // Use iNoBounce to prevent scrolling past the boundaries of the page

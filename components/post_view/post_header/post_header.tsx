@@ -156,12 +156,7 @@ export default class PostHeader extends React.PureComponent<Props> {
             userProfile = (
                 <UserProfile
                     userId=''
-                    overwriteName={
-                        <FormattedMessage
-                            id='post_info.system'
-                            defaultMessage='System'
-                        />
-                    }
+                    overwriteName={Constants.SYSTEM_BRAND_NAME}
                     overwriteImage={Constants.SYSTEM_MESSAGE_PROFILE_IMAGE}
                     disablePopover={true}
                 />
