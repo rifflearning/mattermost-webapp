@@ -220,9 +220,11 @@ exports[`components/signup/SignupLTI should pick email, username and full name f
                 className="form-control"
                 id="password"
                 maxLength="128"
+                onInput={[Function]}
                 placeholder=""
                 spellCheck="false"
                 type="password"
+                value=""
               />
             </div>
           </div>
@@ -425,9 +427,11 @@ exports[`components/signup/SignupLTI should redirect to / when not signup with l
                 className="form-control"
                 id="password"
                 maxLength="128"
+                onInput={[Function]}
                 placeholder=""
                 spellCheck="false"
                 type="password"
+                value=""
               />
             </div>
           </div>
