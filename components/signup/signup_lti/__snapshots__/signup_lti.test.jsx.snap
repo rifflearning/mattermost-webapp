@@ -26,7 +26,6 @@ exports[`components/signup/SignupLTI should match snapshot 1`] = `
         <FormattedMessage
           defaultMessage="Let's create your account"
           id="signup_user_completed.lets"
-          values={Object {}}
         />
       </p>
       <div
@@ -38,7 +37,6 @@ exports[`components/signup/SignupLTI should match snapshot 1`] = `
           <FormattedMessage
             defaultMessage="There was an error with your login request. Please try again or contact your system administrator."
             id="signup_LTI.invalid_request"
-            values={Object {}}
           />
         </label>
       </div>
@@ -73,7 +71,6 @@ exports[`components/signup/SignupLTI should pick email, username and full name f
         <FormattedMessage
           defaultMessage="Let's create your account"
           id="signup_user_completed.lets"
-          values={Object {}}
         />
       </p>
       <form>
@@ -90,7 +87,6 @@ exports[`components/signup/SignupLTI should pick email, username and full name f
                 <FormattedMessage
                   defaultMessage="Full Name"
                   id="signup_LTI.fullname"
-                  values={Object {}}
                 />
               </strong>
             </p>
@@ -131,7 +127,6 @@ exports[`components/signup/SignupLTI should pick email, username and full name f
                 <FormattedMessage
                   defaultMessage="Username"
                   id="signup_LTI.username"
-                  values={Object {}}
                 />
               </strong>
             </p>
@@ -172,7 +167,6 @@ exports[`components/signup/SignupLTI should pick email, username and full name f
                 <FormattedMessage
                   defaultMessage="Email Address"
                   id="signup_LTI.email"
-                  values={Object {}}
                 />
               </strong>
             </p>
@@ -214,7 +208,6 @@ exports[`components/signup/SignupLTI should pick email, username and full name f
                 <FormattedMessage
                   defaultMessage="Choose your password"
                   id="signup_user_completed.choosePwd"
-                  values={Object {}}
                 />
               </strong>
             </p>
@@ -261,7 +254,6 @@ exports[`components/signup/SignupLTI should pick email, username and full name f
               <FormattedMessage
                 defaultMessage="Create Account"
                 id="signup_user_completed.create"
-                values={Object {}}
               />
             </button>
           </p>
@@ -298,7 +290,6 @@ exports[`components/signup/SignupLTI should redirect to / when not signup with l
         <FormattedMessage
           defaultMessage="Let's create your account"
           id="signup_user_completed.lets"
-          values={Object {}}
         />
       </p>
       <form>
@@ -315,7 +306,6 @@ exports[`components/signup/SignupLTI should redirect to / when not signup with l
                 <FormattedMessage
                   defaultMessage="Full Name"
                   id="signup_LTI.fullname"
-                  values={Object {}}
                 />
               </strong>
             </p>
@@ -356,7 +346,6 @@ exports[`components/signup/SignupLTI should redirect to / when not signup with l
                 <FormattedMessage
                   defaultMessage="Username"
                   id="signup_LTI.username"
-                  values={Object {}}
                 />
               </strong>
             </p>
@@ -397,7 +386,6 @@ exports[`components/signup/SignupLTI should redirect to / when not signup with l
                 <FormattedMessage
                   defaultMessage="Email Address"
                   id="signup_LTI.email"
-                  values={Object {}}
                 />
               </strong>
             </p>
@@ -425,7 +413,6 @@ exports[`components/signup/SignupLTI should redirect to / when not signup with l
                 <FormattedMessage
                   defaultMessage="Choose your password"
                   id="signup_user_completed.choosePwd"
-                  values={Object {}}
                 />
               </strong>
             </p>
@@ -472,7 +459,6 @@ exports[`components/signup/SignupLTI should redirect to / when not signup with l
               <FormattedMessage
                 defaultMessage="Create Account"
                 id="signup_user_completed.create"
-                values={Object {}}
               />
             </button>
           </p>
