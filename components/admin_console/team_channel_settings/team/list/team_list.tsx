@@ -25,7 +25,7 @@ type Props = {
     data: Team[];
     total: number;
     actions: {
-        searchTeams(term: string, opts: TeamSearchOpts): Promise<{ data: TeamsWithCount }>;
+        searchTeams(term: string, opts: TeamSearchOpts): Promise<{data: TeamsWithCount}>;
         getData(page: number, size: number): void;
     };
 }
@@ -99,7 +99,7 @@ export default class TeamList extends React.PureComponent<Props, State> {
         this.setState({page, loading: false, teams, total, searchErrored});
     }
 
-    searchTeamsDebounced = debounce((page, term, filters = {}) => this.searchTeams(page, term, filters), 300, false, () => { });
+    searchTeamsDebounced = debounce((page, term, filters = {}) => this.searchTeams(page, term, filters), 300, false, () => {});
 
     nextPage = () => {
         this.loadPage(this.state.page + 1, this.state.term, this.state.filters);
